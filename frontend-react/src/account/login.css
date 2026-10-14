@@ -1,0 +1,351 @@
+.passport-page {
+  box-sizing: border-box;
+  font-size: 16px;
+  min-height: 100vh;
+  background: #fbf5e9;
+  color: #233a55;
+  padding: 32px 6vw 20px;
+  font-family: inherit;
+  background-image: radial-gradient(#b5a18b25 0.7px, transparent 0.7px);
+  background-size: 8px 8px;
+}
+.passport-brand {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  max-width: 1200px;
+  margin: auto;
+  font-weight: 800;
+  font-size: 23px;
+}
+.passport-brand > span {
+  border: 2px solid #233a55;
+  border-radius: 12px;
+  padding: 5px 12px;
+  background: #f4b5ac;
+  transform: rotate(-8deg);
+}
+.passport-brand small {
+  display: block;
+  font-size: 12px;
+  letter-spacing: 2px;
+  margin-top: 3px;
+}
+.passport-brand button {
+  margin-left: auto;
+  font-size: 14px;
+  border: 1px solid #233a5540;
+  border-radius: 20px;
+  padding: 8px 14px;
+  background: #fffaf1;
+  color: inherit;
+  min-height: 44px;
+}
+.passport-spread {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 48px;
+  max-width: 1070px;
+  margin: 60px auto 30px;
+  align-items: start;
+}
+.passport-story {
+  position: relative;
+  padding: 0 14px;
+}
+.passport-eyebrow {
+  margin-top: 30px;
+  font-size: 14px;
+  font-weight: 700;
+}
+.passport-story h1 {
+  font-size: clamp(32px, 3.4vw, 49px);
+  line-height: 1.35;
+  letter-spacing: 2px;
+  margin: 10px 0 16px;
+}
+.passport-story > p:not(.passport-eyebrow) {
+  font-size: 15px;
+  line-height: 1.9;
+  color: #647184;
+}
+.passport-stamp {
+  display: inline-block;
+  border: 2px dashed #ba7067;
+  border-radius: 8px;
+  color: #a9635b;
+  padding: 6px 13px;
+  transform: rotate(-7deg);
+  font-weight: 700;
+}
+.xiaoqi-sticker {
+  width: 330px;
+  height: 330px;
+  margin: -7px auto -4px;
+  background: url('/art/login/xiaoqi-passport.png') left center/200% 100% no-repeat;
+  animation: xiaoqi-wave 4s ease-in-out infinite;
+}
+.xiaoqi-sticker.shy {
+  background-position: right center;
+  animation: none;
+}
+.xiaoqi-speech {
+  background: #fffdf8;
+  border: 1.5px solid #233a55;
+  border-radius: 16px;
+  padding: 12px;
+  text-align: center;
+  font-size: 14px;
+  max-width: 350px;
+  margin: auto;
+  box-shadow: 3px 3px #233a5510;
+}
+.passport-footnote {
+  display: block;
+  text-align: center;
+  font-size: 14px;
+  margin: 20px 0;
+  color: #768071;
+  letter-spacing: 2px;
+}
+.passport-card {
+  position: relative;
+  padding: 36px 38px 65px;
+  background: #fffdf7;
+  border: 2px solid #233a55;
+  border-radius: 12px;
+  box-shadow: 8px 9px 0 #e6d9c5;
+  transform: none;
+}
+.passport-card:before {
+  content: '';
+  position: absolute;
+  top: -13px;
+  left: calc(50% - 36px);
+  height: 27px;
+  width: 72px;
+  background: #e5c4a6a8;
+  transform: rotate(-5deg);
+}
+.passport-ticket {
+  font-size: 14px;
+  letter-spacing: 2px;
+  border-bottom: 1px dashed #233a5550;
+  display: block;
+  padding-bottom: 18px;
+}
+.passport-card h2 {
+  font-size: 24px;
+  margin: 23px 0 8px;
+}
+.passport-card > p {
+  font-size: 14px;
+  line-height: 1.7;
+  color: #738091;
+}
+.passport-card form {
+  margin-top: 25px;
+}
+.passport-card label {
+  display: block;
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 17px;
+}
+.passport-card input {
+  display: block;
+  width: 100%;
+  margin-top: 8px;
+  background: #faf7ee;
+  border: 1.5px solid #d9d4c8;
+  border-radius: 8px;
+  padding: 12px;
+  font: inherit;
+  font-size: 16px;
+  min-height: 48px;
+  color: #233a55;
+  box-sizing: border-box;
+}
+.passport-card input:focus {
+  outline: 3px solid #edb5ae60;
+  border-color: #a4645b;
+}
+.passport-captcha {
+  display: flex;
+  align-items: flex-end;
+  gap: 14px;
+}
+.passport-captcha label {
+  flex: 1;
+  min-width: 0;
+}
+.passport-captcha button {
+  margin-bottom: 17px;
+}
+.passport-captcha button {
+  background: transparent;
+  border: 0;
+  padding: 0;
+  width: 145px;
+  color: #647184;
+  cursor: pointer;
+}
+.passport-captcha img {
+  width: 145px;
+  max-width: 100%;
+  border-radius: 6px;
+}
+.passport-captcha small {
+  display: block;
+  font-size: 14px;
+}
+.passport-submit {
+  width: 100%;
+  border: 2px solid #233a55;
+  border-radius: 9px;
+  background: #f4b2a6;
+  color: #233a55;
+  font-size: 16px;
+  font-weight: 800;
+  padding: 14px;
+  box-shadow: 3px 4px #233a55;
+  cursor: pointer;
+}
+.passport-submit span {
+  float: right;
+}
+.passport-submit:hover {
+  background: #f7c6b8;
+}
+.passport-submit:disabled {
+  opacity: 0.65;
+  cursor: wait;
+}
+.passport-card .passport-error {
+  color: #ad3939;
+  font-size: 14px;
+  margin: 0 0 15px;
+}
+.passport-card .passport-help {
+  font-size: 14px;
+  margin-top: 20px;
+  color: #52627a;
+}
+.passport-seal {
+  position: absolute;
+  bottom: 17px;
+  right: 27px;
+  border: 2px solid #98a38a;
+  border-radius: 50%;
+  padding: 9px 13px;
+  text-align: center;
+  font-size: 14px;
+  color: #82936e;
+  transform: rotate(-13deg);
+}
+.passport-footer {
+  text-align: center;
+  font-size: 14px;
+  color: #818575;
+  padding: 18px 0;
+}
+.passport-loading {
+  padding: 18vh 20px;
+  text-align: center;
+  background: #fbf5e9;
+  min-height: 100vh;
+  color: #233a55;
+}
+.passport-loading button {
+  display: block;
+  margin: 20px auto;
+  padding: 12px 22px;
+  border-radius: 10px;
+}
+.passport-page[data-quiet='true'] .xiaoqi-sticker {
+  animation: none;
+}
+@keyframes xiaoqi-wave {
+  0%,
+  65%,
+  100% {
+    transform: rotate(-2deg) translateY(0);
+  }
+  75% {
+    transform: rotate(3deg) translateY(-5px);
+  }
+  85% {
+    transform: rotate(-2deg) translateY(0);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .xiaoqi-sticker {
+    animation: none;
+  }
+}
+@media (max-width: 960px) {
+  .passport-page {
+    padding: 20px;
+  }
+  .passport-spread {
+    grid-template-columns: 1fr;
+    gap: 25px;
+    margin: 28px auto;
+  }
+  .passport-story {
+    text-align: center;
+  }
+  .passport-spread {
+    max-width: 520px;
+  }
+  .passport-story h1 {
+    font-size: 29px;
+  }
+  .passport-story > p:not(.passport-eyebrow),
+  .passport-footnote {
+    display: none;
+  }
+  .xiaoqi-sticker {
+    width: 120px;
+    height: 120px;
+    margin: 0 auto;
+  }
+  .passport-eyebrow {
+    display: none;
+  }
+  .passport-card {
+    padding: 27px 24px 65px;
+    transform: none;
+  }
+  .passport-brand {
+    font-size: 19px;
+  }
+  .passport-brand small {
+    display: none;
+  }
+  .passport-footer {
+    line-height: 1.8;
+  }
+  .passport-stamp {
+    display: none;
+  }
+  .passport-seal {
+    display: none;
+  }
+  .passport-story h1 {
+    font-size: 24px;
+    margin: 0 0 8px;
+  }
+  .xiaoqi-speech {
+    padding: 8px;
+  }
+  .passport-page {
+    padding: 20px 16px;
+  }
+  .passport-captcha button {
+    width: 125px;
+  }
+  .passport-captcha img {
+    width: 125px;
+  }
+}

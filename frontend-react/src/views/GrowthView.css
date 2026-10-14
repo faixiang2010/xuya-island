@@ -1,0 +1,105 @@
+@import url('./FamilyPages.css');
+.growth-tabs {
+  display: flex;
+  gap: 8px;
+  border-bottom: 1px solid #ded9cc;
+  margin-bottom: 24px;
+}
+.growth-tabs button {
+  font: inherit;
+  min-height: 48px;
+  padding: 10px 20px;
+  border: 0;
+  border-bottom: 3px solid transparent;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+}
+.growth-tabs button[aria-pressed='true'] {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+  font-weight: 700;
+}
+.growth-gift-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+.growth-balance {
+  flex-shrink: 0;
+  text-align: center;
+  padding: 12px 24px;
+  background: var(--learning-soft, #fff1f7);
+  border-radius: 12px;
+}
+.growth-balance strong {
+  display: block;
+  font-size: 30px;
+  color: var(--accent);
+}
+.growth-balance span,
+.growth-balance small {
+  display: block;
+}
+.growth-balance small {
+  color: var(--muted);
+}
+.growth-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
+  gap: 20px;
+}
+.growth-history {
+  width: 100%;
+  background: transparent;
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  border: 0;
+  border-bottom: 1px dashed #dcd4c7;
+  padding: 18px 0;
+  text-align: left;
+  font: inherit;
+  margin-top: 0;
+}
+.growth-page .family-paper > .family-heading {
+  margin-bottom: 8px;
+}
+button.growth-history {
+  cursor: pointer;
+}
+button.growth-history:hover {
+  background: var(--learning-soft, #fff1f7);
+}
+.growth-history small {
+  display: block;
+  margin-top: 6px;
+  color: var(--muted);
+}
+.growth-history .family-status {
+  flex-shrink: 0;
+}
+.growth-notice {
+  padding: 16px;
+  background: var(--learning-soft, #fff1f7);
+  border-radius: 10px;
+}
+.growth-more details {
+  margin: 0;
+}
+@media (max-width: 650px) {
+  .growth-gift-heading {
+    flex-wrap: wrap;
+  }
+  .growth-history {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+  .growth-tabs button {
+    flex: 1;
+    padding: 10px 12px;
+  }
+}

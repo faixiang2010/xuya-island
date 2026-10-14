@@ -1,0 +1,122 @@
+name: Release
+
+# 推送 v* 标签时构建 Windows 安装包，并创建草稿 Release 供人工确认。
+# 标签版本应与 electron/package.json 的 version 一致（例如 v0.2.1）。
+#
+# 可选签名：仓库配置 WINDOWS_CERT_BASE64 / WINDOWS_CERT_PASSWORD 两个 Secret
+# 后，构建会自动使用该证书签名；未配置时按未签名构建，流程照常产出草稿。
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+  # 门禁需要读取同一提交在 Verify 工作流中的历史运行结论。
+  actions: read
+
+jobs:
+  gate:
+    runs-on: windows-latest
+    timeout-minutes: 5
+    steps:
+      - name: 校验同一提交已通过 Verify
+        # 发布门禁：标签指向的提交必须已有成功的 Verify 运行，否则不产出草稿包。
+        # verify.yml 只在分支推送与 PR 上触发，标签推送不会触发它，因此这里按提交查已有结论。
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $headers = @{ Authorization="Bearer $($env:GH_TOKEN)"; Accept='application/vnd.github+json'; 'User-Agent'='xuya-ci' }
+          $api = "https://api.github.com/repos/$env:GITHUB_REPOSITORY"
+          # 轻量标签的 object 直接是提交；附注标签需再解析一层，统一取到提交 SHA。
+          $ref = Invoke-RestMethod -Method Get -Uri "$api/git/ref/tags/$env:GITHUB_REF_NAME" -Headers $headers
+          $sha = $ref.object.sha
+          if ($ref.object.type -eq 'tag') {
+            $sha = (Invoke-RestMethod -Method Get -Uri "$api/git/tags/$sha" -Headers $headers).object.sha
+          }
+          Write-Output "标签 $env:GITHUB_REF_NAME 指向提交 $sha"
+          # 若 verify.yml 改名，需同步此处引用。
+          $response = Invoke-RestMethod -Method Get -Uri "$api/actions/workflows/verify.yml/runs?head_sha=$sha&status=completed&per_page=20" -Headers $headers
+          $runs = @($response.workflow_runs)
+          if (@($runs | Where-Object { $_.conclusion -eq 'success' }).Count -eq 0) {
+            $got = @($runs | ForEach-Object { $_.conclusion }) -join ', '
+            if (-not $got) { $got = '无运行记录' }
+            Write-Output "发布门禁未通过：提交 $sha 没有成功的 Verify 运行（现有结论：$got）。请先在分支上验证通过再打标签。"
+            exit 1
+          }
+          Write-Output "发布门禁通过，允许构建安装包。"
+
+  windows-installer:
+    needs: gate
+    runs-on: windows-latest
+    timeout-minutes: 60
+    env:
+      XUYA_MODEL_API_KEY: ''
+      # 发布打包只构建产物、跳过测试执行；测试由 verify 流水线负责，避免偶发测试阻断发布。
+      XUYA_SKIP_TESTS: '1'
+      # 证书为可选：未配置时为空字符串，流程按未签名构建。
+      WINDOWS_CERT_BASE64: ${{ secrets.WINDOWS_CERT_BASE64 }}
+      WINDOWS_CERT_PASSWORD: ${{ secrets.WINDOWS_CERT_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+          cache-dependency-path: backend/pom.xml
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: |
+            frontend-react/package-lock.json
+            electron/package-lock.json
+      - name: 安装依赖
+        run: |
+          npm.cmd --prefix frontend-react ci
+          npm.cmd --prefix electron ci
+          # electron 44 的包没有 postinstall，npm ci 不会下载 Electron 二进制；显式安装。
+          npm.cmd --prefix electron run prepare:electron
+      - name: 解析 Java 与 Maven 路径
+        shell: pwsh
+        run: |
+          # backend.ps1 依赖 XUYA_JAVA_HOME / XUYA_MAVEN_HOME，从 CI 预装工具链解析。
+          $mvn = (Get-Command mvn.cmd -ErrorAction Stop).Source
+          "XUYA_MAVEN_HOME=$(Split-Path (Split-Path $mvn -Parent) -Parent)" | Out-File -Append -Encoding utf8 $env:GITHUB_ENV
+          "XUYA_JAVA_HOME=$env:JAVA_HOME" | Out-File -Append -Encoding utf8 $env:GITHUB_ENV
+          $testPython = (Get-Command python.exe -ErrorAction Stop).Source
+          "XUYA_TEST_PYTHON=$testPython" | Out-File -Append -Encoding utf8 $env:GITHUB_ENV
+      - name: 准备代码签名证书
+        if: env.WINDOWS_CERT_BASE64 != ''
+        shell: pwsh
+        run: |
+          [IO.File]::WriteAllBytes("$env:RUNNER_TEMP\cert.pfx", [Convert]::FromBase64String($env:WINDOWS_CERT_BASE64))
+          "CSC_LINK=$env:RUNNER_TEMP\cert.pfx" | Out-File -Append -Encoding utf8 $env:GITHUB_ENV
+          "CSC_KEY_PASSWORD=$env:WINDOWS_CERT_PASSWORD" | Out-File -Append -Encoding utf8 $env:GITHUB_ENV
+      - name: 配置发布渠道与签名
+        shell: pwsh
+        env:
+          GH_REPOSITORY: ${{ github.repository }}
+        run: |
+          # 把 package.json 里的占位渠道替换为当前仓库，并按证书是否存在决定是否签名。
+          node -e "const fs=require('fs');const p='electron/package.json';const j=JSON.parse(fs.readFileSync(p,'utf8'));const [owner,repo]=process.env.GH_REPOSITORY.split('/');j.build.publish[0].owner=owner;j.build.publish[0].repo=repo;const signed=Boolean(process.env.CSC_LINK);j.build.win.signAndEditExecutable=signed;fs.writeFileSync(p,JSON.stringify(j,null,2)+'\n');console.log('publish ->',owner+'/'+repo,'signed='+signed)"
+      - name: 构建安装包
+        run: npm.cmd --prefix electron run dist
+      - name: 收集发布资产
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path release-assets | Out-Null
+          Copy-Item electron/dist/*.exe release-assets/ -ErrorAction SilentlyContinue
+          Copy-Item electron/dist/*.blockmap release-assets/ -ErrorAction SilentlyContinue
+          Copy-Item electron/dist/latest.yml release-assets/ -ErrorAction SilentlyContinue
+          Get-ChildItem release-assets | Format-Table Name, Length
+      - name: 创建草稿 Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: release-assets/*
+          draft: true
+          generate_release_notes: true

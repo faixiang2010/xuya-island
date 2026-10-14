@@ -1,0 +1,77 @@
+server:
+  address: ${XUYA_BIND_ADDRESS:127.0.0.1}
+  port: ${XUYA_PORT:43172}
+
+spring:
+  config:
+    import: optional:file:${XUYA_CONFIG_DIR:./config}/application-local.yml
+  application:
+    name: xuya-island
+  reactor:
+    context-propagation: auto
+  codec:
+    max-in-memory-size: 6MB
+  web:
+    resources:
+      static-locations: classpath:/static/
+
+xuya:
+  data-dir: ${XUYA_DATA_DIR:./data}
+  runner-port: ${XUYA_RUNNER_PORT:43173}
+  allowed-origins:
+    - http://127.0.0.1:${XUYA_PORT:43172}
+    - http://localhost:${XUYA_PORT:43172}
+    - http://127.0.0.1:${XUYA_FRONTEND_PORT:43171}
+    - http://localhost:${XUYA_FRONTEND_PORT:43171}
+  model:
+    provider: ${XUYA_MODEL_PROVIDER:DeepSeek}
+    base-url: ${XUYA_MODEL_BASE_URL:https://api.deepseek.com}
+    name: ${XUYA_MODEL_NAME:deepseek-flash}
+    api-key: ${XUYA_MODEL_API_KEY:}
+  codex:
+    log-file: ${XUYA_CODEX_LOG_FILE:}
+    data-dir: ${XUYA_CODEX_DATA_DIR:${xuya.data-dir}/codex}
+    max-iterations: 40
+    terminal-idle-minutes: 30
+    terminal-max-sessions: 8
+    max-upload-bytes: 26214400
+    preview-base-port: 43200
+    jev:
+      enabled: ${XUYA_JEV_ENABLED:false}
+      base-url: ${XUYA_JEV_BASE_URL:}
+      model: ${XUYA_JEV_MODEL:laya:typed-decisions}
+      api-key: ${XUYA_JEV_API_KEY:}
+    studio:
+      enabled: ${XUYA_STUDIO_ENABLED:false}
+      url: ${XUYA_STUDIO_URL:}
+      project: xuya-island-codex
+      run-name: codex
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    persist-authorization: false
+    display-request-duration: true
+
+sa-token:
+  token-name: xuya-session
+  timeout: 28800
+  active-timeout: 1800
+  is-read-header: false
+  is-read-body: false
+  is-read-cookie: false
+  is-log: false
+  cookie:
+    http-only: true
+    same-site: Strict
+    secure: false
+
+logging:
+  level:
+    io.agentscope: OFF
+    io.agentscope.harness.agent.middleware.AgentTraceMiddleware: OFF
+    com.xuya.island: ${XUYA_LOG_LEVEL:INFO}
+    com.xuya.island.codex: ${XUYA_LOG_LEVEL:INFO}
+    com.xuya.island.agentapi: ${XUYA_LOG_LEVEL:INFO}

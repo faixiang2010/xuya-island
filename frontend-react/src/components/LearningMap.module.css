@@ -1,0 +1,587 @@
+.notebook {
+  display: grid;
+  grid-template-columns: minmax(240px, 1fr) minmax(0, 2.2fr);
+  gap: clamp(20px, 2.5vw, 42px);
+  align-items: start;
+}
+.task {
+  min-width: 0;
+  padding-top: 44px;
+}
+.clue {
+  display: block;
+  width: 100%;
+  max-width: 370px;
+  height: 310px;
+  object-fit: contain;
+  object-position: left center;
+  margin-bottom: 20px;
+}
+.invitation {
+  font-family: 'KaiTi', 'STKaiti', 'Microsoft YaHei', serif;
+  font-size: clamp(27px, 2.8vw, 42px);
+  line-height: 1.45;
+  margin: 0 0 20px;
+  color: #233a56;
+  font-synthesis: weight;
+  font-weight: 700;
+}
+.skill {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+.skill > svg {
+  color: #b64e80;
+  flex-shrink: 0;
+  margin-top: 3px;
+}
+.skill h3 {
+  font-size: 25px;
+  margin: 0 0 7px;
+}
+.skill p {
+  font-size: 16px;
+  color: #61708a;
+  line-height: 1.8;
+}
+.progress {
+  color: #6c7584;
+  font-size: 14px;
+  margin: 12px 0 18px;
+}
+.start:global(.button) {
+  width: 100%;
+  min-height: 56px;
+  font-size: 18px;
+  border-radius: 15px;
+  gap: 14px;
+}
+.details {
+  margin: 14px 0;
+  font-size: 14px;
+  color: #61708a;
+  position: relative;
+  width: fit-content;
+  max-width: 100%;
+  padding-inline: 8px;
+  background: #fffdf8f0;
+}
+.details > summary {
+  cursor: pointer;
+  padding: 7px 0;
+}
+.detailBody > p {
+  padding-top: 7px;
+}
+.details small {
+  display: block;
+  line-height: 1.8;
+  padding-top: 6px;
+}
+.shortcut,
+.textButton {
+  color: #456184;
+  font-size: 14px;
+  line-height: 1.8;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  background: #fffdf8f0;
+  padding: 4px 8px;
+  width: fit-content;
+  margin-inline: auto;
+  position: relative;
+}
+.textButton {
+  border: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+.cache {
+  margin-top: 14px;
+  font-size: 14px;
+  color: #896442;
+}
+.route {
+  min-width: 0;
+  width: 100%;
+  max-width: min(1000px, calc((100vh - 170px) * 1239 / 1269));
+  justify-self: center;
+  position: relative;
+  aspect-ratio: 1239 / 1269;
+  margin-bottom: 28px;
+}
+.routeArt {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+}
+.steps {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.steps li {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  width: 26%;
+  max-width: 190px;
+  transform: translate(-50%, -50%);
+}
+.stage {
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  padding: 0;
+  border: 0;
+  border-radius: 14px;
+  background: transparent;
+  color: #263e5a;
+  cursor: pointer;
+}
+.stage:hover .stageTitle {
+  color: #b64e80;
+}
+.stage:focus-visible {
+  outline: 3px solid #b64e80;
+  outline-offset: 5px;
+  background: #fffdf830;
+}
+.marker {
+  width: 34px;
+  height: 34px;
+  border: 2px solid #294463;
+  background: #fffcf6;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: #294463;
+  font-family: 'KaiTi', 'Microsoft YaHei', serif;
+  font-size: 22px;
+}
+.selected .marker {
+  color: #fff;
+  background: #b64e80;
+  border-color: #b64e80;
+  box-shadow: 0 0 0 5px #edccd955;
+}
+.here {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  color: #fff;
+  background: #b64e80;
+  border-radius: 14px 14px 14px 2px;
+  font-size: 14px;
+  padding: 5px 11px;
+  white-space: nowrap;
+}
+.artSpace {
+  height: clamp(55px, 6vw, 82px);
+  width: 100%;
+  display: block;
+}
+.artSpace svg {
+  display: none;
+}
+.stageTitle {
+  font-family: 'KaiTi', 'STKaiti', 'Microsoft YaHei', serif;
+  font-synthesis: weight;
+  font-size: clamp(14px, 1.35vw, 20px);
+  font-weight: 700;
+  line-height: 1.6;
+  white-space: nowrap;
+  background: #fbf8f1ed;
+  padding-inline: 3px;
+}
+.optional .marker {
+  display: none;
+}
+.optional .artSpace {
+  height: clamp(60px, 7.5vw, 105px);
+}
+.selected .stageTitle {
+  color: #b64e80;
+}
+.optional .stageTitle {
+  font-size: clamp(13px, 1.05vw, 16px);
+}
+.optional small {
+  font-size: 14px;
+  color: #69758a;
+}
+.mobileGuide {
+  display: none;
+}
+.mobileConnector {
+  display: none;
+}
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+@media (min-width: 1101px) and (max-height: 820px) {
+  .clue {
+    height: 155px;
+    margin-bottom: 12px;
+  }
+  .invitation {
+    font-size: 28px;
+    margin-bottom: 14px;
+  }
+  .skill h3 {
+    font-size: 20px;
+  }
+  .progress {
+    margin: 9px 0 12px;
+  }
+  .details {
+    margin: 9px 0;
+  }
+  .task {
+    padding-top: 0;
+  }
+}
+@media (max-width: 1100px) {
+  .notebook {
+    grid-template-columns: minmax(210px, 1fr) minmax(0, 1.9fr);
+    gap: 18px;
+  }
+  .clue {
+    height: 170px;
+    margin-bottom: 14px;
+  }
+  .task {
+    padding-top: 8px;
+  }
+  .invitation {
+    font-size: 28px;
+    margin-bottom: 16px;
+  }
+  .skill {
+    gap: 8px;
+  }
+  .skill h3 {
+    font-size: 20px;
+  }
+  .skill p {
+    font-size: 14px;
+  }
+  .stageTitle {
+    font-size: 14px;
+  }
+  .artSpace {
+    height: 49px;
+  }
+  .optional .artSpace {
+    height: 75px;
+  }
+  .marker {
+    width: 29px;
+    height: 29px;
+    font-size: 18px;
+  }
+  .optional .marker {
+    width: 24px;
+    height: 24px;
+    font-size: 14px;
+  }
+}
+@media (max-width: 850px) {
+  .notebook {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  .task {
+    max-width: 640px;
+    display: grid;
+    grid-template-columns: 160px minmax(0, 1fr);
+    gap: 0 20px;
+  }
+  .clue {
+    grid-column: 1;
+    grid-row: 1 / span 3;
+    width: 160px;
+    height: 180px;
+    margin: 0;
+  }
+  .invitation,
+  .skill,
+  .progress {
+    grid-column: 2;
+  }
+  .invitation {
+    font-size: 25px;
+    line-height: 1.4;
+    margin-bottom: 12px;
+  }
+  .start,
+  .details,
+  .shortcut,
+  .textButton,
+  .cache {
+    grid-column: 1 / -1;
+  }
+  .start {
+    margin-top: 8px;
+  }
+  .route {
+    max-width: 740px;
+    margin-inline: auto;
+  }
+  .marker {
+    width: 34px;
+    height: 34px;
+    font-size: 22px;
+  }
+  .stageTitle {
+    font-size: 16px;
+  }
+  .artSpace {
+    height: 76px;
+  }
+  .optional .artSpace {
+    height: 70px;
+  }
+}
+@media (max-width: 600px) {
+  .task {
+    grid-template-columns: 92px minmax(0, 1fr);
+    gap: 0 14px;
+  }
+  .clue {
+    width: 92px;
+    height: 133px;
+  }
+  .invitation {
+    font-size: 24px;
+  }
+  .skill h3 {
+    font-size: 18px;
+  }
+  .skill > svg {
+    display: none;
+  }
+  .progress {
+    margin: 9px 0 12px;
+  }
+  .route {
+    aspect-ratio: auto;
+  }
+  .routeArt {
+    display: none;
+  }
+  .mobileGuide {
+    display: block;
+    margin-bottom: 20px;
+    font-size: 14px;
+    color: #6b7685;
+  }
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 25px 16px;
+  }
+  .steps li {
+    width: 100%;
+    max-width: none;
+    transform: none;
+    position: relative;
+    left: auto;
+    top: auto;
+  }
+  .steps li:nth-child(3) {
+    grid-row: 2;
+    grid-column: 2;
+  }
+  .steps li:nth-child(4) {
+    grid-row: 2;
+    grid-column: 1;
+  }
+  .stage {
+    min-height: 127px;
+    gap: 6px;
+  }
+  .mobileConnector {
+    display: grid;
+    position: absolute;
+    right: -18px;
+    top: 48px;
+    color: #c4849f;
+    pointer-events: none;
+  }
+  .steps li:nth-child(3) .mobileConnector {
+    right: auto;
+    left: -18px;
+  }
+  .steps li:nth-child(2) .mobileConnector,
+  .steps li:nth-child(4) .mobileConnector {
+    right: auto;
+    top: auto;
+    bottom: -22px;
+    left: calc(50% - 9px);
+  }
+  .artSpace {
+    height: 42px;
+    display: grid;
+    place-items: center;
+    color: #526a7f;
+  }
+  .artSpace svg {
+    display: block;
+  }
+  .selected .artSpace {
+    color: #b64e80;
+  }
+  .stageTitle {
+    font-size: 15px;
+    white-space: normal;
+    text-align: center;
+  }
+  .here {
+    bottom: auto;
+    top: -12px;
+    left: calc(50% + 18px);
+    font-size: 14px;
+    padding: 3px 6px;
+  }
+  .marker {
+    width: 30px;
+    height: 30px;
+    font-size: 18px;
+  }
+  .optional .artSpace {
+    height: 40px;
+  }
+  .optional {
+    border-top: 1px dashed #b9b9b4;
+    padding-top: 15px;
+  }
+}
+
+/* Desktop Chrome: size the actual content, rather than clipping a tall page. */
+@media (min-width: 1101px) {
+  .notebook {
+    flex: 1;
+    min-height: 0;
+    container-type: size;
+    grid-template-columns: minmax(280px, 1fr) minmax(0, 2fr);
+    gap: clamp(24px, 2.2vw, 40px);
+    align-items: center;
+  }
+  .task {
+    position: relative;
+    height: 100%;
+    max-height: 800px;
+    width: 100%;
+    max-width: 420px;
+    min-height: 0;
+    justify-self: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 24px clamp(24px, 2.2vw, 36px);
+    background: url('/art/notebook/task-paper.webp') center / 100% 100% no-repeat;
+  }
+  .clue {
+    flex: 1 1 0;
+    min-height: 55px;
+    max-height: 240px;
+    height: 0;
+    max-width: 310px;
+    object-position: center;
+    margin: 0 auto 12px;
+  }
+  .invitation {
+    flex-shrink: 0;
+    font-size: clamp(24px, 4cqh, 36px);
+    line-height: 1.35;
+    margin-bottom: 12px;
+  }
+  .skill {
+    flex-shrink: 0;
+    gap: 10px;
+  }
+  .skill h3 {
+    font-size: clamp(18px, 2.7cqh, 24px);
+    margin-bottom: 4px;
+  }
+  .skill p {
+    font-size: clamp(12px, 1.8cqh, 15px);
+    line-height: 1.7;
+  }
+  .progress {
+    margin: 8px 0 12px;
+    flex-shrink: 0;
+  }
+  .start:global(.button) {
+    min-height: 48px;
+    flex-shrink: 0;
+    border-radius: 12px;
+  }
+  .details {
+    position: relative;
+    flex-shrink: 0;
+    margin: 8px 0 4px;
+    padding: 0;
+    background: transparent;
+  }
+  .detailBody {
+    position: absolute;
+    z-index: 4;
+    left: 0;
+    width: min(320px, calc(100cqw / 3 - 60px));
+    bottom: calc(100% + 8px);
+    max-height: min(240px, calc(100cqh - 130px));
+    overflow: auto;
+    padding: 16px;
+    background: #fffdf8;
+    border: 1px solid #e5d9cb;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px #24334c16;
+  }
+  .shortcut,
+  .textButton {
+    flex-shrink: 0;
+    margin: 0;
+    padding: 4px 0;
+    background: transparent;
+  }
+  .cache {
+    flex-shrink: 0;
+    font-size: 14px;
+    margin-top: 6px;
+    line-height: 1.5;
+  }
+  .route {
+    width: min(100%, calc((100cqh - 90px) * 1239 / 1269));
+    max-width: none;
+    margin: 0;
+  }
+  .artSpace {
+    height: clamp(36px, 8cqh, 76px);
+  }
+  .optional .artSpace {
+    height: clamp(55px, 10cqh, 95px);
+  }
+  .stageTitle {
+    font-size: clamp(14px, 2.2cqh, 20px);
+  }
+  .optional .stageTitle {
+    font-size: clamp(13px, 1.8cqh, 16px);
+  }
+}

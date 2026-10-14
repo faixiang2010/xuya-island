@@ -1,0 +1,114 @@
+# Shared and module dependency caches
+node_modules/
+.vite/
+.cache/
+*.tsbuildinfo
+
+# Build intermediates and distributable packages
+/backend/target/
+/backend/dist/
+/frontend-react/dist/
+/electron/build/
+/electron/dist/
+target/
+dist/
+out/
+build/
+*.class
+*.jar
+*.war
+!.mvn/wrapper/maven-wrapper.jar
+
+# Local learning data, AI workspace, credentials, and database journals
+/backend/data/
+/backend/config/application-local.yml
+/backend/config/application-local.yaml
+/backend/config/ports.json
+/backend/config/network.json
+/backend/logs/
+/frontend-react/logs/
+/electron/logs/
+/credentials/
+*.db
+*.db-wal
+*.db-shm
+*.db-journal
+*.sqlite
+*.sqlite3
+*.sqlite-wal
+*.sqlite-shm
+*.sqlite3-wal
+*.sqlite3-shm
+*.hprof
+*.dump
+
+# Secrets: template files remain versioned
+.env
+.env.*
+!.env.example
+!.env.*.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*.keystore
+
+# Logs, temporary validation data, and test reports
+*.log
+*.tmp
+*.temp
+.tmp/
+tmp/
+temp/
+coverage/
+.nyc_output/
+playwright-report/
+test-results/
+
+# Local-only: planning doc and verification evidence live in the agent workspace (.codex/), not Git
+/docs/verification/
+/docs/design/
+
+# Legacy locations: do not recreate these after directory cleanup
+/.xuya-data/
+/node_modules/
+/package.json
+/package-lock.json
+/.prettierrc.json
+/scripts/
+/backend/src/main/resources/runner/
+/backend/src/main/resources/static/
+/electron/runtime/
+
+# AI agent workspaces: intermediate/process files, plans, and drafts stay out of Git
+.codex/
+.trae/
+.trae-cn/
+.cursor/
+.claude/
+.windsurf/
+.gemini/
+.agents/
+
+# Editor and operating-system files
+.idea/
+.vscode/
+*.iml
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Python caches and local virtual environments
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+venv/
+.venv/
+ca/

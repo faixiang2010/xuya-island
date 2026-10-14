@@ -1,0 +1,54 @@
+{
+  "name": "@xuya/frontend-react",
+  "private": true,
+  "version": "0.2.1",
+  "type": "module",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "prepare:runtime": "node scripts/prepare-runtime.mjs",
+    "prepare:learning-media": "node scripts/create-learning-media.mjs",
+    "dev": "vite --host 127.0.0.1 --strictPort",
+    "build": "tsc --noEmit && vite build",
+    "test": "vitest run",
+    "test:curriculum": "node scripts/verify-curriculum.mjs",
+    "test:adventure": "node scripts/verify-adventure.mjs",
+    "test:e2e": "node scripts/test-e2e.mjs",
+    "contract:generate": "node scripts/generate-codex-contract.mjs",
+    "contract:check": "node scripts/generate-codex-contract.mjs --check",
+    "format": "prettier --config .prettierrc.json --write \"*.ts\" \"tests/*.ts\" \"src/**/*.{ts,tsx,css}\" \"runner/*.{js,html}\" \"scripts/*.mjs\" \"../backend/scripts/*.mjs\"",
+    "format:check": "prettier --config .prettierrc.json --check \"*.ts\" \"tests/*.ts\" \"src/**/*.{ts,tsx,css}\" \"runner/*.{js,html}\" \"scripts/*.mjs\" \"../backend/scripts/*.mjs\""
+  },
+  "dependencies": {
+    "@ant-design/pro-components": "2.8.10",
+    "@ant-design/v5-patch-for-react-19": "1.0.3",
+    "@xterm/addon-fit": "^0.11.0",
+    "@xterm/xterm": "^6.0.0",
+    "antd": "5.29.3",
+    "dompurify": "^3.4.16",
+    "lucide-react": "^1.55.0",
+    "marked": "^18.1.0",
+    "monaco-editor": "0.57.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "react-router-dom": "^7.9.0",
+    "zustand": "^5.0.8"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.64.0",
+    "@testing-library/react": "^16.3.0",
+    "@types/node": "24.10.1",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "@vitejs/plugin-react": "^5.1.0",
+    "happy-dom": "^20.14.6",
+    "jsdom": "^26.1.0",
+    "openapi-typescript": "^7.13.0",
+    "prettier": "3.9.9",
+    "pyodide": "314.0.7",
+    "typescript": "5.9.3",
+    "vite": "8.3.4",
+    "vitest": "5.0.3"
+  }
+}

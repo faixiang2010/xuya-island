@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+    <Properties>
+        <Property name="mainLog">${spring:logging.file.name:-logs/backend.log}</Property>
+        <Property name="codexLog">${spring:xuya.codex.log-file:-${mainLog}.codex}</Property>
+        <Property name="pattern">%d{yyyy-MM-dd HH:mm:ss.SSS} %-5p [%t] request=%X{requestId} trace=%X{traceId} session=%X{sessionId} turn=%X{turnId} tool=%X{toolCallId} %c{1} - %m%n%ex{none}</Property>
+    </Properties>
+    <Appenders>
+        <CodexDropCounter name="DropCounter"/>
+        <Console name="Console"><PatternLayout pattern="${pattern}" charset="UTF-8"/></Console>
+        <RollingFile name="BackendFile" fileName="${mainLog}" filePattern="${mainLog}.archive/backend-%d{yyyy-MM-dd}-%i.log.gz">
+            <PatternLayout pattern="${pattern}" charset="UTF-8"/>
+            <Policies><TimeBasedTriggeringPolicy/><SizeBasedTriggeringPolicy size="20 MB"/></Policies>
+            <DefaultRolloverStrategy max="20"><Delete basePath="${mainLog}.archive" maxDepth="1"><IfFileName glob="backend-*.log.gz"/><IfAny><IfLastModified age="14d"/><IfAccumulatedFileSize exceeds="256 MB"/></IfAny></Delete></DefaultRolloverStrategy>
+        </RollingFile>
+        <RollingFile name="CodexFile" fileName="${codexLog}" filePattern="${codexLog}.archive/codex-%d{yyyy-MM-dd}-%i.log.gz">
+            <PatternLayout pattern="${pattern}" charset="UTF-8"/>
+            <Policies><TimeBasedTriggeringPolicy/><SizeBasedTriggeringPolicy size="20 MB"/></Policies>
+            <DefaultRolloverStrategy max="20"><Delete basePath="${codexLog}.archive" maxDepth="1"><IfFileName glob="codex-*.log.gz"/><IfAny><IfLastModified age="14d"/><IfAccumulatedFileSize exceeds="256 MB"/></IfAny></Delete></DefaultRolloverStrategy>
+        </RollingFile>
+        <Rewrite name="BackendSafe"><CodexSafeLog/><AppenderRef ref="BackendFile"/><AppenderRef ref="Console"/></Rewrite>
+        <Rewrite name="CodexSafe"><CodexSafeLog/><AppenderRef ref="CodexFile"/></Rewrite>
+        <Async name="BackendAsync" bufferSize="4096" blocking="false" includeLocation="false" errorRef="DropCounter" shutdownTimeout="2000"><AppenderRef ref="BackendSafe"/></Async>
+        <Async name="CodexAsync" bufferSize="4096" blocking="false" includeLocation="false" errorRef="DropCounter" shutdownTimeout="2000"><AppenderRef ref="CodexSafe"/></Async>
+    </Appenders>
+    <Loggers>
+        <Logger name="com.xuya.island.codex" level="${spring:logging.level.com.xuya.island.codex:-INFO}" additivity="false"><AppenderRef ref="CodexAsync"/><AppenderRef ref="BackendAsync"/></Logger>
+        <Logger name="com.xuya.island.agentapi" level="${spring:logging.level.com.xuya.island.agentapi:-INFO}" additivity="false"><AppenderRef ref="CodexAsync"/><AppenderRef ref="BackendAsync"/></Logger>
+        <Logger name="io.agentscope" level="OFF"/>
+        <Logger name="io.agentscope.extensions.model" level="OFF"/>
+        <Logger name="io.agentscope.harness.agent.memory" level="OFF"/>
+        <Logger name="io.agentscope.harness.agent.middleware.AgentTraceMiddleware" level="OFF"/>
+        <Logger name="io.agentscope.core.studio" level="OFF"/>
+        <Logger name="io.opentelemetry.exporter" level="OFF"/>
+        <Logger name="reactor.netty" level="WARN"/>
+        <Root level="INFO"><AppenderRef ref="BackendAsync"/></Root>
+    </Loggers>
+</Configuration>

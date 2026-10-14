@@ -1,0 +1,10 @@
+/* 保留独立的覆盖入口，后续主题或无障碍设置从这里扩展。 */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+    animation: none !important;
+    scroll-behavior: auto !important;
+  }
+}

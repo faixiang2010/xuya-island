@@ -1,0 +1,80 @@
+name: Verify
+on:
+  push:
+    # 仅分支推送触发；打 v* 标签由 Release 工作流负责，避免重复跑整套检查。
+    branches: ['**']
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+  checks: write
+jobs:
+  checks:
+    runs-on: windows-latest
+    timeout-minutes: 20
+    env:
+      XUYA_MODEL_API_KEY: ''
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+          cache-dependency-path: backend/pom.xml
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: frontend-react/package-lock.json
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: 检查文档本地链接
+        run: node backend/scripts/check-docs.mjs
+      - run: npm.cmd --prefix frontend-react ci
+      - run: npm.cmd --prefix frontend-react run format:check
+      - run: npm.cmd --prefix frontend-react test
+      - run: npm.cmd --prefix frontend-react run test:curriculum
+      - run: npm.cmd --prefix frontend-react run test:adventure
+      - run: npm.cmd --prefix frontend-react run build
+      - run: npm.cmd --prefix frontend-react run prepare:runtime
+      - name: 准备版本化活动和测试专用 Python
+        shell: pwsh
+        run: |
+          node --experimental-strip-types frontend-react/scripts/prepare-learning-catalog.mjs
+          # 用 setup-python 安装的真实解释器（避免命中 Windows 应用商店别名导致探测失败）。
+          $testPython = (python -c "import sys; print(sys.executable)").Trim()
+          "XUYA_TEST_PYTHON=$testPython" | Out-File -Append -Encoding utf8 $env:GITHUB_ENV
+          Write-Output "XUYA_TEST_PYTHON=$testPython"
+      - name: 后端测试
+        shell: pwsh
+        # 统一 UTF-8，避免英文 runner 下中文日志与断言消息乱码。
+        env:
+          JAVA_TOOL_OPTIONS: '-Dfile.encoding=UTF-8 -Dstdout.encoding=UTF-8 -Dstderr.encoding=UTF-8'
+          PYTHONIOENCODING: 'utf-8'
+          PYTHONUTF8: '1'
+        run: |
+          [Console]::OutputEncoding = [System.Text.UTF8Encoding]::new($false)
+          mvn -B -f backend/pom.xml verify
+      - name: 后端测试失败摘要
+        # 本仓库 Actions 日志无法匿名读取；失败时把 surefire 摘要写入 check-run，便于快速定位。
+        if: failure()
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $bad = @()
+          Get-ChildItem backend/target/surefire-reports/*.txt -ErrorAction SilentlyContinue | ForEach-Object {
+            $t = Get-Content $_.FullName -Raw
+            if ($t -match 'Failures: [1-9]' -or $t -match 'Errors: [1-9]') {
+              $bad += "== $($_.Name) =="
+              $bad += ($t -split "`r?`n" | Where-Object { $_ -match '<<< (FAILURE|ERROR)!|^Tests run' } | ForEach-Object { $_.Trim() })
+            }
+          }
+          $summary = if ($bad.Count) { $bad -join "`n" } else { '无 surefire 摘要（可能编译或环境失败）' }
+          if ($summary.Length -gt 60000) { $summary = $summary.Substring(0, 60000) }
+          $body = @{ name='backend-failure'; head_sha=$env:GITHUB_SHA; status='completed'; conclusion='failure'; output=@{ title='后端失败摘要'; summary=$summary } } | ConvertTo-Json -Depth 6 -Compress
+          Invoke-RestMethod -Method Post -Uri "https://api.github.com/repos/$env:GITHUB_REPOSITORY/check-runs" -Headers @{ Authorization="Bearer $($env:GH_TOKEN)"; Accept='application/vnd.github+json'; 'User-Agent'='xuya-ci' } -Body $body -ContentType 'application/json'

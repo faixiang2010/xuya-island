@@ -1,0 +1,46 @@
+.media {
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--surface);
+  margin: 18px 0;
+}
+.media > summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 16px;
+  cursor: pointer;
+  color: var(--learning-ink, #7d3c5c);
+  font-weight: 600;
+}
+.media > summary span {
+  margin-left: auto;
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 400;
+}
+.body {
+  padding: 0 16px 16px;
+}
+.body video {
+  display: block;
+  width: 100%;
+  max-width: 720px;
+  border-radius: 12px;
+  background: #18243b;
+}
+.body details {
+  margin: 12px 0;
+}
+.body summary {
+  cursor: pointer;
+}
+.body ol {
+  padding-left: 22px;
+  line-height: 1.9;
+}
+.body small {
+  color: var(--muted);
+  line-height: 1.8;
+}

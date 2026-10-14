@@ -1,0 +1,38 @@
+.adultCaption {
+  border-top: 1px solid #344159;
+  margin-top: 8px;
+  padding: 12px 10px 0;
+  font-size: 14px;
+  color: #a6b5cf;
+}
+@media (min-width: 801px) {
+  :global(.sidebar) {
+    overflow-y: auto;
+  }
+}
+@media (max-width: 800px) {
+  nav.navigation[aria-label='主导航'] {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .adultCaption {
+    display: none;
+  }
+}
+@media (min-width: 801px) and (max-height: 820px) {
+  :global(.sidebar) {
+    padding-top: 20px;
+  }
+  :global(.sidebar nav) {
+    gap: 6px;
+  }
+  :global(.sidebar .nav-item) {
+    padding-block: 8px;
+  }
+  :global(.sidebar-note) {
+    display: none;
+  }
+  :global(.sidebar-bottom) {
+    margin-top: auto;
+    padding-top: 10px;
+  }
+}

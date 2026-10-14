@@ -1,0 +1,42 @@
+.lesson-companion {
+  border: 1px solid #e2e5f0;
+  background: #f8f9fd;
+  border-radius: 14px;
+  margin-top: 24px;
+  padding: 18px;
+}
+h3 {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 15px;
+  margin-bottom: 12px;
+}
+h3 svg {
+  color: #7a66c3;
+}
+p {
+  font-size: 14px;
+  line-height: 1.8;
+}
+label {
+  display: block;
+  margin-top: 16px;
+  font-size: 14px;
+}
+textarea {
+  display: block;
+  width: 100%;
+  margin: 10px 0;
+}
+button {
+  margin: 6px 8px 0 0;
+  max-width: 100%;
+}
+.adventure-hint {
+  padding: 12px;
+  margin: 10px 0;
+  background: #f3eff7;
+  border-radius: 12px;
+  white-space: pre-wrap;
+}

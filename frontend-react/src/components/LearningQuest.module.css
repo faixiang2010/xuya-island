@@ -1,0 +1,77 @@
+.quest {
+  padding: 16px 20px;
+  margin: 16px 0;
+  border: 1px solid var(--learning-line, #edcbdc);
+  border-radius: 20px;
+  background: var(--learning-soft, #fff2f7);
+}
+.heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+  color: var(--learning-ink, #7d3c5c);
+}
+.heading > div {
+  flex: 1;
+}
+.heading span {
+  font-size: 14px;
+}
+.heading h2 {
+  font-size: 18px;
+  margin-top: 6px;
+  line-height: 1.6;
+}
+.heading small {
+  font-size: 14px;
+  color: var(--muted);
+}
+.steps {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  margin: 12px 0 10px;
+}
+.steps button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 9px 8px;
+  background: #ffffffa8;
+  color: var(--learning-ink, #7d3c5c);
+  border: 1px solid var(--learning-line, #edcbdc);
+  border-radius: 10px;
+}
+.steps button[aria-pressed='true'] {
+  background: var(--surface);
+  box-shadow: inset 0 -3px var(--accent);
+  font-weight: 700;
+}
+.quest > p {
+  color: var(--ink);
+}
+.actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 10px;
+}
+.actions span {
+  color: var(--muted);
+  font-size: 14px;
+}
+@media (max-width: 700px) {
+  .steps {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .heading small {
+    width: 100%;
+  }
+  .quest {
+    padding: 18px;
+  }
+}

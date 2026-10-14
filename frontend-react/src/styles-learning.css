@@ -1,0 +1,165 @@
+/* 学习正文采用更易读的字号和对比度，辅助装饰保持轻盈。 */
+.mission-card p {
+  font-size: 14px;
+  color: #6e765e;
+}
+.mission-card strong {
+  font-size: 14px;
+}
+.guide-message,
+.hint-card p {
+  font-size: 14px;
+  color: #746180;
+}
+.guide-header h2 {
+  font-size: 16px;
+}
+.guide-header small,
+.hint-card span {
+  font-size: 14px;
+  color: #82738e;
+}
+.guide-panel h3 {
+  font-size: 14px;
+  color: #756581;
+}
+.goals li {
+  font-size: 14px;
+  color: #796888;
+}
+.hint-button,
+.button {
+  font-size: 14px;
+}
+.console pre,
+.story-output {
+  font-size: 14px;
+}
+.story-title {
+  font-size: 21px;
+}
+.save-form label {
+  font-size: 14px;
+  color: #81728b;
+}
+.save-form input,
+.ai-section textarea {
+  font-size: 14px;
+}
+.ai-section p {
+  font-size: 14px;
+  color: #796888;
+}
+.ai-section .ai-answer {
+  font-size: 14px;
+}
+.hero-copy p,
+.page-heading p {
+  color: #77717d;
+}
+.error-details {
+  margin: 12px 0;
+  font-size: 14px;
+  color: #9b8070;
+}
+.error-details summary {
+  cursor: pointer;
+  margin-bottom: 9px;
+}
+@media (max-width: 450px) {
+  .nav-item {
+    padding-left: 5px;
+    padding-right: 5px;
+  }
+}
+
+/* 课程内容、输入与学习记录 */
+.learning-activity {
+  margin-top: 24px;
+  padding: 24px;
+}
+.learning-path {
+  display: grid;
+  gap: 12px;
+}
+.learning-path details,
+.case-card {
+  background: var(--surface, #faf9f6);
+  border: 1px solid #e7e3dc;
+  border-radius: 12px;
+  padding: 14px;
+}
+.learning-path summary,
+.virtual-files summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+.learning-path p,
+.reflection-form p {
+  line-height: 1.8;
+  white-space: pre-wrap;
+}
+.reference-code {
+  max-height: 360px;
+  overflow: auto;
+  padding: 16px;
+  background: #f2f0eb;
+  white-space: pre;
+  font-size: 14px;
+}
+.reflection-form,
+.input-form {
+  display: grid;
+  gap: 12px;
+  margin-top: 20px;
+}
+.reflection-form label,
+.console label {
+  display: grid;
+  gap: 8px;
+  margin: 10px 0;
+}
+.reflection-form textarea,
+.console textarea,
+.input-form input,
+select {
+  border: 1px solid #d8d3c9;
+  border-radius: 8px;
+  padding: 10px;
+  font: inherit;
+  background: white;
+  color: #493964;
+  max-width: 100%;
+}
+.console details {
+  margin: 12px 0;
+}
+.console pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.virtual-files {
+  margin-top: 20px;
+}
+.case-card {
+  margin: 12px 0;
+}
+.first-program-guide {
+  padding: 20px 24px;
+  margin: 18px 0;
+  border: 1px solid #d4e8dc;
+  border-radius: 16px;
+  background: #edf8f1;
+}
+.first-program-guide h2 {
+  font-size: 18px;
+  color: #327055;
+}
+.first-program-guide ol {
+  padding-left: 22px;
+  line-height: 1.9;
+}
+.first-program-guide p {
+  color: #516f61;
+  margin-bottom: 8px;
+}

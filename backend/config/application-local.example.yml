@@ -1,0 +1,16 @@
+# Copy to application-local.yml for local model credentials. Never commit the real Key.
+xuya:
+  model:
+    api-key: ${XUYA_MODEL_API_KEY:}
+  codex:
+    # 可选服务首次真实任务才连接；失败自动回到常规 Harness 流程。
+    jev:
+      enabled: ${XUYA_JEV_ENABLED:true}
+      base-url: ${XUYA_JEV_BASE_URL:}
+      model: ${XUYA_JEV_MODEL:laya:typed-decisions}
+      api-key: ${XUYA_JEV_API_KEY:}
+    studio:
+      enabled: ${XUYA_STUDIO_ENABLED:true}
+      url: ${XUYA_STUDIO_URL:}
+      project: xuya-island-codex
+      run-name: codex

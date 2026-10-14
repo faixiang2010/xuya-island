@@ -1,0 +1,3596 @@
+{
+  "version": "python-interest-1.0",
+  "phases": [
+    {
+      "id": "story",
+      "title": "故事创作室",
+      "track": "core",
+      "project": "故事发布助手",
+      "description": "用程序表达想法，学会观察错误。"
+    },
+    {
+      "id": "interactive",
+      "title": "互动故事馆",
+      "track": "core",
+      "project": "分支互动故事",
+      "description": "让故事根据选择继续发展。"
+    },
+    {
+      "id": "art",
+      "title": "生成艺术坊",
+      "track": "core",
+      "project": "生成艺术海报",
+      "description": "用数据和循环创造图案。"
+    },
+    {
+      "id": "game",
+      "title": "小游戏工坊",
+      "track": "core",
+      "project": "背包冒险小游戏",
+      "description": "拆分任务，管理角色状态。"
+    },
+    {
+      "id": "detective",
+      "title": "数据侦探社",
+      "track": "extension",
+      "project": "数据线索图册",
+      "description": "探索统计、查找和虚拟文件。"
+    },
+    {
+      "id": "studio",
+      "title": "自由创作营",
+      "track": "extension",
+      "project": "可存档的故事冒险",
+      "description": "设计、测试、调试和展示。"
+    }
+  ],
+  "lessons": [
+    {
+      "id": "story-cover",
+      "number": 1,
+      "title": "故事海报：顺序有秘密",
+      "subtitle": "print、引号与换行 · 执行顺序和注释",
+      "mission": "云朵邮局需要文字海报，让标题、作者和开场白按顺序出现。",
+      "starterCode": "# 故事发布台\nprint(\"月光森林\")\nprint(\"创作者：小画家\")\n",
+      "goals": [
+        "print、引号与换行",
+        "执行顺序和注释"
+      ],
+      "hints": [
+        "开场白需要另一次输出。",
+        "把新 print 写在作者下面，使用成对引号。",
+        "增加 print(\"第一章：云朵来信\")，再交换前两行观察。"
+      ],
+      "previewType": "cover",
+      "version": "python-interest-1.0",
+      "phaseId": "story",
+      "track": "core",
+      "prerequisites": [],
+      "minutes": 50,
+      "explanation": "print 输出括号里的内容，每次默认换行。成对引号里的文字是字符串；# 后面的注释给人看，不会输出。Python 从上往下执行，交换语句会改变结果顺序。",
+      "prediction": "交换两行 print 会怎样？注释会出现在海报里吗？",
+      "creation": "设计带两句角色对话和空行的海报。",
+      "quickChallenge": "只用一次 print 输出两行，解释换行符的效果。",
+      "commonErrors": [
+        "中文引号不能充当代码引号",
+        "漏掉括号会出现语法错误"
+      ],
+      "parentPrompt": "海报的先后顺序由什么决定？",
+      "reflectionPrompts": [
+        "我改了什么？",
+        "遇到什么问题，怎样找到线索？",
+        "下次想做什么？"
+      ],
+      "exercises": [
+        {
+          "id": "practice",
+          "title": "动手改造",
+          "instruction": "增加第三行“第一章：云朵来信”，保留标题、作者、开场白的顺序。",
+          "referenceCode": "print(\"月光森林\")\nprint(\"创作者：小画家\")\nprint(\"第一章：云朵来信\")\n",
+          "tests": [
+            {
+              "name": "检查1",
+              "input": [],
+              "outputContains": [
+                "月光森林",
+                "创作者：小画家",
+                "第一章：云朵来信"
+              ],
+              "minDrawings": 0,
+              "expectedFiles": []
+            }
+          ]
+        }
+      ],
+      "rubric": [
+        "能解释本课规则",
+        "能完成基础练习并检查结果",
+        "能自己修改一个功能"
+      ],
+      "exampleInput": []
+    },
+    {
+      "id": "character-card",
+      "number": 2,
+      "title": "角色档案：名字只改一次",
+      "subtitle": "变量与赋值 · 变量和字符串的区别",
+      "mission": "主角名字出现多次，只改一个地方就更新整份档案。",
+      "starterCode": "name = \"阿芽\"\nwish = \"找到会唱歌的树\"\nprint(\"主角：\", name)\nprint(\"愿望：\", wish)\n",
+      "goals": [
+        "变量与赋值",
+        "变量和字符串的区别"
+      ],
+      "hints": [
+        "数字也能放进变量。",
+        "增加 age = 12，再让 print 读 age。",
+        "再次输出用 print(\"再次见面：\", name)，改 name 检查两处变化。"
+      ],
+      "previewType": "cover",
+      "version": "python-interest-1.0",
+      "phaseId": "story",
+      "track": "core",
+      "prerequisites": [
+        "story-cover"
+      ],
+      "minutes": 50,
+      "explanation": "name = \"阿芽\" 把文字交给变量。print(name) 读取当前内容，print(\"name\") 输出字母。再次赋值只影响后面的读取，已经输出的内容不会倒过来变化。",
+      "prediction": "先输出 name，再改 name，再输出，会相同吗？",
+      "creation": "加一个爱好，让姓名在介绍和告别里出现。",
+      "quickChallenge": "连续两次赋值，预测两次输出各读到哪个值。",
+      "commonErrors": [
+        "= 是赋值",
+        "变量改名后要同步使用处"
+      ],
+      "parentPrompt": "哪些输出随 name 一起改变？",
+      "reflectionPrompts": [
+        "我改了什么？",
+        "遇到什么问题，怎样找到线索？",
+        "下次想做什么？"
+      ],
+      "exercises": [
+        {
+          "id": "practice",
+          "title": "动手改造",
+          "instruction": "增加 age = 12，输出“年龄：12”；最后再次输出 name，不重复写名字字符串。",
+          "referenceCode": "name = \"阿芽\"\nwish = \"找到会唱歌的树\"\nage = 12\nprint(\"主角：\", name)\nprint(\"愿望：\", wish)\nprint(\"年龄：\", age)\nprint(\"再次见面：\", name)\n",
+          "tests": [
+            {
+              "name": "检查1",
+              "input": [],
+              "outputContains": [
+                "主角： 阿芽",
+                "年龄： 12",
+                "再次见面： 阿芽"
+              ],
+              "minDrawings": 0,
+              "expectedFiles": []
+            }
+          ]
+        }
+      ],
+      "rubric": [
+        "能解释本课规则",
+        "能完成基础练习并检查结果",
+        "能自己修改一个功能"
+      ],
+      "exampleInput": []
+    },
+    {
+      "id": "travel-budget",
+      "number": 3,
+      "title": "旅行预算：钱怎么分配",
+      "subtitle": "数字和四则运算 · 整除和余数",
+      "mission": "买完车票，剩余预算能买多少礼物？",
+      "starterCode": "budget = 50\nticket = 12\ngift_price = 9\nremaining = budget - ticket\nprint(\"剩余预算：\", remaining)\n",
+      "goals": [
+        "数字和四则运算",
+        "整除和余数"
+      ],
+      "hints": [
+        "礼物不能买小数份。",
+        "// 算整份，% 算分完后剩余。",
+        "分别计算 remaining // gift_price 和 remaining % gift_price。"
+      ],
+      "previewType": "cover",
+      "version": "python-interest-1.0",
+      "phaseId": "story",
+      "track": "core",
+      "prerequisites": [
+        "character-card"
+      ],
+      "minutes": 50,
+      "explanation": "/ 得到除法结果，// 得到整除结果，% 得到余数。先计算剩余预算，再算整份礼物数量，让中间结果帮助我们检查。浮点数能表达 2.5，商品数量通常需要整数。",
+      "prediction": "23 // 5 和 23 % 5 在购物中各表示什么？",
+      "creation": "设计自己的预算，并验证礼物数量。",
+      "quickChallenge": "让预算不足一份礼物，检查结果。",
+      "commonErrors": [
+        "/ 可能得到小数",
+        "除数不能为 0"
+      ],
+      "parentPrompt": "为什么这里用整除？",
+      "reflectionPrompts": [
+        "我改了什么？",
+        "遇到什么问题，怎样找到线索？",
+        "下次想做什么？"
+      ],
+      "exercises": [
+        {
+          "id": "practice",
+          "title": "动手改造",
+          "instruction": "输出最多可买的礼物数量和余额，分别是 4 和 2。",
+          "referenceCode": "budget = 50\nticket = 12\ngift_price = 9\nremaining = budget - ticket\nprint(\"剩余预算：\", remaining)\nprint(\"礼物：\", remaining // gift_price)\nprint(\"余额：\", remaining % gift_price)\n",
+          "tests": [
+            {
+              "name": "检查1",
+              "input": [],
+              "outputContains": [
+                "礼物： 4",
+                "余额： 2"
+              ],
+              "minDrawings": 0,
+              "expectedFiles": []
+            }
+          ]
+        }
+      ],
+      "rubric": [
+        "能解释本课规则",
+        "能完成基础练习并检查结果",
+        "能自己修改一个功能"
+      ],
+      "exampleInput": []
+    },
+    {
+      "id": "invitation",
+      "number": 4,
+      "title": "邀请函：文字和数字合作",
+      "subtitle": "f-string · int 和 str 转换",
+      "mission": "把两组来宾人数写进邀请函。",
+      "starterCode": "first = \"3\"\nsecond = \"2\"\nplace = \"云朵邮局\"\nprint(f\"欢迎来到{place}\")\n",
+      "goals": [
+        "f-string",
+        "int 和 str 转换"
+      ],
+      "hints": [
+        "两组人数现在是文字。",
+        "分别 int 转换后再加。",
+        "total = int(first) + int(second)，用 f-string 输出。"
+      ],
+      "previewType": "cover",
+      "version": "python-interest-1.0",
+      "phaseId": "story",
+      "track": "core",
+      "prerequisites": [
+        "travel-budget"
+      ],
+      "minutes": 50,
+      "explanation": "字符串直接相加会拼接，\"3\"+\"2\" 得到 \"32\"。int 将合适的文字转成整数。f\"来宾{total}人\" 把变量内容嵌进文字；花括号里面还可以计算。",
+      "prediction": "文字相加和数字相加有什么不同？",
+      "creation": "加入天数、费用和地点，只改变量就更新邀请函。",
+      "quickChallenge": "分别输出拼接和计算的结果，解释区别。",
+      "commonErrors": [
+        "f-string 开头需要 f",
+        "int(\"三\") 不能转换"
+      ],
+      "parentPrompt": "“3”和 3 有什么不同？",
+      "reflectionPrompts": [
+        "我改了什么？",
+        "遇到什么问题，怎样找到线索？",
+        "下次想做什么？"
+      ],
+      "exercises": [
+        {
+          "id": "practice",
+          "title": "动手改造",
+          "instruction": "把两组人数转换后相加，输出“来宾共5人”。",
+          "referenceCode": "first = \"3\"\nsecond = \"2\"\nplace = \"云朵邮局\"\ntotal = int(first) + int(second)\nprint(f\"欢迎来到{place}\")\nprint(f\"来宾共{total}人\")\n",
+          "tests": [
+            {
+              "name": "检查1",
+              "input": [],
+              "outputContains": [
+                "来宾共5人"
+              ],
+              "minDrawings": 0,
+              "expectedFiles": []
+            }
+          ]
+        }
+      ],
+      "rubric": [
+        "能解释本课规则",
+        "能完成基础练习并检查结果",
+        "能自己修改一个功能"
+      ],
+      "exampleInput": []
+    },
+    {
+      "id": "author-interview",
+      "number": 5,
+      "title": "程序采访作者",
+      "subtitle": "input 返回字符串 · 输入、处理和输出",
+      "mission": "运行后回答笔名和章节数，让程序生成计划。",
+      "starterCode": "name = input(\"你的笔名：\")\nchapters = int(input(\"准备写几章：\"))\nprint(f\"{name}的计划：{chapters}章\")\n",
+      "goals": [
+        "input 返回字符串",
+        "输入、处理和输出"
+      ],
+      "hints": [
+        "找到已经变成数字的 chapters。",
+        "下一次目标是它加 1。",
+        "增加 print(f\"下一次目标：{chapters + 1}章\")，测试 0 和 3。"
+      ],
+      "previewType": "cover",
+      "version": "python-interest-1.0",
+      "phaseId": "story",
+      "track": "core",
+      "prerequisites": [
+        "invitation"
+      ],
+      "minutes": 50,
+      "explanation": "input 先显示问题，再等待一行输入，返回值总是字符串。计算需要 int 转换。实时输入适合互动，预设输入适合反复检查；它们运行的是同一段 Python。",
+      "prediction": "如果不转换章节数，可以直接加 1 吗？",
+      "creation": "加入主题采访，生成个性计划。",
+      "quickChallenge": "比较输入 0、12 和非数字时的结果。",
+      "commonErrors": [
+        "输入不够会出现 EOFError",
+        "非数字可能导致 ValueError"
+      ],
+      "parentPrompt": "为什么换作者不需要改代码？",
+      "reflectionPrompts": [
+        "我改了什么？",
+        "遇到什么问题，怎样找到线索？",
+        "下次想做什么？"
+      ],
+      "exercises": [
+        {
+          "id": "practice",
+          "title": "动手改造",
+          "instruction": "输出下一次目标，章节数增加 1；不能固定写答案。",
+          "referenceCode": "name = input(\"你的笔名：\")\nchapters = int(input(\"准备写几章：\"))\nprint(f\"{name}的计划：{chapters}章\")\nprint(f\"下一次目标：{chapters + 1}章\")\n",
+          "tests": [
+            {
+              "name": "检查1",
+              "input": [
+                "小画家",
+                "3"
+              ],
+              "outputContains": [
+                "小画家的计划：3章",
+                "下一次目标：4章"
+              ],
+              "minDrawings": 0,
+              "expectedFiles": []
+            },
+            {
+              "name": "检查2",
+              "input": [
+                "星星",
+                "0"
+              ],
+              "outputContains": [
+                "下一次目标：1章"
+              ],
+              "minDrawings": 0,
+              "expectedFiles": []
+            }
+          ]
+        }
+      ],
+      "rubric": [
+        "能解释本课规则",
+        "能完成基础练习并检查结果",
+        "能自己修改一个功能"
+      ],
+      "exampleInput": [
+        "小画家",
+        "3"
+      ]
+    },
+    {
+      "id": "character-badge",
+      "number": 6,
+      "title": "角色徽章：坐标画笔",
+      "subtitle": "坐标和参数 · 圆、矩形和文字",
+      "mission": "为主角设计徽章，自己安排位置和大小。",
+      "starterCode": "from xuya import draw\ndraw.circle(160, 130, 60, \"#c7bbff\")\ndraw.text(100, 230, \"故事徽章\", \"#493964\")\nprint(\"徽章准备好了\")\n",
+      "goals": [
+        "坐标和参数",
+        "圆、矩形和文字"
+      ],
+      "hints": [
+        "眼睛要在圆心两侧。",
+        "两个 y 相同，x 分别比 160 小和大。",
+        "增加圆心 (140,120) 和 (180,120)、半径 7 的圆。"
+      ],
+      "previewType": "drawing",
+      "version": "python-interest-1.0",
+      "phaseId": "story",
+      "track": "core",
+      "prerequisites": [
+        "author-interview"
+      ],
+      "minutes": 50,
+      "explanation": "画布左上角为起点，x 向右、y 向下增加。circle 接收圆心、半径和颜色。xuya.draw 是教学模块，不是桌面 turtle。先改一个参数，再观察，能分清每个数字的作用。",
+      "prediction": "只增加圆心 x，徽章往哪里移动？",
+      "creation": "加背景矩形和自己的符号。",
+      "quickChallenge": "把眼睛大小放入变量，让两只一起改变。",
+      "commonErrors": [
+        "颜色使用 # 加六位十六进制数",
+        "坐标和半径应为数字"
+      ],
+      "parentPrompt": "x、y 和半径各管什么？",
+      "reflectionPrompts": [
+        "我改了什么？",
+        "遇到什么问题，怎样找到线索？",
+        "下次想做什么？"
+      ],
+      "exercises": [
+        {
+          "id": "practice",
+          "title": "动手改造",
+          "instruction": "增加两只眼睛，使图案至少有 3 个圆和 1 段文字。",
+          "referenceCode": "from xuya import draw\ndraw.circle(160, 130, 60, \"#c7bbff\")\ndraw.circle(140, 120, 7, \"#493964\")\ndraw.circle(180, 120, 7, \"#493964\")\ndraw.text(100, 230, \"故事徽章\", \"#493964\")\nprint(\"徽章准备好了\")\n",
+          "tests": [
+            {
+              "name": "检查1",
+              "input": [],
+              "outputContains": [
+                "徽章准备好了"
+              ],
+              "minDrawings": 4,
+              "expectedFiles": []
+            }
+          ]
+        }
+      ],
+      "rubric": [
+        "能解释本课规则",
+        "能完成基础练习并检查结果",
+        "能自己修改一个功能"
+      ],
+      "exampleInput": []
+    },
+    {
+      "id": "debug-invitation",
+      "number": 7,
+      "title": "修复邀请函：错误是线索",
+      "subtitle": "语法、运行和逻辑错误 · 期待结果与定位",
+      "mission": "程序说还要 32 天，原本只想等 5 天，为什么没报错？",
+      "starterCode": "first = \"3\"\nsecond = \"2\"\nprint(\"等待天数：\", first + second)\n",
+      "goals": [
+        "语法、运行和逻辑错误",
+        "期待结果与定位"
+      ],
+      "hints": [
+        "先判断变量的类型。",
+        "问题在加号两边的字符串。",
+        "分别 int 转换再相加。"
+      ],
+      "previewType": "cover",
+      "version": "python-interest-1.0",
+      "phaseId": "story",
+      "track": "core",
+      "prerequisites": [
+        "character-badge"
+      ],
+      "minutes": 50,
+      "explanation": "语法错误是写法读不懂；运行错误是执行遇到问题；逻辑错误是能运行却不符合规则。先写期待结果，对照中间值，每次改一处。",
+      "prediction": "这段代码会输出 5 还是 32？",
+      "creation": "制作并修复一个没有报错的逻辑问题。",
+      "quickChallenge": "比较缺括号和未定义变量的错误名称。",
+      "commonErrors": [
+        "不报错不等于正确",
+        "一次改多处难以定位"
+      ],
+      "parentPrompt": "第一次发现结果与期待不一致在哪里？",
+      "reflectionPrompts": [
+        "我改了什么？",
+        "遇到什么问题，怎样找到线索？",
+        "下次想做什么？"
+      ],
+      "exercises": [
+        {
+          "id": "practice",
+          "title": "动手改造",
+          "instruction": "修复成“等待天数：5”，解释原来的 32 从哪来。",
+          "referenceCode": "first = \"3\"\nsecond = \"2\"\nprint(\"等待天数：\", int(first) + int(second))\n",
+          "tests": [
+            {
+              "name": "检查1",
+              "input": [],
+              "outputContains": [
+                "等待天数： 5"
+              ],
+              "minDrawings": 0,
+              "expectedFiles": []
+            }
+          ]
+        }
+      ],
+      "rubric": [
+        "能解释本课规则",
+        "能完成基础练习并检查结果",
+        "能自己修改一个功能"
+      ],
+      "exampleInput": []
+    },
+    {
+      "id": "story-publisher",
+      "number": 8,
+      "title": "项目一：故事发布助手",
+      "subtitle": "整合输入和计算 · 设计输出结构",
+      "mission": "发布台接收不同作者和故事，生成海报及章节计划。",
+      "starterCode": "title = input(\"标题：\")\nauthor = input(\"笔名：\")\nchapters = int(input(\"已有几章：\"))\nprint(f\"《{title}》 / {author}\")\n# 加入章节计划\n",
+      "goals": [
+        "整合输入和计算",
+        "设计输出结构"
+      ],
+      "hints": [
+        "画出输入、计算、输出三个框。",
+        "目标用 chapters + 1。",
+        "两条 f-string 分别显示已有章节和新目标。"
+      ],
+      "previewType": "cover",
+      "version": "python-interest-1.0",
+      "phaseId": "story",
+      "track": "core",
+      "prerequisites": [
+        "debug-invitation"
+      ],
+      "minutes": 50,
+      "explanation": "把需求拆成收集资料、计算计划、发布海报三部分。为每部分列出变量。不要把某次输入的答案写死，同一份程序要适应下一位作者。",
+      "prediction": "章节数为 0 时，下一次目标是多少？",
+      "creation": "加入预算或徽章，自选海报风格。",
+      "quickChallenge": "用两组完全不同的输入演示作品。",
+      "commonErrors": [
+        "写死答案不能适应新输入",
+        "覆盖原始资料会丢失信息"
+      ],
+      "parentPrompt": "演示同一份程序接待两个作者。",
+      "reflectionPrompts": [
+        "我改了什么？",
+        "遇到什么问题，怎样找到线索？",
+        "下次想做什么？"
+      ],
+      "exercises": [
+        {
+          "id": "practice",
+          "title": "动手改造",
+          "instruction": "输出已有章节和增加 1 后的目标。",
+          "referenceCode": "title = input(\"标题：\")\nauthor = input(\"笔名：\")\nchapters = int(input(\"已有几章：\"))\nprint(f\"《{title}》 / {author}\")\nprint(f\"已有{chapters}章\")\nprint(f\"下一次目标：{chapters + 1}章\")\n",
+          "tests": [
+            {
+              "name": "检查1",
+              "input": [
+                "月光森林",
+                "阿芽",
+                "2"
+              ],
+              "outputContains": [
+                "《月光森林》 / 阿芽",
+                "已有2章",
+                "下一次目标：3章"
+              ],
+              "minDrawings": 0,
+              "expectedFiles": []
+            },
+            {
+              "name": "检查2",
+              "input": [
+                "天空",
+                "邮差",
+                "0"
+              ],
+              "outputContains": [
+                "《天空》 / 邮差",
+                "下一次目标：1章"
+              ],
+              "minDrawings": 0,
+              "expectedFiles": []
+            }
+          ]
+        }
+      ],
+      "rubric": [
+        "两组输入生成不同结果",
+        "能解释目标的计算",
+        "独立改变一个功能"
+      ],
+      "exampleInput": [
+        "月光森林",
+        "阿芽",
+        "2"
+      ]
+    },
+    {
+      "id": "secret-garden",
+      "number": 9,
+      "title": "秘密花园：满足条件",
+      "subtitle": "if 与布尔值 · 比较和缩进",
+      "mission": "花园接待年龄达到 12 岁的访客，检查等于门槛的情况。",
+      "starterCode": "age = int(input(\"年龄：\"))\nif age > 12:\n    print(\"欢迎进入\")\nprint(\"检查结束\")\n",
+      "goals": [
+        "if 与布尔值",
+        "比较和缩进"
+      ],
+      "hints": [
+        "测试恰好等于门槛的输入。",
+        "找包含等于的比较符。",
+        "改成 age >= 12，再测试 11。"
+      ],
+      "previewType": "cover",
+      "version": "python-interest-1.0",
+      "phaseId": "interactive",
+      "track": "core",
+      "prerequisites": [
+        "story-publisher"
+      ],
+      "minutes": 50,
+      "explanation": "比较产生 True 或 False。if 只在条件成立时执行缩进部分，不缩进的后续代码仍执行。>= 包含等于，> 不包含，因此边界必须检查。",
+      "prediction": "12 岁能通过 age > 12 吗？",
+      "creation": "设计能量开门规则。",
+      "quickChallenge": "把条件结果存进 allowed 再判断。",
+      "commonErrors": [
+        "if 后需冒号",
+        "条件内部一致缩进"
+      ],
+      "parentPrompt": "为什么测试 12 特别重要？",
+      "reflectionPrompts": [
+        "我改了什么？",
+        "遇到什么问题，怎样找到线索？",
+        "下次想做什么？"
+      ],
+      "exercises": [
+        {
+          "id": "practice",
+          "title": "动手改造",
+          "instruction": "修正条件，让 12 岁也能进入。",
+          "referenceCode": "age = int(input(\"年龄：\"))\nif age >= 12:\n    print(\"欢迎进入\")\nprint(\"检查结束\")\n",
+          "tests": [
+            {
+              "name": "检查1",
+              "input": [
+                "12"
+              ],
+              "outputContains": [
+                "欢迎进入",
+                "检查结束"
+              ],
+              "minDrawings": 0,
+              "expectedFiles": []
+            },
+            {
+              "name": "检查2",
+              "input": [
+                "11"
+              ],
+              "outputContains": [
+                "检查结束"
+              ],
+              "minDrawings": 0,
+              "expectedFiles": []
+            }
+          ]
+        }
+      ],
+      "rubric": [
+        "能解释本课规则",
+        "能完成基础练习并检查结果",
+        "能自己修改一个功能"
+      ],
+      "exampleInput": [
+        "12"
+      ]
+    },
+    {
+      "id": "two-endings",
+      "number": 10,
+      "title": "两种结局：另一条路",
+      "subtitle": "if/else · 互斥分支",
+      "mission": "选择左边去花园，右边去海边。",
+      "starterCode": "choice = input(\"left/right：\")\nif choice == \"left\":\n    print(\"花园结局\")\n",
+      "goals": [
+        "if/else",
+        "互斥分支"
+      ],
+      "hints": [
+        "目前没有处理条件不成立。",
+        "else 与 if 对齐，内容缩进。",
+        "增加 else: 和 print(\"海边结局\")。"
+      ],
+      "previewType": "cover",
+      "version": "python-interest-1.0",
+      "phaseId": "interactive",
+      "track": "core",
+      "prerequisites": [
+        "secret-garden"
+      ],
+      "minutes": 50,
+      "explanation": "if 不成立才执行 else。else 没有条件，和 if 对齐。== 比较是否相同，= 给变量赋值。只选择一个分支，可以让故事结局互斥。",
+      "prediction": "输入 right 后会执行哪个分支？",
+      "creation": "设计两个不同结局。",
+      "quickChallenge": "输入未知选择，解释现有规则。",
+      "commonErrors": [
+        "else 需对齐",
+        "比较不是赋值"
+      ],
+      "parentPrompt": "为何不会同时出现两种结局？",
+      "reflectionPrompts": [
+        "我改了什么？",
+        "遇到什么问题，怎样找到线索？",
+        "下次想做什么？"
+      ],
+      "exercises": [
+        {
+          "id": "practice",
+          "title": "动手改造",
+          "instruction": "补全其他选择的“海边结局”。",
+          "referenceCode": "choice = input(\"left/right：\")\nif choice == \"left\":\n    print(\"花园结局\")\nelse:\n    print(\"海边结局\")\n",
+          "tests": [
+            {
+              "name": "检查1",
+              "input": [
+                "left"
+              ],
+              "outputContains": [
+                "花园结局"
+              ],
+              "minDrawings": 0,
+              "expectedFiles": []
+            },
+            {
+              "name": "检查2",
+              "input": [
+                "right"
+              ],
+              "outputContains": [
+                "海边结局"
+              ],
+              "minDrawings": 0,
+              "expectedFiles": []
+            }
+          ]
+        }
+      ],
+      "rubric": [
+        "能解释本课规则",
+        "能完成基础练习并检查结果",
+        "能自己修改一个功能"
+      ],
+      "exampleInput": [
+        "left"
+      ]
+    },
+    {
+      "id": "route-guide",
+      "number": 11,
+      "title": "路线推荐：多个区间",
+      "subtitle": "elif · 判断顺序和边界",
+      "mission": "按可用时间推荐短、中、长路线。",
+      "starterCode": "time = int(input(\"分钟：\"))\nif time < 30:\n    print(\"短线\")\nelse:\n    print(\"长线\")\n",
+      "goals": [
+        "elif",
+        "判断顺序和边界"
+      ],
+      "hints": [
+        "在 else 前增加一种情况。",
+        "前一个条件已排除小于 30。",
+        "用 elif time < 60 输出中线。"
+      ],
+      "previewType": "cover",
+      "version": "python-interest-1.0",
+      "phaseId": "interactive",
+      "track": "core",
+      "prerequisites": [
+        "two-endings"
+      ],
+      "minutes": 50,
+      "explanation": "if/elif/else 找到第一个成立条件就选定分支。先排除小于 30 的情况，下一步小于 60 就表示 30–59。区间交界比中间值更容易暴露错误。",
+      "prediction": "30 和 60 分钟各应该选哪条？",
+      "creation": "按天气或预算推荐路线。",
+      "quickChallenge": "交换判断顺序，观察遮住的区间。",
+      "commonErrors": [
+        "大范围放前面会遮住小范围",
+        "elif 依附 if"
+      ],
+      "parentPrompt": "请解释三个区间。",
+      "reflectionPrompts": [
+        "我改了什么？",
+        "遇到什么问题，怎样找到线索？",
+        "下次想做什么？"
+      ],
+      "exercises": [
+        {
+          "id": "practice",
+          "title": "动手改造",
+          "instruction": "加入 30–59 分钟的中线。",
+          "referenceCode": "time = int(input(\"分钟：\"))\nif time < 30:\n    print(\"短线\")\nelif time < 60:\n    print(\"中线\")\nelse:\n    print(\"长线\")\n",
+          "tests": [
+            {
+              "name": "检查1",
+              "input": [
+                "29"
+              ],
+              "outputContains": [
+                "短线"
+              ],
+              "minDrawings": 0,
+              "expectedFiles": []
+            },
+            {
+              "name": "检查2",
+              "input": [
+                "30"
+              ],
+              "outputContains": [
+                "中线"
+              ],
+              "minDrawings": 0,
+              "expectedFiles": []
+            },
+            {
+              "name": "检查3",
+              "input": [
+                "60"
+              ],
+              "outputContains": [
+                "长线"
+              ],
+              "minDrawings": 0,
+              "expectedFiles": []
+            }
+          ]
+        }
+      ],
+      "rubric": [
+        "能解释本课规则",
+        "能完成基础练习并检查结果",
+        "能自己修改一个功能"
+      ],
+      "exampleInput": [
+        "29"
+      ]
+    },
+    {
+      "id": "multi-door",
+      "number": 12,
+      "title": "多条件机关：钥匙与能量",
+      "subtitle": "and/or/not · 组合条件",
+      "mission": "同时有钥匙和至少 5 点能量才能开门。",
+      "starterCode": "key = input(\"钥匙 yes/no：\") == \"yes\"\nenergy = int(input(\"能量：\"))\nif key:\n    print(\"开门\")\nelse:\n    print(\"门未打开\")\n",
+      "goals": [
+        "and/or/not",
+        "组合条件"
+      ],
+      "hints": [
+        "用自然语言写出两条规则。",
+        "两条都成立应使用 and。",
+        "条件写成 key and energy >= 5。"
+      ],
+      "previewType": "cover",
+      "version": "python-interest-1.0",
+      "phaseId": "interactive",
+      "track": "core",
+      "prerequisites": [
+        "route-guide"
+      ],
+      "minutes": 50,
+      "explanation": "and 要两边都成立，or 只需至少一边，not 反转真假。给组合条件加括号帮助阅读。分别尝试钥匙有无和能量够不够的四种组合。",
+      "prediction": "有钥匙，能量 4，应该开门吗？",
+      "creation": "加入替代通行证体验 or。",
+      "quickChallenge": "列四种组合，预测每次结果。",
+      "commonErrors": [
+        "or 会扩大通行范围",
+        "not 的范围写清楚"
+      ],
+      "parentPrompt": "用日常语言读出条件。",
+      "reflectionPrompts": [
+        "我改了什么？",
+        "遇到什么问题，怎样找到线索？",
+        "下次想做什么？"
+      ],
+      "exercises": [
+        {
+          "id": "practice",
+          "title": "动手改造",
+          "instruction": "让开门同时要求 energy >= 5。",
+          "referenceCode": "key = input(\"钥匙 yes/no：\") == \"yes\"\nenergy = int(input(\"能量：\"))\nif key and energy >= 5:\n    print(\"开门\")\nelse:\n    print(\"门未打开\")\n",
+          "tests": [
+            {
+              "name": "检查1",
+              "input": [
+                "yes",
+                "5"
+              ],
+              "outputContains": [
+                "开门"
+              ],
+              "minDrawings": 0,
+              "expectedFiles": []
+            },
+            {
+              "name": "检查2",
+              "input": [
+                "yes",
+                "4"
+              ],
+              "outputContains": [
+                "门未打开"
+              ],
+              "minDrawings": 0,
+              "expectedFiles": []
+            },
+            {
+              "name": "检查3",
+              "input": [
+                "no",
+                "8"
+              ],
+              "outputContains": [
+                "门未打开"
+              ],
+              "minDrawings": 0,
+              "expectedFiles": []
+            }
+          ]
+        }
+      ],
+      "rubric": [
+        "能解释本课规则",
+        "能完成基础练习并检查结果",
+        "能自己修改一个功能"
+      ],
+      "exampleInput": [
+        "yes",
+        "5"
+      ]
+    },
+    {
+      "id": "random-events",
+      "number": 13,
+      "title": "随机事件：探险变化",
+      "subtitle": "import 与 random · 事件分支",
+      "mission": "掷事件骰子，让故事每次有不同机会。",
+      "starterCode": "import random\nrandom.seed(7)\nevent = random.randint(1, 3)\nprint(\"事件：\", event)\nif event == 1:\n    print(\"发现地图\")\n",
+      "goals": [
+        "import 与 random",
+        "事件分支"
+      ],
+      "hints": [
+        "三种结果都需要故事。",
+        "用 elif 和 else 补上其他结果。",
+        "event == 2 时输出伙伴，其他情况输出小雨。"
+      ],
+      "previewType": "cover",
+      "version": "python-interest-1.0",
+      "phaseId": "interactive",
+      "track": "core",
+      "prerequisites": [
+        "multi-door"
+      ],
+      "minutes": 50,
+      "explanation": "randint(a,b) 包含端点。随机不是每次都不同。seed 固定起点，可重放事件来调试；自由创作时可以去掉固定种子。",
+      "prediction": "randint(1,3) 能返回 3 吗？",
+      "creation": "雨天加雨伞判断，体验嵌套条件。",
+      "quickChallenge": "去掉 seed 多运行几次，说明重放的用途。",
+      "commonErrors": [
+        "重复固定 seed 会重放",
+        "import 的名字不能被其他变量覆盖"
+      ],
+      "parentPrompt": "随机与重复实验各适合什么？",
+      "reflectionPrompts": [
+        "我改了什么？",
+        "遇到什么问题，怎样找到线索？",
+        "下次想做什么？"
+      ],
+      "exercises": [
+        {
+          "id": "practice",
+          "title": "动手改造",
+          "instruction": "补上事件 2“遇见伙伴”和事件 3“下起小雨”。",
+          "referenceCode": "import random\nrandom.seed(7)\nevent = random.randint(1, 3)\nprint(\"事件：\", event)\nif event == 1:\n    print(\"发现地图\")\nelif event == 2:\n    print(\"遇见伙伴\")\nelse:\n    print(\"下起小雨\")\n",
+          "tests": [
+            {
+              "name": "检查1",
+              "input": [],
+              "outputContains": [
+                "事件： 2",
+                "遇见伙伴"
+              ],
+              "minDrawings": 0,
+              "expectedFiles": []
+            }
+          ]
+        }
+      ],
+      "rubric": [
+        "能解释本课规则",
+        "能完成基础练习并检查结果",
+        "能自己修改一个功能"
+      ],
+      "exampleInput": []
+    },
+    {
+      "id": "guess-number",
+      "number": 14,
+      "title": "猜数字：继续等你",
+      "subtitle": "while · 循环结束与计数",
+      "mission": "实时猜一个数字，猜中才结束。",
+      "starterCode": "secret = 7\nguess = int(input(\"猜 1–10：\"))\nwhile guess != secret:\n    print(\"再试一次\")\n    guess = int(input(\"再猜：\"))\nprint(\"猜中了\")\n",
+      "goals": [
+        "while",
+        "循环结束与计数"
+      ],
+      "hints": [
+        "第一次输入也算一次。",
+        "初始化 count = 1，后来每次输入再加 1。",
+        "循环读取新答案后写 count += 1，循环后输出。"
+      ],
+      "previewType": "cover",
+      "version": "python-interest-1.0",
+      "phaseId": "interactive",
+      "track": "core",
+      "prerequisites": [
+        "random-events"
+      ],
+      "minutes": 50,
+      "explanation": "while 每轮先检查条件。循环里要更新答案，否则条件可能一直不变。第一次输入也要计入次数；用逐轮跟踪可以发现少算一轮的问题。",
+      "prediction": "删除循环里的 input 会怎样？",
+      "creation": "加太大、太小提示。",
+      "quickChallenge": "设计 exit 退出方式，再考虑何时转数字。",
+      "commonErrors": [
+        "不更新答案会无法结束",
+        "计数位置影响结果"
+      ],
+      "parentPrompt": "指出循环结束条件。",
+      "reflectionPrompts": [
+        "我改了什么？",
+        "遇到什么问题，怎样找到线索？",
+        "下次想做什么？"
+      ],
+      "exercises": [
+        {
+          "id": "practice",
+          "title": "动手改造",
+          "instruction": "统计次数，输入 3、7 时应为 2 次。",
+          "referenceCode": "secret = 7\ncount = 1\nguess = int(input(\"猜 1–10：\"))\nwhile guess != secret:\n    print(\"再试一次\")\n    guess = int(input(\"再猜：\"))\n    count += 1\nprint(\"猜中了\")\nprint(\"次数：\", count)\n",
+          "tests": [
+            {
+              "name": "检查1",
+              "input": [
+                "3",
+                "7"
+              ],
+              "outputContains": [
+                "猜中了",
+                "次数： 2"
+              ],
+              "minDrawings": 0,
+              "expectedFiles": []
+            },
+            {
+              "name": "检查2",
+              "input": [
+                "7"
+              ],
+              "outputContains": [
+                "猜中了",
+                "次数： 1"
+              ],
+              "minDrawings": 0,
+              "expectedFiles": []
+            }
+          ]
+        }
+      ],
+      "rubric": [
+        "能解释本课规则",
+        "能完成基础练习并检查结果",
+        "能自己修改一个功能"
+      ],
+      "exampleInput": [
+        "3",
+        "7"
+      ]
+    },
+    {
+      "id": "rule-loopholes",
+      "number": 15,
+      "title": "找漏洞：退出与跳过",
+      "subtitle": "break/continue · 边界和流程",
+      "mission": "空消息跳过，stop 结束，其他消息正常接收。",
+      "starterCode": "while True:\n    message = input(\"消息（stop结束）：\")\n    if message == \"stop\":\n        break\n    print(\"收到：\", message)\nprint(\"结束收信\")\n",
+      "goals": [
+        "break/continue",
+        "边界和流程"
+      ],
+      "hints": [
+        "空字符串写成 \"\"。",
+        "跳过这一轮不能用 break。",
+        "在输出前判断 message == \"\"，内部 continue。"
+      ],
+      "previewType": "cover",
+      "version": "python-interest-1.0",
+      "phaseId": "interactive",
+      "track": "core",
+      "prerequisites": [
+        "guess-number"
+      ],
+      "minutes": 50,
+      "explanation": "break 结束整个循环，continue 跳过本轮剩余语句。空字符串与空格不同。画出读入、判断、处理的箭头，确保每轮都有机会读到新消息。",
+      "prediction": "空消息应该结束还是继续等待？",
+      "creation": "用 strip 处理只有空格的消息。",
+      "quickChallenge": "画出三种输入各经过的语句。",
+      "commonErrors": [
+        "跳过前要保证能读取新消息",
+        "空格不是空字符串"
+      ],
+      "parentPrompt": "break 与 continue 各去哪里？",
+      "reflectionPrompts": [
+        "我改了什么？",
+        "遇到什么问题，怎样找到线索？",
+        "下次想做什么？"
+      ],
+      "exercises": [
+        {
+          "id": "practice",
+          "title": "动手改造",
+          "instruction": "用 continue 跳过空字符串。",
+          "referenceCode": "while True:\n    message = input(\"消息（stop结束）：\")\n    if message == \"stop\":\n        break\n    if message == \"\":\n        continue\n    print(\"收到：\", message)\nprint(\"结束收信\")\n",
+          "tests": [
+            {
+              "name": "检查1",
+              "input": [
+                "",
+                "你好",
+                "stop"
+              ],
+              "outputContains": [
+                "收到： 你好",
+                "结束收信"
+              ],
+              "minDrawings": 0,
+              "expectedFiles": []
+            },
+            {
+              "name": "检查2",
+              "input": [
+                "stop"
+              ],
+              "outputContains": [
+                "结束收信"
+              ],
+              "minDrawings": 0,
+              "expectedFiles": []
+            }
+          ]
+        }
+      ],
+      "rubric": [
+        "能解释本课规则",
+        "能完成基础练习并检查结果",
+        "能自己修改一个功能"
+      ],
+      "exampleInput": [
+        "",
+        "你好",
+        "stop"
+      ]
+    },
+    {
+      "id": "branching-story",
+      "number": 16,
+      "title": "项目二：三条路线的故事",
+      "subtitle": "分支、状态和循环整合 · 未知输入处理",
+      "mission": "探索花园、海边、山洞，exit 离开，记录有效探索数。",
+      "starterCode": "visits = 0\nwhile True:\n    route = input(\"garden/sea/cave，exit退出：\")\n    if route == \"exit\":\n        break\n    if route == \"garden\":\n        visits += 1\n        print(\"花园的来信\")\n    else:\n        print(\"请重新选择\")\nprint(\"探索次数：\", visits)\n",
+      "goals": [
+        "分支、状态和循环整合",
+        "未知输入处理"
+      ],
+      "hints": [
+        "画三条路线，另保留未知和退出。",
+        "有效路线之后统一增加次数。",
+        "未知分支用 continue，避免继续执行计数。"
+      ],
+      "previewType": "cover",
+      "version": "python-interest-1.0",
+      "phaseId": "interactive",
+      "track": "core",
+      "prerequisites": [
+        "rule-loopholes"
+      ],
+      "minutes": 50,
+      "explanation": "列出有效选择、未知选择和退出。有效路线汇合到共同计数，未知输入跳过计数。把相同工作集中在一起，能避免漏掉某一条路线。",
+      "prediction": "未知路线该消耗次数吗？",
+      "creation": "每条路线加入道具或二次选择。",
+      "quickChallenge": "请家长输入不存在的路线。",
+      "commonErrors": [
+        "exit 不应计数",
+        "遗漏未知选择会无响应"
+      ],
+      "parentPrompt": "解释有效和无效路线各怎么走。",
+      "reflectionPrompts": [
+        "我改了什么？",
+        "遇到什么问题，怎样找到线索？",
+        "下次想做什么？"
+      ],
+      "exercises": [
+        {
+          "id": "practice",
+          "title": "动手改造",
+          "instruction": "补全 sea 和 cave，分别输出海边的贝壳和山洞的星光，只计有效探索。",
+          "referenceCode": "visits = 0\nwhile True:\n    route = input(\"garden/sea/cave，exit退出：\")\n    if route == \"exit\":\n        break\n    if route == \"garden\":\n        print(\"花园的来信\")\n    elif route == \"sea\":\n        print(\"海边的贝壳\")\n    elif route == \"cave\":\n        print(\"山洞的星光\")\n    else:\n        print(\"请重新选择\")\n        continue\n    visits += 1\nprint(\"探索次数：\", visits)\n",
+          "tests": [
+            {
+              "name": "检查1",
+              "input": [
+                "garden",
+                "sea",
+                "cave",
+                "exit"
+              ],
+              "outputContains": [
+                "花园的来信",
+                "海边的贝壳",
+                "山洞的星光",
+                "探索次数： 3"
+              ],
+              "minDrawings": 0,
+              "expectedFiles": []
+            },
+            {
+              "name": "检查2",
+              "input": [
+                "unknown",
+                "exit"
+              ],
+              "outputContains": [
+                "请重新选择",
+                "探索次数： 0"
+              ],
+              "minDrawings": 0,
+              "expectedFiles": []
+            }
+          ]
+        }
+      ],
+      "rubric": [
+        "三条路线能游玩",
+        "未知输入不破坏计数",
+        "能连续探索和退出"
+      ],
+      "exampleInput": [
+        "garden",
+        "sea",
+        "cave",
+        "exit"
+      ]
+    },
+    {
+      "id": "planet-row",
+      "number": 17,
+      "title": "星球排列：循环画一排",
+      "subtitle": "for/range · 循环变量",
+      "mission": "只写一条画圆命令，却画出整排星球。",
+      "starterCode": "from xuya import draw\nfor i in range(3):\n    draw.circle(40 + i * 50, 100, 15, \"#c7bbff\")\nprint(\"星球：\", 3)\n",
+      "goals": [
+        "for/range",
+        "循环变量"
+      ],
+      "hints": [
+        "数量由 range 的参数控制。",
+        "把数量存进变量供绘画和输出共用。",
+        "count = 5，然后 range(count)，输出同一个 count。"
+      ],
+      "previewType": "drawing",
+      "version": "python-interest-1.0",
+      "phaseId": "art",
+      "track": "core",
+      "prerequisites": [
+        "branching-story"
+      ],
+      "minutes": 50,
+      "explanation": "range(5) 产生 0 到 4，不包含 5。循环变量每轮变化，可用它计算位置。把重复命令变成规律，后面只需调整数量。",
+      "prediction": "range(5) 会循环几次？最后一个 i 是多少？",
+      "creation": "改间隔、大小或交替颜色。",
+      "quickChallenge": "在纸上列出五个圆心 x。",
+      "commonErrors": [
+        "range 不包含右端点",
+        "重复画同一位置看起来只有一颗"
+      ],
+      "parentPrompt": "为什么一条命令能画五个圆？",
+      "reflectionPrompts": [
+        "我改了什么？",
+        "遇到什么问题，怎样找到线索？",
+        "下次想做什么？"
+      ],
+      "exercises": [
+        {
+          "id": "practice",
+          "title": "动手改造",
+          "instruction": "改成 5 颗星球，保持间隔一致并输出数量。",
+          "referenceCode": "from xuya import draw\ncount = 5\nfor i in range(count):\n    draw.circle(40 + i * 50, 100, 15, \"#c7bbff\")\nprint(\"星球：\", count)\n",
+          "tests": [
+            {
+              "name": "检查1",
+              "input": [],
+              "outputContains": [
+                "星球： 5"
+              ],
+              "minDrawings": 5,
+              "expectedFiles": []
+            }
+          ]
+        }
+      ],
+      "rubric": [
+        "能解释本课规则",
+        "能完成基础练习并检查结果",
+        "能自己修改一个功能"
+      ],
+      "exampleInput": []
+    },
+    {
+      "id": "energy-collector",
+      "number": 18,
+      "title": "收集能量：累加和计数",
+      "subtitle": "累加器 · 循环跟踪",
+      "mission": "收集编号 1 到 5 的能量卡，每张能量等于编号。",
+      "starterCode": "total = 0\nfor value in range(1, 4):\n    total += value\nprint(\"总能量：\", total)\n",
+      "goals": [
+        "累加器",
+        "循环跟踪"
+      ],
+      "hints": [
+        "检查 range 的右端点。",
+        "要包含 5，需要右端点 6。",
+        "使用 range(1, 6)，保留循环外初始化。"
+      ],
+      "previewType": "cover",
+      "version": "python-interest-1.0",
+      "phaseId": "art",
+      "track": "core",
+      "prerequisites": [
+        "planet-row"
+      ],
+      "minutes": 50,
+      "explanation": "累加器先从 0 开始，每轮在旧总数上加新值。放在循环内部初始化会清空之前结果。跟踪每轮 total，能看见 1、3、6、10、15 怎样形成。",
+      "prediction": "total = 0 放进循环会怎样？",
+      "creation": "把每张卡能量改成编号的两倍。",
+      "quickChallenge": "不运行，逐轮算出 total。",
+      "commonErrors": [
+        "循环内清零会丢失累积",
+        "忘记右端点不包含"
+      ],
+      "parentPrompt": "让她追踪第三轮的总数。",
+      "reflectionPrompts": [
+        "我改了什么？",
+        "遇到什么问题，怎样找到线索？",
+        "下次想做什么？"
+      ],
+      "exercises": [
+        {
+          "id": "practice",
+          "title": "动手改造",
+          "instruction": "计算 1 到 5 的总能量。",
+          "referenceCode": "total = 0\nfor value in range(1, 6):\n    total += value\nprint(\"总能量：\", total)\n",
+          "tests": [
+            {
+              "name": "检查1",
+              "input": [],
+              "outputContains": [
+                "总能量： 15"
+              ],
+              "minDrawings": 0,
+              "expectedFiles": []
+            }
+          ]
+        }
+      ],
+      "rubric": [
+        "能解释本课规则",
+        "能完成基础练习并检查结果",
+        "能自己修改一个功能"
+      ],
+      "exampleInput": []
+    },
+    {
+      "id": "pixel-grid",
+      "number": 19,
+      "title": "像素图案：行与列",
+      "subtitle": "嵌套循环 · 二维坐标",
+      "mission": "用两层循环拼出像素棋盘。",
+      "starterCode": "from xuya import draw\nfor row in range(2):\n    for col in range(3):\n        draw.rectangle(40 + col * 35, 40 + row * 35, 30, 30, \"#9ad9bb\")\nprint(\"格子：\", 6)\n",
+      "goals": [
+        "嵌套循环",
+        "二维坐标"
+      ],
+      "hints": [
+        "两层 range 分别控制行和列。",
+        "让 rows=3、cols=4，同时计算数量。",
+        "外层 range(rows)，内层 range(cols)，输出 rows * cols。"
+      ],
+      "previewType": "drawing",
+      "version": "python-interest-1.0",
+      "phaseId": "art",
+      "track": "core",
+      "prerequisites": [
+        "energy-collector"
+      ],
+      "minutes": 50,
+      "explanation": "外层每次选一行，内层走遍该行的列。总格数是行数乘列数。row 影响 y，col 影响 x，把它们用反会改变方向。",
+      "prediction": "2 行 3 列会调用多少次 rectangle？",
+      "creation": "用 (row + col) % 2 做交替色棋盘。",
+      "quickChallenge": "预测只改外层循环的图形变化。",
+      "commonErrors": [
+        "内层必须缩进",
+        "行和列影响不同坐标"
+      ],
+      "parentPrompt": "为什么总格数是乘法？",
+      "reflectionPrompts": [
+        "我改了什么？",
+        "遇到什么问题，怎样找到线索？",
+        "下次想做什么？"
+      ],
+      "exercises": [
+        {
+          "id": "practice",
+          "title": "动手改造",
+          "instruction": "改成 3 行 4 列，输出 12 格。",
+          "referenceCode": "from xuya import draw\nrows, cols = 3, 4\nfor row in range(rows):\n    for col in range(cols):\n        draw.rectangle(40 + col * 35, 40 + row * 35, 30, 30, \"#9ad9bb\")\nprint(\"格子：\", rows * cols)\n",
+          "tests": [
+            {
+              "name": "检查1",
+              "input": [],
+              "outputContains": [
+                "格子： 12"
+              ],
+              "minDrawings": 12,
+              "expectedFiles": []
+            }
+          ]
+        }
+      ],
+      "rubric": [
+        "能解释本课规则",
+        "能完成基础练习并检查结果",
+        "能自己修改一个功能"
+      ],
+      "exampleInput": []
+    },
+    {
+      "id": "palette-list",
+      "number": 20,
+      "title": "配色盘：列表存放选择",
+      "subtitle": "列表、索引 · 修改与 append",
+      "mission": "用一个列表管理海报颜色。",
+      "starterCode": "colors = [\"#c7bbff\", \"#9ad9bb\"]\nprint(\"颜色数：\", len(colors))\nprint(\"首色：\", colors[0])\n",
+      "goals": [
+        "列表、索引",
+        "修改与 append"
+      ],
+      "hints": [
+        "新增颜色不必重建整个列表。",
+        "用 append，最后一项可以用 -1 索引。",
+        "colors.append(\"#f0c987\")，再读取 colors[-1]。"
+      ],
+      "previewType": "cover",
+      "version": "python-interest-1.0",
+      "phaseId": "art",
+      "track": "core",
+      "prerequisites": [
+        "pixel-grid"
+      ],
+      "minutes": 50,
+      "explanation": "列表按顺序存多项数据，索引从 0 开始。colors[1] 读第二项，赋值可替换某项，append 把新项放在尾部。len 得到当前数量。",
+      "prediction": "列表的第一个颜色是 colors[0] 还是 colors[1]？",
+      "creation": "用 for 遍历配色盘绘制色块。",
+      "quickChallenge": "修改第二项，观察数量是否改变。",
+      "commonErrors": [
+        "索引超出范围会 IndexError",
+        "append 返回值不是新列表"
+      ],
+      "parentPrompt": "替换和新增颜色有何不同？",
+      "reflectionPrompts": [
+        "我改了什么？",
+        "遇到什么问题，怎样找到线索？",
+        "下次想做什么？"
+      ],
+      "exercises": [
+        {
+          "id": "practice",
+          "title": "动手改造",
+          "instruction": "添加 #f0c987，输出颜色数 3 和尾色。",
+          "referenceCode": "colors = [\"#c7bbff\", \"#9ad9bb\"]\ncolors.append(\"#f0c987\")\nprint(\"颜色数：\", len(colors))\nprint(\"尾色：\", colors[-1])\n",
+          "tests": [
+            {
+              "name": "检查1",
+              "input": [],
+              "outputContains": [
+                "颜色数： 3",
+                "尾色： #f0c987"
+              ],
+              "minDrawings": 0,
+              "expectedFiles": []
+            }
+          ]
+        }
+      ],
+      "rubric": [
+        "能解释本课规则",
+        "能完成基础练习并检查结果",
+        "能自己修改一个功能"
+      ],
+      "exampleInput": []
+    },
+    {
+      "id": "text-clues",
+      "number": 21,
+      "title": "文字线索：索引与切片",
+      "subtitle": "len、索引、切片 · 切片右端点",
+      "mission": "从口令中提取前半段线索。",
+      "starterCode": "clue = \"星光邮局\"\nprint(\"字数：\", len(clue))\nprint(\"首字：\", clue[0])\n",
+      "goals": [
+        "len、索引、切片",
+        "切片右端点"
+      ],
+      "hints": [
+        "前两个字是一段范围。",
+        "右端点 2 不包含位置 2。",
+        "使用 clue[:2] 和 clue[-1]。"
+      ],
+      "previewType": "cover",
+      "version": "python-interest-1.0",
+      "phaseId": "art",
+      "track": "core",
+      "prerequisites": [
+        "palette-list"
+      ],
+      "minutes": 50,
+      "explanation": "字符串也可以按位置读取，但不能像列表那样修改某个字符。text[a:b] 包含 a，不包含 b；负索引从尾部数。切片表达范围，索引表达单个位置。",
+      "prediction": "“星光邮局”[:2] 包含哪两个字？",
+      "creation": "提取笔名或故事标题的一段字符。",
+      "quickChallenge": "测试空字符串，观察索引和切片的差别。",
+      "commonErrors": [
+        "索引从 0 开始",
+        "空字符串不能读取第一个字"
+      ],
+      "parentPrompt": "切片和索引各适合什么？",
+      "reflectionPrompts": [
+        "我改了什么？",
+        "遇到什么问题，怎样找到线索？",
+        "下次想做什么？"
+      ],
+      "exercises": [
+        {
+          "id": "practice",
+          "title": "动手改造",
+          "instruction": "输出“前缀：星光”和“尾字：局”。",
+          "referenceCode": "clue = \"星光邮局\"\nprint(\"字数：\", len(clue))\nprint(\"前缀：\", clue[:2])\nprint(\"尾字：\", clue[-1])\n",
+          "tests": [
+            {
+              "name": "检查1",
+              "input": [],
+              "outputContains": [
+                "前缀： 星光",
+                "尾字： 局"
+              ],
+              "minDrawings": 0,
+              "expectedFiles": []
+            }
+          ]
+        }
+      ],
+      "rubric": [
+        "能解释本课规则",
+        "能完成基础练习并检查结果",
+        "能自己修改一个功能"
+      ],
+      "exampleInput": []
+    },
+    {
+      "id": "team-score",
+      "number": 22,
+      "title": "小队成绩：寻找最高值",
+      "subtitle": "遍历列表 · 最大、最小值",
+      "mission": "不用手工排序，从小队成绩里找到最高分。",
+      "starterCode": "scores = [7, 12, 9, 4]\nbest = scores[0]\nfor score in scores:\n    if score > best:\n        best = score\nprint(\"最高：\", best)\n",
+      "goals": [
+        "遍历列表",
+        "最大、最小值"
+      ],
+      "hints": [
+        "最低值也需要一个暂时记录。",
+        "遇到更小值就更新 lowest。",
+        "初始化 lowest=scores[0]，循环中比较 score < lowest。"
+      ],
+      "previewType": "cover",
+      "version": "python-interest-1.0",
+      "phaseId": "art",
+      "track": "core",
+      "prerequisites": [
+        "text-clues"
+      ],
+      "minutes": 50,
+      "explanation": "把第一个成绩当作暂时最高值，逐项比较并更新。初值设成 0 只适用于非负数据，选第一项更一般。max/min 提供同类内置功能，先理解过程再使用工具。",
+      "prediction": "最高分不在最后一个位置时，算法能找到吗？",
+      "creation": "换成温度或角色能量，试负数。",
+      "quickChallenge": "比较你的循环和 max/min 的结果。",
+      "commonErrors": [
+        "循环里重置最高值会丢记录",
+        "空列表需要额外处理"
+      ],
+      "parentPrompt": "目前最高值为什么可能改变？",
+      "reflectionPrompts": [
+        "我改了什么？",
+        "遇到什么问题，怎样找到线索？",
+        "下次想做什么？"
+      ],
+      "exercises": [
+        {
+          "id": "practice",
+          "title": "动手改造",
+          "instruction": "同时找出最低分，输出“最低：4”。",
+          "referenceCode": "scores = [7, 12, 9, 4]\nbest = scores[0]\nlowest = scores[0]\nfor score in scores:\n    if score > best:\n        best = score\n    if score < lowest:\n        lowest = score\nprint(\"最高：\", best)\nprint(\"最低：\", lowest)\n",
+          "tests": [
+            {
+              "name": "检查1",
+              "input": [],
+              "outputContains": [
+                "最高： 12",
+                "最低： 4"
+              ],
+              "minDrawings": 0,
+              "expectedFiles": []
+            }
+          ]
+        }
+      ],
+      "rubric": [
+        "能解释本课规则",
+        "能完成基础练习并检查结果",
+        "能自己修改一个功能"
+      ],
+      "exampleInput": []
+    },
+    {
+      "id": "pattern-remix",
+      "number": 23,
+      "title": "图案改造：列表和随机选择",
+      "subtitle": "random.choice · 列表方法与调试",
+      "mission": "从配色盘随机选颜色，修复没有保存结果的图案。",
+      "starterCode": "from xuya import draw\nimport random\nrandom.seed(3)\ncolors = [\"#c7bbff\", \"#9ad9bb\"]\nfor i in range(3):\n    draw.circle(60 + i * 60, 120, 20, random.choice(colors))\nprint(\"图案数：\", 3)\n",
+      "goals": [
+        "random.choice",
+        "列表方法与调试"
+      ],
+      "hints": [
+        "数量和颜色盘要分别修改。",
+        "先 append 新颜色，再改变 range。",
+        "颜色追加 #f0c987，range(4) 画四次。"
+      ],
+      "previewType": "drawing",
+      "version": "python-interest-1.0",
+      "phaseId": "art",
+      "track": "core",
+      "prerequisites": [
+        "team-score"
+      ],
+      "minutes": 50,
+      "explanation": "random.choice 从非空列表选一项。sort 在原列表修改顺序，sorted 返回新列表，二者不能混用返回值。固定 seed 可以重放配色，便于比较改动。",
+      "prediction": "choice 会返回整个列表还是一种颜色？",
+      "creation": "自行选择有主题的颜色盘。",
+      "quickChallenge": "比较 colors.sort() 和 sorted(colors) 的返回值。",
+      "commonErrors": [
+        "空列表不能 choice",
+        "颜色字符串必须有效"
+      ],
+      "parentPrompt": "哪些变化来自随机，哪些来自代码？",
+      "reflectionPrompts": [
+        "我改了什么？",
+        "遇到什么问题，怎样找到线索？",
+        "下次想做什么？"
+      ],
+      "exercises": [
+        {
+          "id": "practice",
+          "title": "动手改造",
+          "instruction": "增加一个颜色，并画出 4 个随机配色的圆。",
+          "referenceCode": "from xuya import draw\nimport random\nrandom.seed(3)\ncolors = [\"#c7bbff\", \"#9ad9bb\"]\ncolors.append(\"#f0c987\")\nfor i in range(4):\n    draw.circle(60 + i * 60, 120, 20, random.choice(colors))\nprint(\"图案数：\", 4)\n",
+          "tests": [
+            {
+              "name": "检查1",
+              "input": [],
+              "outputContains": [
+                "图案数： 4"
+              ],
+              "minDrawings": 4,
+              "expectedFiles": []
+            }
+          ]
+        }
+      ],
+      "rubric": [
+        "能解释本课规则",
+        "能完成基础练习并检查结果",
+        "能自己修改一个功能"
+      ],
+      "exampleInput": []
+    },
+    {
+      "id": "art-poster",
+      "number": 24,
+      "title": "项目三：生成艺术海报",
+      "subtitle": "列表、循环与条件整合 · 参数化创作",
+      "mission": "给海报设计可调整的行列和配色。",
+      "starterCode": "from xuya import draw\ncolors = [\"#c7bbff\", \"#9ad9bb\"]\nrows, cols = 2, 3\nfor row in range(rows):\n    for col in range(cols):\n        draw.circle(50 + col * 60, 50 + row * 60, 18, colors[0])\nprint(\"海报图形：\", rows * cols)\n",
+      "goals": [
+        "列表、循环与条件整合",
+        "参数化创作"
+      ],
+      "hints": [
+        "先保证数量正确，再调整颜色。",
+        "用余数把索引限制在颜色盘内。",
+        "colors[(row + col) % len(colors)] 生成循环色。"
+      ],
+      "previewType": "drawing",
+      "version": "python-interest-1.0",
+      "phaseId": "art",
+      "track": "core",
+      "prerequisites": [
+        "pattern-remix"
+      ],
+      "minutes": 50,
+      "explanation": "把数量、间隔、颜色放进参数，图案就能重复生成。用行列编号计算位置，取余在配色盘中循环选择，避免逐个手写图形。",
+      "prediction": "(row + col) % 2 怎样产生交替色？",
+      "creation": "选择自己的标题、图形和排布规律。",
+      "quickChallenge": "只改参数生成另一张海报，解释规律。",
+      "commonErrors": [
+        "颜色索引越界",
+        "圆心间距太小会重叠"
+      ],
+      "parentPrompt": "请她用三个参数生成另一个版本。",
+      "reflectionPrompts": [
+        "我改了什么？",
+        "遇到什么问题，怎样找到线索？",
+        "下次想做什么？"
+      ],
+      "exercises": [
+        {
+          "id": "practice",
+          "title": "动手改造",
+          "instruction": "生成 3 行 4 列，用 (row+col)%len(colors) 交替颜色。",
+          "referenceCode": "from xuya import draw\ncolors = [\"#c7bbff\", \"#9ad9bb\"]\nrows, cols = 3, 4\nfor row in range(rows):\n    for col in range(cols):\n        color = colors[(row + col) % len(colors)]\n        draw.circle(50 + col * 60, 50 + row * 60, 18, color)\ndraw.text(60, 250, \"我的生成艺术\", \"#493964\")\nprint(\"海报图形：\", rows * cols)\n",
+          "tests": [
+            {
+              "name": "检查1",
+              "input": [],
+              "outputContains": [
+                "海报图形： 12"
+              ],
+              "minDrawings": 12,
+              "expectedFiles": []
+            }
+          ]
+        }
+      ],
+      "rubric": [
+        "用循环生成图案",
+        "能解释坐标或颜色规律",
+        "改参数产生不同作品"
+      ],
+      "exampleInput": []
+    },
+    {
+      "id": "reusable-brush",
+      "number": 25,
+      "title": "可重复画笔：函数和参数",
+      "subtitle": "def、调用和参数",
+      "mission": "把画徽章的动作变成工具，在不同位置重复使用。",
+      "starterCode": "from xuya import draw\ndef badge(x, y):\n    draw.circle(x, y, 20, \"#c7bbff\")\nbadge(60, 100)\nprint(\"徽章：\", 1)\n",
+      "goals": [
+        "def、调用和参数"
+      ],
+      "hints": [
+        "不用复制函数体。",
+        "调用时换 x 参数。",
+        "在循环中调用 badge(x,100)，x 取 60、140、220。"
+      ],
+      "previewType": "drawing",
+      "version": "python-interest-1.0",
+      "phaseId": "game",
+      "track": "core",
+      "prerequisites": [
+        "art-poster"
+      ],
+      "minutes": 50,
+      "explanation": "def 定义动作但不会立即执行，调用才会执行。参数把每次不同的位置传入函数，函数体缩进。先封装重复动作，再用多次调用组合画面。",
+      "prediction": "只有 def，没有调用，会画图吗？",
+      "creation": "让函数接收颜色和大小。",
+      "quickChallenge": "把眼睛也封装进 badge。",
+      "commonErrors": [
+        "定义不等于调用",
+        "参数数量需要匹配"
+      ],
+      "parentPrompt": "函数封装了哪件重复的事？",
+      "reflectionPrompts": [
+        "我改了什么？",
+        "遇到什么问题，怎样找到线索？",
+        "下次想做什么？"
+      ],
+      "exercises": [
+        {
+          "id": "practice",
+          "title": "动手改造",
+          "instruction": "调用 badge 三次，在不同 x 位置画三枚徽章。",
+          "referenceCode": "from xuya import draw\ndef badge(x, y):\n    draw.circle(x, y, 20, \"#c7bbff\")\nfor x in [60, 140, 220]:\n    badge(x, 100)\nprint(\"徽章：\", 3)\n",
+          "tests": [
+            {
+              "name": "检查1",
+              "input": [],
+              "outputContains": [
+                "徽章： 3"
+              ],
+              "minDrawings": 3,
+              "expectedFiles": []
+            }
+          ]
+        }
+      ],
+      "rubric": [
+        "能解释本课规则",
+        "能完成基础练习并检查结果",
+        "能自己修改一个功能"
+      ],
+      "exampleInput": []
+    },
+    {
+      "id": "return-results",
+      "number": 26,
+      "title": "函数返回：结果交给下一步",
+      "subtitle": "return 与组合",
+      "mission": "计算任务奖励，再交给打印函数展示。",
+      "starterCode": "def reward(tasks):\n    return tasks * 3\ntasks = int(input(\"完成任务数：\"))\nprint(\"奖励：\", reward(tasks))\n",
+      "goals": [
+        "return 与组合"
+      ],
+      "hints": [
+        "结果由 reward 的 return 决定。",
+        "把额外奖励加在返回表达式中。",
+        "return tasks * 3 + 2，测试零项任务。"
+      ],
+      "previewType": "cover",
+      "version": "python-interest-1.0",
+      "phaseId": "game",
+      "track": "core",
+      "prerequisites": [
+        "reusable-brush"
+      ],
+      "minutes": 50,
+      "explanation": "print 展示结果，return 把值交回调用位置。返回值能继续计算；没有 return 默认返回 None。函数最好围绕一个清楚任务，方便单独测试。",
+      "prediction": "只有 print 的函数能参与数字加法吗？",
+      "creation": "另写一个计算下一等级所需奖励的函数。",
+      "quickChallenge": "把 return 改成 print，观察外面的输出。",
+      "commonErrors": [
+        "print 不等于 return",
+        "return 后的代码不再执行"
+      ],
+      "parentPrompt": "返回值去了哪里？",
+      "reflectionPrompts": [
+        "我改了什么？",
+        "遇到什么问题，怎样找到线索？",
+        "下次想做什么？"
+      ],
+      "exercises": [
+        {
+          "id": "practice",
+          "title": "动手改造",
+          "instruction": "奖励在每项 3 点基础上再加 2 点，修改函数而不是写死输出。",
+          "referenceCode": "def reward(tasks):\n    return tasks * 3 + 2\ntasks = int(input(\"完成任务数：\"))\nprint(\"奖励：\", reward(tasks))\n",
+          "tests": [
+            {
+              "name": "检查1",
+              "input": [
+                "2"
+              ],
+              "outputContains": [
+                "奖励： 8"
+              ],
+              "minDrawings": 0,
+              "expectedFiles": []
+            },
+            {
+              "name": "检查2",
+              "input": [
+                "0"
+              ],
+              "outputContains": [
+                "奖励： 2"
+              ],
+              "minDrawings": 0,
+              "expectedFiles": []
+            }
+          ]
+        }
+      ],
+      "rubric": [
+        "能解释本课规则",
+        "能完成基础练习并检查结果",
+        "能自己修改一个功能"
+      ],
+      "exampleInput": [
+        "2"
+      ]
+    },
+    {
+      "id": "scope-tasks",
+      "number": 27,
+      "title": "拆分任务：变量住在哪里",
+      "subtitle": "局部变量、作用域 · 参数传递",
+      "mission": "不同角色各自计算能量，不要互相改坏数据。",
+      "starterCode": "energy = 10\ndef collect(current, amount):\n    current = current + amount\n    return current\nprint(\"新能量：\", collect(energy, 3))\nprint(\"原能量：\", energy)\n",
+      "goals": [
+        "局部变量、作用域",
+        "参数传递"
+      ],
+      "hints": [
+        "函数返回值需要有人接住。",
+        "调用处赋值给外面的 energy。",
+        "energy = collect(energy,3)，再打印外部变量。"
+      ],
+      "previewType": "cover",
+      "version": "python-interest-1.0",
+      "phaseId": "game",
+      "track": "core",
+      "prerequisites": [
+        "return-results"
+      ],
+      "minutes": 50,
+      "explanation": "函数内赋值通常创建局部变量。函数之外不应依赖内部变量，使用参数传入、return 传出。把任务拆成计算和展示，能减少隐藏联系。",
+      "prediction": "函数调用会自动修改外面的 energy 吗？",
+      "creation": "拆分购买、计算余额和展示三个任务。",
+      "quickChallenge": "解释形参 current 与外部 energy 的关系。",
+      "commonErrors": [
+        "函数外不能直接用局部变量",
+        "返回值没有保存会丢失"
+      ],
+      "parentPrompt": "数据从哪里进，又从哪里出来？",
+      "reflectionPrompts": [
+        "我改了什么？",
+        "遇到什么问题，怎样找到线索？",
+        "下次想做什么？"
+      ],
+      "exercises": [
+        {
+          "id": "practice",
+          "title": "动手改造",
+          "instruction": "把返回结果保存回 energy，最后输出“原能量：13”。",
+          "referenceCode": "energy = 10\ndef collect(current, amount):\n    current = current + amount\n    return current\nenergy = collect(energy, 3)\nprint(\"新能量：\", energy)\nprint(\"原能量：\", energy)\n",
+          "tests": [
+            {
+              "name": "检查1",
+              "input": [],
+              "outputContains": [
+                "新能量： 13",
+                "原能量： 13"
+              ],
+              "minDrawings": 0,
+              "expectedFiles": []
+            }
+          ]
+        }
+      ],
+      "rubric": [
+        "能解释本课规则",
+        "能完成基础练习并检查结果",
+        "能自己修改一个功能"
+      ],
+      "exampleInput": []
+    },
+    {
+      "id": "item-database",
+      "number": 28,
+      "title": "角色道具库：字典",
+      "subtitle": "字典键值 · 查询和更新",
+      "mission": "用道具名找到数量，而不记它在列表第几项。",
+      "starterCode": "bag = {\"key\": 1, \"map\": 2}\nprint(\"钥匙：\", bag[\"key\"])\nprint(\"药水：\", bag.get(\"potion\", 0))\n",
+      "goals": [
+        "字典键值",
+        "查询和更新"
+      ],
+      "hints": [
+        "在已有值上增加，而不是覆盖成 2。",
+        "键用字符串，更新该键的数值。",
+        "bag[\"key\"] += 2，缺失药水用 get。"
+      ],
+      "previewType": "cover",
+      "version": "python-interest-1.0",
+      "phaseId": "game",
+      "track": "core",
+      "prerequisites": [
+        "scope-tasks"
+      ],
+      "minutes": 50,
+      "explanation": "字典将键和对应值联系起来。bag[\"key\"] 查询钥匙数量；get 能在缺少键时提供默认值。键应清楚且不重复，更新同一键会替换它的值。",
+      "prediction": "增加同名道具会自动累加吗？",
+      "creation": "建立含名字、能量、背包的角色资料。",
+      "quickChallenge": "查询不存在的键，比较 [] 和 get。",
+      "commonErrors": [
+        "[] 访问缺失键会 KeyError",
+        "键和值不要颠倒"
+      ],
+      "parentPrompt": "为什么字典比记住索引方便？",
+      "reflectionPrompts": [
+        "我改了什么？",
+        "遇到什么问题，怎样找到线索？",
+        "下次想做什么？"
+      ],
+      "exercises": [
+        {
+          "id": "practice",
+          "title": "动手改造",
+          "instruction": "增加 2 把钥匙，并输出钥匙 3 和药水 0。",
+          "referenceCode": "bag = {\"key\": 1, \"map\": 2}\nbag[\"key\"] += 2\nprint(\"钥匙：\", bag[\"key\"])\nprint(\"药水：\", bag.get(\"potion\", 0))\n",
+          "tests": [
+            {
+              "name": "检查1",
+              "input": [],
+              "outputContains": [
+                "钥匙： 3",
+                "药水： 0"
+              ],
+              "minDrawings": 0,
+              "expectedFiles": []
+            }
+          ]
+        }
+      ],
+      "rubric": [
+        "能解释本课规则",
+        "能完成基础练习并检查结果",
+        "能自己修改一个功能"
+      ],
+      "exampleInput": []
+    },
+    {
+      "id": "unique-clues",
+      "number": 29,
+      "title": "去重线索与固定坐标",
+      "subtitle": "集合、元组 · 选择数据容器",
+      "mission": "相同线索只计一次，地点坐标保持不变。",
+      "starterCode": "clues = [\"羽毛\", \"地图\", \"羽毛\"]\nposition = (120, 80)\nprint(\"原线索：\", len(clues))\nprint(\"坐标：\", position)\n",
+      "goals": [
+        "集合、元组",
+        "选择数据容器"
+      ],
+      "hints": [
+        "先明确重复线索是否要保留。",
+        "set 可从列表建立去重集合。",
+        "unique = set(clues)，输出 len(unique)，不比较集合顺序。"
+      ],
+      "previewType": "cover",
+      "version": "python-interest-1.0",
+      "phaseId": "game",
+      "track": "core",
+      "prerequisites": [
+        "item-database"
+      ],
+      "minutes": 50,
+      "explanation": "集合存唯一元素，不依赖显示顺序；元组适合表达固定组合，如 (x,y)。列表保留顺序和重复，字典关联键值。按用途选容器比记名称更重要。",
+      "prediction": "三条线索，其中两条相同，独特线索有几条？",
+      "creation": "给地图做地点坐标字典。",
+      "quickChallenge": "解释背包、坐标、线索、角色分别选什么容器。",
+      "commonErrors": [
+        "集合顺序不固定",
+        "元组不能直接修改某一项"
+      ],
+      "parentPrompt": "为什么这次选择集合？",
+      "reflectionPrompts": [
+        "我改了什么？",
+        "遇到什么问题，怎样找到线索？",
+        "下次想做什么？"
+      ],
+      "exercises": [
+        {
+          "id": "practice",
+          "title": "动手改造",
+          "instruction": "用 set 去重，输出“独特线索：2”。",
+          "referenceCode": "clues = [\"羽毛\", \"地图\", \"羽毛\"]\nposition = (120, 80)\nunique = set(clues)\nprint(\"独特线索：\", len(unique))\nprint(\"坐标：\", position)\n",
+          "tests": [
+            {
+              "name": "检查1",
+              "input": [],
+              "outputContains": [
+                "独特线索： 2",
+                "坐标： (120, 80)"
+              ],
+              "minDrawings": 0,
+              "expectedFiles": []
+            }
+          ]
+        }
+      ],
+      "rubric": [
+        "能解释本课规则",
+        "能完成基础练习并检查结果",
+        "能自己修改一个功能"
+      ],
+      "exampleInput": []
+    },
+    {
+      "id": "python-toolbox",
+      "number": 30,
+      "title": "Python 工具箱",
+      "subtitle": "math、random 和内置函数",
+      "mission": "使用现成工具计算圆形徽章面积。",
+      "starterCode": "import math\nradius = 3\narea = math.pi * radius ** 2\nprint(\"面积：\", round(area, 2))\n",
+      "goals": [
+        "math、random 和内置函数"
+      ],
+      "hints": [
+        "** 2 表示平方。",
+        "只改半径，公式保持不变。",
+        "radius = 5，使用 round(area,2) 控制展示。"
+      ],
+      "previewType": "cover",
+      "version": "python-interest-1.0",
+      "phaseId": "game",
+      "track": "core",
+      "prerequisites": [
+        "unique-clues"
+      ],
+      "minutes": 50,
+      "explanation": "模块组织相关工具，math.pi 提供圆周率，round 调整显示精度。工具有输入和输出约定，要读懂用法，再在小例子中验证，避免自行重复造工具。",
+      "prediction": "面积与半径成正比还是平方关系？",
+      "creation": "写圆面积函数，再计算几种徽章。",
+      "quickChallenge": "比较 sorted、sum、len 的输入与返回值。",
+      "commonErrors": [
+        "平方不是乘以 2",
+        "模块名不可被变量覆盖"
+      ],
+      "parentPrompt": "工具省去了什么工作？",
+      "reflectionPrompts": [
+        "我改了什么？",
+        "遇到什么问题，怎样找到线索？",
+        "下次想做什么？"
+      ],
+      "exercises": [
+        {
+          "id": "practice",
+          "title": "动手改造",
+          "instruction": "计算半径 5 的面积，保留两位小数，输出 78.54。",
+          "referenceCode": "import math\nradius = 5\narea = math.pi * radius ** 2\nprint(\"面积：\", round(area, 2))\n",
+          "tests": [
+            {
+              "name": "检查1",
+              "input": [],
+              "outputContains": [
+                "面积： 78.54"
+              ],
+              "minDrawings": 0,
+              "expectedFiles": []
+            }
+          ]
+        }
+      ],
+      "rubric": [
+        "能解释本课规则",
+        "能完成基础练习并检查结果",
+        "能自己修改一个功能"
+      ],
+      "exampleInput": []
+    },
+    {
+      "id": "invalid-input",
+      "number": 31,
+      "title": "应对错误输入",
+      "subtitle": "try/except · 有效范围与反馈",
+      "mission": "访客可能输入文字或负数，程序要友好回应。",
+      "starterCode": "raw = input(\"能量数量：\")\ntry:\n    energy = int(raw)\n    print(\"能量：\", energy)\nexcept ValueError:\n    print(\"请输入整数\")\n",
+      "goals": [
+        "try/except",
+        "有效范围与反馈"
+      ],
+      "hints": [
+        "转换错误与规则错误分别处理。",
+        "转换成功后增加 energy < 0 判断。",
+        "负数分支输出提示，其余分支显示能量；保留 ValueError。"
+      ],
+      "previewType": "cover",
+      "version": "python-interest-1.0",
+      "phaseId": "game",
+      "track": "core",
+      "prerequisites": [
+        "python-toolbox"
+      ],
+      "minutes": 50,
+      "explanation": "int 转换失败会抛出 ValueError。try 放可能失败的操作，except 处理特定错误；转换成功后仍要检查范围。错误处理不能把所有问题都藏起来。",
+      "prediction": "输入 -1 和输入 abc 产生的是同一种问题吗？",
+      "creation": "改成不合法就重新询问，提供 exit。",
+      "quickChallenge": "列出空行、小数、负数、零的预期结果。",
+      "commonErrors": [
+        "转换成功不等于范围有效",
+        "不要用空 except 掩盖错误"
+      ],
+      "parentPrompt": "两类错误各在哪里处理？",
+      "reflectionPrompts": [
+        "我改了什么？",
+        "遇到什么问题，怎样找到线索？",
+        "下次想做什么？"
+      ],
+      "exercises": [
+        {
+          "id": "practice",
+          "title": "动手改造",
+          "instruction": "负数提示“不能是负数”，合法整数正常显示。",
+          "referenceCode": "raw = input(\"能量数量：\")\ntry:\n    energy = int(raw)\n    if energy < 0:\n        print(\"不能是负数\")\n    else:\n        print(\"能量：\", energy)\nexcept ValueError:\n    print(\"请输入整数\")\n",
+          "tests": [
+            {
+              "name": "检查1",
+              "input": [
+                "abc"
+              ],
+              "outputContains": [
+                "请输入整数"
+              ],
+              "minDrawings": 0,
+              "expectedFiles": []
+            },
+            {
+              "name": "检查2",
+              "input": [
+                "-1"
+              ],
+              "outputContains": [
+                "不能是负数"
+              ],
+              "minDrawings": 0,
+              "expectedFiles": []
+            },
+            {
+              "name": "检查3",
+              "input": [
+                "0"
+              ],
+              "outputContains": [
+                "能量： 0"
+              ],
+              "minDrawings": 0,
+              "expectedFiles": []
+            }
+          ]
+        }
+      ],
+      "rubric": [
+        "能解释本课规则",
+        "能完成基础练习并检查结果",
+        "能自己修改一个功能"
+      ],
+      "exampleInput": [
+        "abc"
+      ]
+    },
+    {
+      "id": "backpack-adventure",
+      "number": 32,
+      "title": "项目四：背包冒险",
+      "subtitle": "函数、字典与状态 · 交互和容错",
+      "mission": "拾取道具、查看背包、应对未知命令，退出时保留解释。",
+      "starterCode": "bag = {\"key\": 0}\ndef show():\n    print(\"钥匙：\", bag[\"key\"])\nwhile True:\n    command = input(\"pick/show/exit：\")\n    if command == \"exit\":\n        break\n    if command == \"show\":\n        show()\n    else:\n        print(\"未知命令\")\n",
+      "goals": [
+        "函数、字典与状态",
+        "交互和容错"
+      ],
+      "hints": [
+        "让拾取动作集中到一个函数。",
+        "更新 bag[\"key\"]，主循环调用这个函数。",
+        "collect 里增加钥匙，elif command == \"pick\" 调用 collect。"
+      ],
+      "previewType": "cover",
+      "version": "python-interest-1.0",
+      "phaseId": "game",
+      "track": "core",
+      "prerequisites": [
+        "invalid-input"
+      ],
+      "minutes": 50,
+      "explanation": "把展示和修改背包拆成函数，主循环只负责读命令和分派。每次拾取更新同一份字典；未知命令不应该改变状态。用连续输入验证状态是否正确累积。",
+      "prediction": "pick、pick、show 后钥匙应该有几把？",
+      "creation": "添加其他道具、购买和角色能量。",
+      "quickChallenge": "设计三条不同输入序列检验背包。",
+      "commonErrors": [
+        "重新创建背包会丢状态",
+        "未知命令不能误计拾取"
+      ],
+      "parentPrompt": "请她解释状态如何在多轮保留。",
+      "reflectionPrompts": [
+        "我改了什么？",
+        "遇到什么问题，怎样找到线索？",
+        "下次想做什么？"
+      ],
+      "exercises": [
+        {
+          "id": "practice",
+          "title": "动手改造",
+          "instruction": "增加 pick 功能，每次增加一把钥匙；未知命令不能改变背包。",
+          "referenceCode": "bag = {\"key\": 0}\ndef show():\n    print(\"钥匙：\", bag[\"key\"])\ndef collect():\n    bag[\"key\"] += 1\n    print(\"拾取成功\")\nwhile True:\n    command = input(\"pick/show/exit：\")\n    if command == \"exit\":\n        break\n    if command == \"show\":\n        show()\n    elif command == \"pick\":\n        collect()\n    else:\n        print(\"未知命令\")\n",
+          "tests": [
+            {
+              "name": "检查1",
+              "input": [
+                "pick",
+                "pick",
+                "show",
+                "exit"
+              ],
+              "outputContains": [
+                "拾取成功",
+                "钥匙： 2"
+              ],
+              "minDrawings": 0,
+              "expectedFiles": []
+            },
+            {
+              "name": "检查2",
+              "input": [
+                "unknown",
+                "show",
+                "exit"
+              ],
+              "outputContains": [
+                "未知命令",
+                "钥匙： 0"
+              ],
+              "minDrawings": 0,
+              "expectedFiles": []
+            }
+          ]
+        }
+      ],
+      "rubric": [
+        "连续操作正确改变背包",
+        "函数有清楚职责",
+        "未知命令不改坏状态"
+      ],
+      "exampleInput": [
+        "pick",
+        "pick",
+        "show",
+        "exit"
+      ]
+    },
+    {
+      "id": "hidden-number",
+      "number": 33,
+      "title": "隐藏号码：枚举与筛选",
+      "subtitle": "枚举 · 把线索写成条件",
+      "mission": "找出 10–30 中能被 7 整除的号码。",
+      "starterCode": "for number in range(10, 31):\n    if number % 7 == 0:\n        print(\"候选：\", number)\n",
+      "goals": [
+        "枚举",
+        "把线索写成条件"
+      ],
+      "hints": [
+        "把两条线索分开写。",
+        "都满足要用 and。",
+        "组合 number % 7 == 0 与 number >= 20。"
+      ],
+      "previewType": "cover",
+      "version": "python-interest-1.0",
+      "phaseId": "detective",
+      "track": "extension",
+      "prerequisites": [
+        "backpack-adventure"
+      ],
+      "minutes": 50,
+      "explanation": "枚举是逐个尝试候选，再用条件筛掉不合适的。先明确范围和端点，再写条件。它不一定最快，但容易理解、验证，也适合小范围解谜。",
+      "prediction": "range(10,30) 包含 30 吗？",
+      "creation": "给家长出一个有唯一解的号码谜题。",
+      "quickChallenge": "用列表收集候选，再说明为什么有两个解。",
+      "commonErrors": [
+        "漏右端点",
+        "把或误用作且"
+      ],
+      "parentPrompt": "每条线索排除了哪些候选？",
+      "reflectionPrompts": [
+        "我改了什么？",
+        "遇到什么问题，怎样找到线索？",
+        "下次想做什么？"
+      ],
+      "exercises": [
+        {
+          "id": "practice",
+          "title": "动手改造",
+          "instruction": "再加条件，号码至少为 20，只输出 21 和 28。",
+          "referenceCode": "for number in range(10, 31):\n    if number % 7 == 0 and number >= 20:\n        print(\"候选：\", number)\n",
+          "tests": [
+            {
+              "name": "检查1",
+              "input": [],
+              "outputContains": [
+                "候选： 21",
+                "候选： 28"
+              ],
+              "minDrawings": 0,
+              "expectedFiles": []
+            }
+          ]
+        }
+      ],
+      "rubric": [
+        "能解释本课规则",
+        "能完成基础练习并检查结果",
+        "能自己修改一个功能"
+      ],
+      "exampleInput": []
+    },
+    {
+      "id": "word-frequency",
+      "number": 34,
+      "title": "故事用词：字典统计",
+      "subtitle": "频次统计 · get 默认值",
+      "mission": "数清故事里不同道具出现几次。",
+      "starterCode": "words = [\"星\", \"月\", \"星\", \"云\", \"星\"]\ncounts = {}\nfor word in words:\n    counts[word] = counts.get(word, 0) + 1\nprint(\"星：\", counts[\"星\"])\n",
+      "goals": [
+        "频次统计",
+        "get 默认值"
+      ],
+      "hints": [
+        "字典已经完成统计，缺展示所有项。",
+        "遍历 sorted(counts) 得到固定顺序的键。",
+        "对每个 word 输出 f\"{word}：{counts[word]}\"。"
+      ],
+      "previewType": "cover",
+      "version": "python-interest-1.0",
+      "phaseId": "detective",
+      "track": "extension",
+      "prerequisites": [
+        "hidden-number"
+      ],
+      "minutes": 50,
+      "explanation": "计数字典以道具为键、次数为值。第一次出现按 0 处理，再加 1；之后继续增加。sorted 可以让输出顺序固定，便于比较统计结果。",
+      "prediction": "一个词第一次出现，当前次数该从多少开始？",
+      "creation": "统计自己的故事中角色出现次数。",
+      "quickChallenge": "解释列表长度与不同词数量的区别。",
+      "commonErrors": [
+        "每次赋 1 会覆盖旧次数",
+        "字典键不等于所有原始词"
+      ],
+      "parentPrompt": "一次遍历怎样积累次数？",
+      "reflectionPrompts": [
+        "我改了什么？",
+        "遇到什么问题，怎样找到线索？",
+        "下次想做什么？"
+      ],
+      "exercises": [
+        {
+          "id": "practice",
+          "title": "动手改造",
+          "instruction": "按排序后的键输出所有词的次数。",
+          "referenceCode": "words = [\"星\", \"月\", \"星\", \"云\", \"星\"]\ncounts = {}\nfor word in words:\n    counts[word] = counts.get(word, 0) + 1\nfor word in sorted(counts):\n    print(f\"{word}：{counts[word]}\")\n",
+          "tests": [
+            {
+              "name": "检查1",
+              "input": [],
+              "outputContains": [
+                "云：1",
+                "星：3",
+                "月：1"
+              ],
+              "minDrawings": 0,
+              "expectedFiles": []
+            }
+          ]
+        }
+      ],
+      "rubric": [
+        "能解释本课规则",
+        "能完成基础练习并检查结果",
+        "能自己修改一个功能"
+      ],
+      "exampleInput": []
+    },
+    {
+      "id": "text-cipher",
+      "number": 35,
+      "title": "文字密码：编码与回文",
+      "subtitle": "ord/chr · 字符串变换",
+      "mission": "用字符编码制作一个简单密码。",
+      "starterCode": "text = \"ABC\"\nencoded = \"\"\nfor letter in text:\n    encoded += chr(ord(letter) + 1)\nprint(\"密文：\", encoded)\n",
+      "goals": [
+        "ord/chr",
+        "字符串变换"
+      ],
+      "hints": [
+        "恢复需要做相反的变化。",
+        "从 encoded 逐字读取，编码减 1。",
+        "decoded += chr(ord(letter)-1)，最后输出。"
+      ],
+      "previewType": "cover",
+      "version": "python-interest-1.0",
+      "phaseId": "detective",
+      "track": "extension",
+      "prerequisites": [
+        "word-frequency"
+      ],
+      "minutes": 50,
+      "explanation": "ord 给出字符编码，chr 把编码变回字符。这里做教学中的简单位移，不是安全加密。回文可以用 text[::-1] 比较正反，切片步长 -1 表示反向。",
+      "prediction": "chr(ord(\"A\")+1) 是什么？",
+      "creation": "做正反都一样的回文线索游戏。",
+      "quickChallenge": "尝试边界字符，说明位移规则的限制。",
+      "commonErrors": [
+        "ord 接收单个字符",
+        "简单位移不适合保护秘密"
+      ],
+      "parentPrompt": "为什么能恢复原文？",
+      "reflectionPrompts": [
+        "我改了什么？",
+        "遇到什么问题，怎样找到线索？",
+        "下次想做什么？"
+      ],
+      "exercises": [
+        {
+          "id": "practice",
+          "title": "动手改造",
+          "instruction": "再把密文每个字符减 1，恢复 ABC。",
+          "referenceCode": "text = \"ABC\"\nencoded = \"\"\nfor letter in text:\n    encoded += chr(ord(letter) + 1)\nprint(\"密文：\", encoded)\ndecoded = \"\"\nfor letter in encoded:\n    decoded += chr(ord(letter) - 1)\nprint(\"原文：\", decoded)\n",
+          "tests": [
+            {
+              "name": "检查1",
+              "input": [],
+              "outputContains": [
+                "密文： BCD",
+                "原文： ABC"
+              ],
+              "minDrawings": 0,
+              "expectedFiles": []
+            }
+          ]
+        }
+      ],
+      "rubric": [
+        "能解释本课规则",
+        "能完成基础练习并检查结果",
+        "能自己修改一个功能"
+      ],
+      "exampleInput": []
+    },
+    {
+      "id": "clue-sort",
+      "number": 36,
+      "title": "给线索排序",
+      "subtitle": "sorted · key 与排序规则",
+      "mission": "按地点名称长度整理探险清单。",
+      "starterCode": "places = [\"云朵邮局\", \"海\", \"森林\"]\nordered = sorted(places)\nprint(ordered)\n",
+      "goals": [
+        "sorted",
+        "key 与排序规则"
+      ],
+      "hints": [
+        "需要指定比较规则。",
+        "key 可以接收 len 函数。",
+        "sorted(places,key=len)，再遍历输出。"
+      ],
+      "previewType": "cover",
+      "version": "python-interest-1.0",
+      "phaseId": "detective",
+      "track": "extension",
+      "prerequisites": [
+        "text-cipher"
+      ],
+      "minutes": 50,
+      "explanation": "sorted 返回新列表，不修改原列表；key 指定比较依据，如 len。默认从小到大，reverse=True 反向。等长元素保留原先后，能让规则可预测。",
+      "prediction": "按文字长度排序与按字母排序一样吗？",
+      "creation": "按角色能量给字典列表排序。",
+      "quickChallenge": "保持原列表并显示排序前后两个版本。",
+      "commonErrors": [
+        "key 传函数而不是 len(places)",
+        "sort 和 sorted 返回值不同"
+      ],
+      "parentPrompt": "这里的比较依据是什么？",
+      "reflectionPrompts": [
+        "我改了什么？",
+        "遇到什么问题，怎样找到线索？",
+        "下次想做什么？"
+      ],
+      "exercises": [
+        {
+          "id": "practice",
+          "title": "动手改造",
+          "instruction": "按长度从短到长排序并逐项输出。",
+          "referenceCode": "places = [\"云朵邮局\", \"海\", \"森林\"]\nordered = sorted(places, key=len)\nfor place in ordered:\n    print(place)\n",
+          "tests": [
+            {
+              "name": "检查1",
+              "input": [],
+              "outputContains": [
+                "海",
+                "森林",
+                "云朵邮局"
+              ],
+              "minDrawings": 0,
+              "expectedFiles": []
+            }
+          ]
+        }
+      ],
+      "rubric": [
+        "能解释本课规则",
+        "能完成基础练习并检查结果",
+        "能自己修改一个功能"
+      ],
+      "exampleInput": []
+    },
+    {
+      "id": "archive-search",
+      "number": 37,
+      "title": "查找档案：不断缩小范围",
+      "subtitle": "顺序查找与二分体验",
+      "mission": "在已排序编号中寻找档案。",
+      "starterCode": "numbers = [2, 4, 6, 8, 10]\ntarget = int(input(\"档案编号：\"))\nfound = target in numbers\nprint(\"找到：\", found)\n",
+      "goals": [
+        "顺序查找与二分体验"
+      ],
+      "hints": [
+        "先在纸上圈中间值，决定排除哪半边。",
+        "移动边界时排除已比较的 middle。",
+        "小于目标用 left=middle+1，反之 right=middle-1；循环条件 left<=right。"
+      ],
+      "previewType": "cover",
+      "version": "python-interest-1.0",
+      "phaseId": "detective",
+      "track": "extension",
+      "prerequisites": [
+        "clue-sort"
+      ],
+      "minutes": 50,
+      "explanation": "顺序查找逐项检查。二分查找先看中间，排除一半范围；前提是数据有序。维护 left/right，没找到时要允许范围变空，否则可能无法结束。",
+      "prediction": "未排序的档案能直接用二分吗？",
+      "creation": "用卡片模拟二分，兴趣不足可跳过实现。",
+      "quickChallenge": "比较找不到时两种方法检查的次数。",
+      "commonErrors": [
+        "数据必须有序",
+        "边界不推进会死循环"
+      ],
+      "parentPrompt": "让她用卡片演示缩小范围。",
+      "reflectionPrompts": [
+        "我改了什么？",
+        "遇到什么问题，怎样找到线索？",
+        "下次想做什么？"
+      ],
+      "exercises": [
+        {
+          "id": "practice",
+          "title": "动手改造",
+          "instruction": "用二分循环替代 in，保持找到/未找到的结果。",
+          "referenceCode": "numbers = [2, 4, 6, 8, 10]\ntarget = int(input(\"档案编号：\"))\nleft, right = 0, len(numbers) - 1\nfound = False\nwhile left <= right:\n    middle = (left + right) // 2\n    if numbers[middle] == target:\n        found = True\n        break\n    if numbers[middle] < target:\n        left = middle + 1\n    else:\n        right = middle - 1\nprint(\"找到：\", found)\n",
+          "tests": [
+            {
+              "name": "检查1",
+              "input": [
+                "2"
+              ],
+              "outputContains": [
+                "找到： True"
+              ],
+              "minDrawings": 0,
+              "expectedFiles": []
+            },
+            {
+              "name": "检查2",
+              "input": [
+                "10"
+              ],
+              "outputContains": [
+                "找到： True"
+              ],
+              "minDrawings": 0,
+              "expectedFiles": []
+            },
+            {
+              "name": "检查3",
+              "input": [
+                "3"
+              ],
+              "outputContains": [
+                "找到： False"
+              ],
+              "minDrawings": 0,
+              "expectedFiles": []
+            }
+          ]
+        }
+      ],
+      "rubric": [
+        "能解释本课规则",
+        "能完成基础练习并检查结果",
+        "能自己修改一个功能"
+      ],
+      "exampleInput": [
+        "2"
+      ]
+    },
+    {
+      "id": "save-records",
+      "number": 38,
+      "title": "保存记录：虚拟文件与 JSON",
+      "subtitle": "with/open · JSON 保存与读取",
+      "mission": "把角色资料保存成文件，再读回来。",
+      "starterCode": "import json\nrecord = {\"name\": \"阿芽\", \"energy\": 5}\nwith open(\"record.json\", \"w\", encoding=\"utf-8\") as file:\n    json.dump(record, file, ensure_ascii=False)\nprint(\"记录已保存\")\n",
+      "goals": [
+        "with/open",
+        "JSON 保存与读取"
+      ],
+      "hints": [
+        "写和读需要不同模式。",
+        "用 json.load 读回字典。",
+        "with open(...,encoding=\"utf-8\") 后 restored=json.load(file)。"
+      ],
+      "previewType": "cover",
+      "version": "python-interest-1.0",
+      "phaseId": "detective",
+      "track": "extension",
+      "prerequisites": [
+        "archive-search"
+      ],
+      "minutes": 50,
+      "explanation": "课堂文件位于 Python 虚拟工作目录。with 在结束时关闭文件；json.dump 保存结构，json.load 恢复结构。运行后可显式导出，下次导入；不会自动写到本机任意目录。",
+      "prediction": "重启运行器后，没有导入的虚拟文件还在吗？",
+      "creation": "导出文件，修改名字，再导入另一次运行。",
+      "quickChallenge": "观察损坏 JSON 的报错。",
+      "commonErrors": [
+        "w 模式会覆盖虚拟文件",
+        "必须显式导出才在本机保留"
+      ],
+      "parentPrompt": "虚拟文件和本机下载文件有什么区别？",
+      "reflectionPrompts": [
+        "我改了什么？",
+        "遇到什么问题，怎样找到线索？",
+        "下次想做什么？"
+      ],
+      "exercises": [
+        {
+          "id": "practice",
+          "title": "动手改造",
+          "instruction": "读回 record.json，输出“恢复能量：5”。",
+          "referenceCode": "import json\nrecord = {\"name\": \"阿芽\", \"energy\": 5}\nwith open(\"record.json\", \"w\", encoding=\"utf-8\") as file:\n    json.dump(record, file, ensure_ascii=False)\nwith open(\"record.json\", encoding=\"utf-8\") as file:\n    restored = json.load(file)\nprint(\"恢复能量：\", restored[\"energy\"])\n",
+          "tests": [
+            {
+              "name": "检查1",
+              "input": [],
+              "outputContains": [
+                "恢复能量： 5"
+              ],
+              "minDrawings": 0,
+              "expectedFiles": [
+                "record.json"
+              ]
+            }
+          ]
+        }
+      ],
+      "rubric": [
+        "能解释本课规则",
+        "能完成基础练习并检查结果",
+        "能自己修改一个功能"
+      ],
+      "exampleInput": []
+    },
+    {
+      "id": "data-chart",
+      "number": 39,
+      "title": "画调查结果：数据变图形",
+      "subtitle": "数值映射 · 柱状图",
+      "mission": "把三种道具数量变成图形，比较差异。",
+      "starterCode": "from xuya import draw\ncounts = [2, 5, 3]\nfor index, count in enumerate(counts):\n    height = count * 20\n    draw.rectangle(40 + index * 80, 220 - height, 40, height, \"#9ad9bb\")\nprint(\"柱数：\", len(counts))\n",
+      "goals": [
+        "数值映射",
+        "柱状图"
+      ],
+      "hints": [
+        "每个数值对应一根柱和一条文字。",
+        "在循环里加 draw.text。",
+        "同一个 x、固定标签 y=240，文字内容为 count。"
+      ],
+      "previewType": "drawing",
+      "version": "python-interest-1.0",
+      "phaseId": "detective",
+      "track": "extension",
+      "prerequisites": [
+        "save-records"
+      ],
+      "minutes": 50,
+      "explanation": "把数量乘比例变成柱高，横坐标按编号排布。柱子从同一底部向上长，所以 y = 底部 - 高度。图形要与真实数值对应，标签帮助解释。",
+      "prediction": "数量翻倍后，柱高应该怎样变化？",
+      "creation": "用自己的阅读或绘画调查数据作图。",
+      "quickChallenge": "如果最大数值很大，如何调整比例？",
+      "commonErrors": [
+        "向上画需要减高度",
+        "标签位置不应挤到一起"
+      ],
+      "parentPrompt": "能从图中读出哪些信息？",
+      "reflectionPrompts": [
+        "我改了什么？",
+        "遇到什么问题，怎样找到线索？",
+        "下次想做什么？"
+      ],
+      "exercises": [
+        {
+          "id": "practice",
+          "title": "动手改造",
+          "instruction": "每根柱增加数值标签，至少 6 条画笔指令。",
+          "referenceCode": "from xuya import draw\ncounts = [2, 5, 3]\nfor index, count in enumerate(counts):\n    height = count * 20\n    x = 40 + index * 80\n    draw.rectangle(x, 220 - height, 40, height, \"#9ad9bb\")\n    draw.text(x, 240, count, \"#493964\")\nprint(\"柱数：\", len(counts))\n",
+          "tests": [
+            {
+              "name": "检查1",
+              "input": [],
+              "outputContains": [
+                "柱数： 3"
+              ],
+              "minDrawings": 6,
+              "expectedFiles": []
+            }
+          ]
+        }
+      ],
+      "rubric": [
+        "能解释本课规则",
+        "能完成基础练习并检查结果",
+        "能自己修改一个功能"
+      ],
+      "exampleInput": []
+    },
+    {
+      "id": "detective-atlas",
+      "number": 40,
+      "title": "项目五：数据线索图册",
+      "subtitle": "统计、文件和绘图整合",
+      "mission": "整理线索次数，保存资料并画调查图。",
+      "starterCode": "clues = [\"星\", \"月\", \"星\", \"云\"]\ncounts = {}\nfor clue in clues:\n    counts[clue] = counts.get(clue, 0) + 1\nprint(counts)\n# 添加保存与展示\n",
+      "goals": [
+        "统计、文件和绘图整合"
+      ],
+      "hints": [
+        "先统计，再单独检查保存。",
+        "图表遍历统计字典的键。",
+        "sorted(counts) 固定展示顺序，数量决定柱高，dump 保存同一字典。"
+      ],
+      "previewType": "drawing",
+      "version": "python-interest-1.0",
+      "phaseId": "detective",
+      "track": "extension",
+      "prerequisites": [
+        "data-chart"
+      ],
+      "minutes": 50,
+      "explanation": "先从原始线索统计，再把统计用于展示与保存。共用同一份数据，可以避免图表和文件不一致。逐步运行三个小任务，比一次写完整项目容易调试。",
+      "prediction": "文件和图表应该由哪一份数据生成？",
+      "creation": "调查自己的故事角色，写两条发现。",
+      "quickChallenge": "新增线索后，检查文件和图表是否一起更新。",
+      "commonErrors": [
+        "手写图表数值会失去关联",
+        "保存前应完成统计"
+      ],
+      "parentPrompt": "让她从图表提出两条结论。",
+      "reflectionPrompts": [
+        "我改了什么？",
+        "遇到什么问题，怎样找到线索？",
+        "下次想做什么？"
+      ],
+      "exercises": [
+        {
+          "id": "practice",
+          "title": "动手改造",
+          "instruction": "保存 atlas.json，输出星的次数，并为三种线索各画柱和标签。",
+          "referenceCode": "import json\nfrom xuya import draw\nclues = [\"星\", \"月\", \"星\", \"云\"]\ncounts = {}\nfor clue in clues:\n    counts[clue] = counts.get(clue, 0) + 1\nwith open(\"atlas.json\", \"w\", encoding=\"utf-8\") as file:\n    json.dump(counts, file, ensure_ascii=False)\nfor index, clue in enumerate(sorted(counts)):\n    height = counts[clue] * 40\n    x = 40 + index * 80\n    draw.rectangle(x, 220 - height, 40, height, \"#c7bbff\")\n    draw.text(x, 245, clue, \"#493964\")\nprint(\"星的次数：\", counts[\"星\"])\n",
+          "tests": [
+            {
+              "name": "检查1",
+              "input": [],
+              "outputContains": [
+                "星的次数： 2"
+              ],
+              "minDrawings": 6,
+              "expectedFiles": [
+                "atlas.json"
+              ]
+            }
+          ]
+        }
+      ],
+      "rubric": [
+        "统计与原始资料一致",
+        "文件和图表来自同一数据",
+        "能说明调查结论"
+      ],
+      "exampleInput": []
+    },
+    {
+      "id": "puzzle-rules",
+      "number": 41,
+      "title": "把谜题变成规则",
+      "subtitle": "输入输出约定 · 条件翻译",
+      "mission": "把“至少三封信才能领取徽章”写成别人能检验的程序。",
+      "starterCode": "letters = int(input(\"信件数：\"))\nprint(\"信件：\", letters)\n# 判断是否达标\n",
+      "goals": [
+        "输入输出约定",
+        "条件翻译"
+      ],
+      "hints": [
+        "先用自己的话解释“至少”。",
+        "包含门槛的符号是 >=。",
+        "if letters >= 3 输出领取，否则输出继续。"
+      ],
+      "previewType": "cover",
+      "version": "python-interest-1.0",
+      "phaseId": "studio",
+      "track": "extension",
+      "prerequisites": [
+        "detective-atlas"
+      ],
+      "minutes": 50,
+      "explanation": "先列输入的含义、合法范围和输出规则，再写代码。样例帮助理解，却不能只处理样例。把低于、等于、高于门槛分别测试，能验证自然语言翻译是否准确。",
+      "prediction": "恰好三封信应该领取徽章吗？",
+      "creation": "设计自己的谜题，明确输入范围。",
+      "quickChallenge": "让家长只读规则，猜测试答案。",
+      "commonErrors": [
+        "只处理样例不是完整规则",
+        "门槛处容易漏掉等于"
+      ],
+      "parentPrompt": "规则是否足够让别人判断结果？",
+      "reflectionPrompts": [
+        "我改了什么？",
+        "遇到什么问题，怎样找到线索？",
+        "下次想做什么？"
+      ],
+      "exercises": [
+        {
+          "id": "practice",
+          "title": "动手改造",
+          "instruction": "至少 3 封输出“领取徽章”，否则“继续收集”。",
+          "referenceCode": "letters = int(input(\"信件数：\"))\nif letters >= 3:\n    print(\"领取徽章\")\nelse:\n    print(\"继续收集\")\n",
+          "tests": [
+            {
+              "name": "检查1",
+              "input": [
+                "2"
+              ],
+              "outputContains": [
+                "继续收集"
+              ],
+              "minDrawings": 0,
+              "expectedFiles": []
+            },
+            {
+              "name": "检查2",
+              "input": [
+                "3"
+              ],
+              "outputContains": [
+                "领取徽章"
+              ],
+              "minDrawings": 0,
+              "expectedFiles": []
+            },
+            {
+              "name": "检查3",
+              "input": [
+                "8"
+              ],
+              "outputContains": [
+                "领取徽章"
+              ],
+              "minDrawings": 0,
+              "expectedFiles": []
+            }
+          ]
+        }
+      ],
+      "rubric": [
+        "能解释本课规则",
+        "能完成基础练习并检查结果",
+        "能自己修改一个功能"
+      ],
+      "exampleInput": [
+        "2"
+      ]
+    },
+    {
+      "id": "town-events",
+      "number": 42,
+      "title": "小镇事件模拟",
+      "subtitle": "事件序列 · 状态变化",
+      "mission": "一天中的收入和支出按顺序改变小镇能量。",
+      "starterCode": "events = [5, -3, 2]\ntown = {\"energy\": 10}\nfor change in events:\n    town[\"energy\"] += change\nprint(\"最终能量：\", town[\"energy\"])\n",
+      "goals": [
+        "事件序列",
+        "状态变化"
+      ],
+      "hints": [
+        "更新后立刻展示该步状态。",
+        "输出放在循环内。",
+        "每轮 town[\"energy\"] += change 后 print 当前值。"
+      ],
+      "previewType": "cover",
+      "version": "python-interest-1.0",
+      "phaseId": "studio",
+      "track": "extension",
+      "prerequisites": [
+        "puzzle-rules"
+      ],
+      "minutes": 50,
+      "explanation": "模拟按给定事件顺序执行规则。记录每步状态比只看最终值更容易检查。用列表保存事件、字典保存状态；先明确事件是增加量还是最终值。",
+      "prediction": "先加 5 再减 3，与只保留最后一个事件相同吗？",
+      "creation": "加入不同角色和事件类型。",
+      "quickChallenge": "给事件加不能低于零的规则，检查顺序是否影响结局。",
+      "commonErrors": [
+        "把增量当最终值",
+        "循环外输出看不到过程"
+      ],
+      "parentPrompt": "选一个事件解释它怎样改状态。",
+      "reflectionPrompts": [
+        "我改了什么？",
+        "遇到什么问题，怎样找到线索？",
+        "下次想做什么？"
+      ],
+      "exercises": [
+        {
+          "id": "practice",
+          "title": "动手改造",
+          "instruction": "每轮输出当前能量，过程是 15、12、14。",
+          "referenceCode": "events = [5, -3, 2]\ntown = {\"energy\": 10}\nfor change in events:\n    town[\"energy\"] += change\n    print(\"步骤能量：\", town[\"energy\"])\nprint(\"最终能量：\", town[\"energy\"])\n",
+          "tests": [
+            {
+              "name": "检查1",
+              "input": [],
+              "outputContains": [
+                "步骤能量： 15",
+                "步骤能量： 12",
+                "步骤能量： 14",
+                "最终能量： 14"
+              ],
+              "minDrawings": 0,
+              "expectedFiles": []
+            }
+          ]
+        }
+      ],
+      "rubric": [
+        "能解释本课规则",
+        "能完成基础练习并检查结果",
+        "能自己修改一个功能"
+      ],
+      "exampleInput": []
+    },
+    {
+      "id": "compare-solutions",
+      "number": 43,
+      "title": "比较两种解法",
+      "subtitle": "操作计数 · 改进但保持结果",
+      "mission": "比较逐项查找和遇到目标就停的查找。",
+      "starterCode": "numbers = [2, 4, 6, 8, 10]\ntarget = 2\nchecks = 0\nfor number in numbers:\n    checks += 1\n    if number == target:\n        print(\"找到目标\")\nprint(\"检查次数：\", checks)\n",
+      "goals": [
+        "操作计数",
+        "改进但保持结果"
+      ],
+      "hints": [
+        "后面的比较已经不影响答案。",
+        "找到后用 break。",
+        "在找到目标的 if 内输出后加 break。"
+      ],
+      "previewType": "cover",
+      "version": "python-interest-1.0",
+      "phaseId": "studio",
+      "track": "extension",
+      "prerequisites": [
+        "town-events"
+      ],
+      "minutes": 50,
+      "explanation": "先保证答案正确，再比较检查次数。不同输入下效率可能不同，目标在开头与末尾很不一样。这次只数具体操作，不要求背复杂度公式。",
+      "prediction": "目标在第一项时，提前退出能少检查几次？",
+      "creation": "比较开头、末尾、不存在三种目标。",
+      "quickChallenge": "先说结果为什么相同，再讨论检查次数。",
+      "commonErrors": [
+        "计数不是耗时的完全替代",
+        "优化不能改变问题规则"
+      ],
+      "parentPrompt": "什么时候这个改进帮助最大？",
+      "reflectionPrompts": [
+        "我改了什么？",
+        "遇到什么问题，怎样找到线索？",
+        "下次想做什么？"
+      ],
+      "exercises": [
+        {
+          "id": "practice",
+          "title": "动手改造",
+          "instruction": "找到后提前退出，目标在第一项时检查 1 次。",
+          "referenceCode": "numbers = [2, 4, 6, 8, 10]\ntarget = 2\nchecks = 0\nfor number in numbers:\n    checks += 1\n    if number == target:\n        print(\"找到目标\")\n        break\nprint(\"检查次数：\", checks)\n",
+          "tests": [
+            {
+              "name": "检查1",
+              "input": [],
+              "outputContains": [
+                "找到目标",
+                "检查次数： 1"
+              ],
+              "minDrawings": 0,
+              "expectedFiles": []
+            }
+          ]
+        }
+      ],
+      "rubric": [
+        "能解释本课规则",
+        "能完成基础练习并检查结果",
+        "能自己修改一个功能"
+      ],
+      "exampleInput": []
+    },
+    {
+      "id": "program-checks",
+      "number": 44,
+      "title": "给程序做检查",
+      "subtitle": "测试用例 · assert 和边界",
+      "mission": "在修改函数前留下检查，发现后续改动是否破坏旧功能。",
+      "starterCode": "def reward(tasks):\n    return tasks * 3 + 2\nassert reward(2) == 8\nprint(\"一项检查通过\")\n",
+      "goals": [
+        "测试用例",
+        "assert 和边界"
+      ],
+      "hints": [
+        "先算期待结果，再写判断。",
+        "assert 后面是比较，不是赋值。",
+        "增加 assert reward(0) == 2 和 assert reward(1) == 5。"
+      ],
+      "previewType": "cover",
+      "version": "python-interest-1.0",
+      "phaseId": "studio",
+      "track": "extension",
+      "prerequisites": [
+        "compare-solutions"
+      ],
+      "minutes": 50,
+      "explanation": "测试由输入和期待结果组成。assert 条件不成立会报错，是开发者的检查工具。选择正常、零值和边界案例比重复相同输入更有价值，测试通过也不证明所有情况正确。",
+      "prediction": "只测试一个正数能发现零值问题吗？",
+      "creation": "给自己的道具函数添加检查。",
+      "quickChallenge": "故意改坏公式，看哪项先失败。",
+      "commonErrors": [
+        "期待结果也需要核对",
+        "通过有限用例不等于所有情况正确"
+      ],
+      "parentPrompt": "每条测试针对哪种风险？",
+      "reflectionPrompts": [
+        "我改了什么？",
+        "遇到什么问题，怎样找到线索？",
+        "下次想做什么？"
+      ],
+      "exercises": [
+        {
+          "id": "practice",
+          "title": "动手改造",
+          "instruction": "增加 reward(0)==2 和 reward(1)==5 两项检查，输出“三项检查通过”。",
+          "referenceCode": "def reward(tasks):\n    return tasks * 3 + 2\nassert reward(2) == 8\nassert reward(0) == 2\nassert reward(1) == 5\nprint(\"三项检查通过\")\n",
+          "tests": [
+            {
+              "name": "检查1",
+              "input": [],
+              "outputContains": [
+                "三项检查通过"
+              ],
+              "minDrawings": 0,
+              "expectedFiles": []
+            }
+          ]
+        }
+      ],
+      "rubric": [
+        "能解释本课规则",
+        "能完成基础练习并检查结果",
+        "能自己修改一个功能"
+      ],
+      "exampleInput": []
+    },
+    {
+      "id": "repair-project",
+      "number": 45,
+      "title": "修复作品：找到第一处偏差",
+      "subtitle": "综合调试 · 回归检查",
+      "mission": "背包总数不正确，用逐步跟踪修复。",
+      "starterCode": "items = [1, 2, 3]\ntotal = 0\nfor item in items:\n    total = 0\n    total += item\nprint(\"总数：\", total)\n",
+      "goals": [
+        "综合调试",
+        "回归检查"
+      ],
+      "hints": [
+        "列出每轮 total 的变化。",
+        "循环里面不应重新清零。",
+        "删除循环内部 total = 0，保留循环外初始化。"
+      ],
+      "previewType": "cover",
+      "version": "python-interest-1.0",
+      "phaseId": "studio",
+      "track": "extension",
+      "prerequisites": [
+        "program-checks"
+      ],
+      "minutes": 50,
+      "explanation": "先复现错误，再观察第一次偏离期待的位置。循环内初始化会反复丢掉已累积数据。修复后用不同输入检查，避免只让这一次结果看起来正确。",
+      "prediction": "为什么下面输出 3 而不是 6？",
+      "creation": "再修一个重复计数或丢失状态的问题。",
+      "quickChallenge": "用空列表和只有一项的列表做回归检查。",
+      "commonErrors": [
+        "直接输出 6 只是遮住问题",
+        "同时改很多处会难以归因"
+      ],
+      "parentPrompt": "第一处偏差在哪一轮？",
+      "reflectionPrompts": [
+        "我改了什么？",
+        "遇到什么问题，怎样找到线索？",
+        "下次想做什么？"
+      ],
+      "exercises": [
+        {
+          "id": "practice",
+          "title": "动手改造",
+          "instruction": "修复循环初始化问题，输出 6，解释改动位置。",
+          "referenceCode": "items = [1, 2, 3]\ntotal = 0\nfor item in items:\n    total += item\nprint(\"总数：\", total)\n",
+          "tests": [
+            {
+              "name": "检查1",
+              "input": [],
+              "outputContains": [
+                "总数： 6"
+              ],
+              "minDrawings": 0,
+              "expectedFiles": []
+            }
+          ]
+        }
+      ],
+      "rubric": [
+        "能解释本课规则",
+        "能完成基础练习并检查结果",
+        "能自己修改一个功能"
+      ],
+      "exampleInput": []
+    },
+    {
+      "id": "puzzle-challenge",
+      "number": 46,
+      "title": "自选解谜：按自己的节奏",
+      "subtitle": "综合条件与函数 · 自主尝试和复盘",
+      "mission": "选择一个能量门谜题，先尝试，再决定需要多少提示。没有倒计时。",
+      "starterCode": "def door(energy):\n    return \"待判断\"\nenergy = int(input(\"能量：\"))\nprint(door(energy))\n",
+      "goals": [
+        "综合条件与函数",
+        "自主尝试和复盘"
+      ],
+      "hints": [
+        "先列三个区间的边界。",
+        "按能量从小到大判断，每个分支 return。",
+        "先判断 <5，再判断 <10，最后处理其余情况。"
+      ],
+      "previewType": "cover",
+      "version": "python-interest-1.0",
+      "phaseId": "studio",
+      "track": "extension",
+      "prerequisites": [
+        "repair-project"
+      ],
+      "minutes": 50,
+      "explanation": "独立尝试不是禁止求助。先写出小步骤，运行一个最小版本，卡住再打开提示。记录用了什么帮助，可以让下一次练习更合适。",
+      "prediction": "输入 4 时没有门能开，程序该怎样说明？",
+      "creation": "也可自选文字密码或图案规律谜题，展示你的思路。",
+      "quickChallenge": "不看答案，补写 9、10 的测试。",
+      "commonErrors": [
+        "边界漏掉等于",
+        "函数忘记返回结果"
+      ],
+      "parentPrompt": "问她最想继续解决哪个问题。",
+      "reflectionPrompts": [
+        "我改了什么？",
+        "遇到什么问题，怎样找到线索？",
+        "下次想做什么？"
+      ],
+      "exercises": [
+        {
+          "id": "practice",
+          "title": "动手改造",
+          "instruction": "小于5返回“暂未开启”，5–9返回“花园门”，至少10返回“星空门”。",
+          "referenceCode": "def door(energy):\n    if energy < 5:\n        return \"暂未开启\"\n    if energy < 10:\n        return \"花园门\"\n    return \"星空门\"\nenergy = int(input(\"能量：\"))\nprint(door(energy))\n",
+          "tests": [
+            {
+              "name": "检查1",
+              "input": [
+                "4"
+              ],
+              "outputContains": [
+                "暂未开启"
+              ],
+              "minDrawings": 0,
+              "expectedFiles": []
+            },
+            {
+              "name": "检查2",
+              "input": [
+                "5"
+              ],
+              "outputContains": [
+                "花园门"
+              ],
+              "minDrawings": 0,
+              "expectedFiles": []
+            },
+            {
+              "name": "检查3",
+              "input": [
+                "10"
+              ],
+              "outputContains": [
+                "星空门"
+              ],
+              "minDrawings": 0,
+              "expectedFiles": []
+            }
+          ]
+        }
+      ],
+      "rubric": [
+        "能解释本课规则",
+        "能完成基础练习并检查结果",
+        "能自己修改一个功能"
+      ],
+      "exampleInput": [
+        "4"
+      ]
+    },
+    {
+      "id": "project-design",
+      "number": 47,
+      "title": "设计个人项目：先做最小版本",
+      "subtitle": "需求和流程 · 函数拆分与测试计划",
+      "mission": "计划一个故事冒险，把愿望拆成可完成的小任务。",
+      "starterCode": "def ending(route):\n    return \"路线待设计\"\nroute = input(\"garden/sea：\")\nprint(ending(route))\n",
+      "goals": [
+        "需求和流程",
+        "函数拆分与测试计划"
+      ],
+      "hints": [
+        "先列输入和期待结果表。",
+        "把路线判断放进 ending 函数。",
+        "两个已知分支分别返回结局，最后统一处理未知路线。"
+      ],
+      "previewType": "cover",
+      "version": "python-interest-1.0",
+      "phaseId": "studio",
+      "track": "extension",
+      "prerequisites": [
+        "puzzle-challenge"
+      ],
+      "minutes": 50,
+      "explanation": "先写一句“玩家输入什么，程序做什么”，再画流程。先完成一个可玩的路线，比同时开十个功能更容易成功。每个函数负责一项工作，测试计划包含未知输入和退出。",
+      "prediction": "先做一条可运行路线，还是先写十个未完成功能？",
+      "creation": "画项目流程，列三个功能和三个测试，先实现一个。",
+      "quickChallenge": "说明如果删除一个功能，最小作品是否还能游玩。",
+      "commonErrors": [
+        "目标过大容易失去进展",
+        "设计与代码要能对应"
+      ],
+      "parentPrompt": "最小可玩的版本是什么？",
+      "reflectionPrompts": [
+        "我改了什么？",
+        "遇到什么问题，怎样找到线索？",
+        "下次想做什么？"
+      ],
+      "exercises": [
+        {
+          "id": "practice",
+          "title": "动手改造",
+          "instruction": "完成 garden、sea 两个结局，未知路线返回“请重新选择”。",
+          "referenceCode": "def ending(route):\n    if route == \"garden\":\n        return \"花园结局\"\n    if route == \"sea\":\n        return \"海边结局\"\n    return \"请重新选择\"\nroute = input(\"garden/sea：\")\nprint(ending(route))\n",
+          "tests": [
+            {
+              "name": "检查1",
+              "input": [
+                "garden"
+              ],
+              "outputContains": [
+                "花园结局"
+              ],
+              "minDrawings": 0,
+              "expectedFiles": []
+            },
+            {
+              "name": "检查2",
+              "input": [
+                "sea"
+              ],
+              "outputContains": [
+                "海边结局"
+              ],
+              "minDrawings": 0,
+              "expectedFiles": []
+            },
+            {
+              "name": "检查3",
+              "input": [
+                "unknown"
+              ],
+              "outputContains": [
+                "请重新选择"
+              ],
+              "minDrawings": 0,
+              "expectedFiles": []
+            }
+          ]
+        }
+      ],
+      "rubric": [
+        "能解释本课规则",
+        "能完成基础练习并检查结果",
+        "能自己修改一个功能"
+      ],
+      "exampleInput": [
+        "garden"
+      ]
+    },
+    {
+      "id": "final-showcase",
+      "number": 48,
+      "title": "项目六：完成、存档与展示",
+      "subtitle": "独立项目整合 · 状态、文件与测试",
+      "mission": "做一个可以连续探索、保存和恢复的故事冒险，再向家人介绍。",
+      "starterCode": "import json, os\nstate = {\"visits\": 0}\nif os.path.exists(\"story-save.json\"):\n    with open(\"story-save.json\", encoding=\"utf-8\") as file:\n        state = json.load(file)\nprint(\"恢复次数：\", state[\"visits\"])\n# 完成探索与存档\n",
+      "goals": [
+        "独立项目整合",
+        "状态、文件与测试"
+      ],
+      "hints": [
+        "先实现探索，再实现保存，最后测试导入恢复。",
+        "把路线处理封装为函数，只对有效路线更新次数。",
+        "退出循环后 json.dump(state,file)，运行结束点击导出，下次导入后读 json.load。"
+      ],
+      "previewType": "cover",
+      "version": "python-interest-1.0",
+      "phaseId": "studio",
+      "track": "extension",
+      "prerequisites": [
+        "project-design"
+      ],
+      "minutes": 50,
+      "explanation": "运行器每次重建，虚拟文件不会自动永久保存。程序可把状态写入 JSON，界面导出到本机，下一次显式导入并运行时恢复。展示时说清规则、一次调试和一次自己的改动。",
+      "prediction": "只有程序写入虚拟文件，没有导出，下次启动能恢复吗？",
+      "creation": "也可以做绘画生成器或另一种小游戏，保留设计、测试和展示过程。",
+      "quickChallenge": "导出存档，再导入另一次运行，确认次数从旧值继续。",
+      "commonErrors": [
+        "虚拟保存不等于已经导出",
+        "不合法存档要提供恢复方式"
+      ],
+      "parentPrompt": "让她解释一个函数、一次错误和一个原创选择。",
+      "reflectionPrompts": [
+        "我改了什么？",
+        "遇到什么问题，怎样找到线索？",
+        "下次想做什么？"
+      ],
+      "exercises": [
+        {
+          "id": "practice",
+          "title": "动手改造",
+          "instruction": "支持 garden/sea 探索，每次有效探索加 1；exit 后保存 story-save.json，输出总次数。",
+          "referenceCode": "import json, os\nstate = {\"visits\": 0}\nif os.path.exists(\"story-save.json\"):\n    try:\n        with open(\"story-save.json\", encoding=\"utf-8\") as file:\n            loaded = json.load(file)\n        visits = loaded.get(\"visits\")\n        if isinstance(visits, int) and 0 <= visits <= 100000:\n            state[\"visits\"] = visits\n        else:\n            print(\"存档内容不合规则，开始新故事\")\n    except (ValueError, AttributeError):\n        print(\"存档无法读取，开始新故事\")\nprint(\"恢复次数：\", state[\"visits\"])\ndef explore(route):\n    if route == \"garden\":\n        return \"花园结局\"\n    if route == \"sea\":\n        return \"海边结局\"\n    return None\nwhile True:\n    route = input(\"garden/sea，exit退出：\")\n    if route == \"exit\":\n        break\n    result = explore(route)\n    if result is None:\n        print(\"请重新选择\")\n        continue\n    state[\"visits\"] += 1\n    print(result)\nwith open(\"story-save.json\", \"w\", encoding=\"utf-8\") as file:\n    json.dump(state, file, ensure_ascii=False)\nprint(\"总次数：\", state[\"visits\"])\nprint(\"请导出存档，下次可以导入恢复\")\n",
+          "tests": [
+            {
+              "name": "检查1",
+              "input": [
+                "garden",
+                "sea",
+                "exit"
+              ],
+              "outputContains": [
+                "恢复次数： 0",
+                "花园结局",
+                "海边结局",
+                "总次数： 2"
+              ],
+              "minDrawings": 0,
+              "expectedFiles": [
+                "story-save.json"
+              ]
+            },
+            {
+              "name": "检查2",
+              "input": [
+                "unknown",
+                "exit"
+              ],
+              "outputContains": [
+                "请重新选择",
+                "总次数： 0"
+              ],
+              "minDrawings": 0,
+              "expectedFiles": [
+                "story-save.json"
+              ]
+            }
+          ]
+        }
+      ],
+      "rubric": [
+        "作品有清楚输入和输出",
+        "能处理未知输入并退出",
+        "能导出、导入恢复状态",
+        "能解释自己的修改和测试"
+      ],
+      "exampleInput": [
+        "garden",
+        "sea",
+        "exit"
+      ]
+    },
+    {
+      "id": "drawing-lab",
+      "number": 0,
+      "title": "画笔试验场",
+      "subtitle": "自由探索",
+      "mission": "为主角设计徽章，自己安排位置和大小。",
+      "starterCode": "from xuya import draw\ndraw.circle(160,130,65,\"#c7bbff\")\ndraw.text(95,235,\"你好，叙芽岛\",\"#493964\")\nprint(\"我的第一枚岛屿徽章\")\n",
+      "goals": [
+        "坐标和参数",
+        "圆、矩形和文字"
+      ],
+      "hints": [
+        "眼睛要在圆心两侧。",
+        "两个 y 相同，x 分别比 160 小和大。",
+        "增加圆心 (140,120) 和 (180,120)、半径 7 的圆。"
+      ],
+      "previewType": "drawing",
+      "version": "python-interest-1.0",
+      "phaseId": "story",
+      "track": "core",
+      "prerequisites": [],
+      "minutes": 50,
+      "explanation": "画布左上角为起点，x 向右、y 向下增加。circle 接收圆心、半径和颜色。xuya.draw 是教学模块，不是桌面 turtle。先改一个参数，再观察，能分清每个数字的作用。",
+      "prediction": "只增加圆心 x，徽章往哪里移动？",
+      "creation": "加背景矩形和自己的符号。",
+      "quickChallenge": "把眼睛大小放入变量，让两只一起改变。",
+      "commonErrors": [
+        "颜色使用 # 加六位十六进制数",
+        "坐标和半径应为数字"
+      ],
+      "parentPrompt": "x、y 和半径各管什么？",
+      "reflectionPrompts": [
+        "我改了什么？",
+        "遇到什么问题，怎样找到线索？",
+        "下次想做什么？"
+      ],
+      "exercises": [
+        {
+          "id": "practice",
+          "title": "动手改造",
+          "instruction": "增加两只眼睛，使图案至少有 3 个圆和 1 段文字。",
+          "referenceCode": "from xuya import draw\ndraw.circle(160, 130, 60, \"#c7bbff\")\ndraw.circle(140, 120, 7, \"#493964\")\ndraw.circle(180, 120, 7, \"#493964\")\ndraw.text(100, 230, \"故事徽章\", \"#493964\")\nprint(\"徽章准备好了\")\n",
+          "tests": [
+            {
+              "name": "检查1",
+              "input": [],
+              "outputContains": [
+                "徽章准备好了"
+              ],
+              "minDrawings": 4,
+              "expectedFiles": []
+            }
+          ]
+        }
+      ],
+      "rubric": [
+        "能解释本课规则",
+        "能完成基础练习并检查结果",
+        "能自己修改一个功能"
+      ],
+      "exampleInput": []
+    }
+  ]
+}

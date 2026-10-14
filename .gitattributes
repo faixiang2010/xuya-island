@@ -1,0 +1,15 @@
+# 统一文本换行：避免 Windows 检出为 CRLF 导致 prettier（endOfLine=lf）校验失败。
+# 同时保证 CI 与本地一致，脚本、配置、源码全部使用 LF。
+* text=auto eol=lf
+
+# 明确声明二进制，避免被当作文本改动。
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.exe binary
+*.dll binary
+*.zip binary
+*.jar binary
+*.pfx binary

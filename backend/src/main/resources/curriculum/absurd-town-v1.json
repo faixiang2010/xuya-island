@@ -1,0 +1,60 @@
+{
+  "version": "absurd-town-1.0",
+  "chapters": [
+    {"id":"milk-tea-opening","title":"奶茶店开业即停业","description":"离谱事务所第一次出勤：一杯奶茶为什么能淹没整条街？"}
+  ],
+  "episodes": [
+    {
+      "id":"town-cup-order","number":1,"chapterId":"milk-tea-opening",
+      "title":"防漏测试：一滴都没进去","subtitle":"让卜卜真的倒进一杯奶茶","hook":"卜卜先盖杯盖，再往杯子里倒奶。整张桌子湿了，它却宣布测试成功。",
+      "mission":"调换两行动作，让奶进入杯中，再盖好杯盖。观察桌面和杯子的变化。","concept":"程序按照从上到下的顺序执行；相同动作换个顺序，会改变结果。",
+      "starterCode":"from xuya.stage import cup, lid, pour, say\n\ncup()\nlid()\npour(1)\nsay(\"防漏测试成功，一滴都没进去。\")\n",
+      "referenceCode":"from xuya.stage import cup, lid, pour, say\n\ncup()\npour(1)\nlid()\nsay(\"奶终于进杯子了！桌子表示感谢。\")\n",
+      "hints":["先运行看看：奶最后在杯子里，还是桌上？","Python 从上往下读。盖住杯子以后，pour(1) 还能倒进去吗？","让 cup() 后先执行 pour(1)，再执行 lid()。试完用自己的话解释为什么。"],
+      "prediction":"同样是杯子、盖子和倒奶，哪两个动作交换后会改变结果？先想一下再运行。",
+      "remixes":[{"title":"超大杯挑战","description":"改成 pour(2)，保持桌上没有洒奶。观察杯中数量变化，给新杯型起名。"},{"title":"机器人坏点子","description":"故意把 lid() 放回倒奶前，再增加一次 pour(1)。设计一句机器人给这场失败找的离谱借口。"}],
+      "transfer":"礼物装盒：先封盒再放礼物会怎样？用三句话写出正确顺序，并找一个生活里同样的例子。",
+      "dialogue":[{"speaker":"咕噜","text":"开业第一杯，怎么成了桌子的奶茶？"},{"speaker":"卜卜","text":"防漏测试成功，一滴都没进去。"},{"speaker":"小奇","text":"它每个动作都做了。我们先查查：是不是动作排错了队？"},{"speaker":"咕噜","text":"修好了就收下这张订单。等等，落款为什么是第零号？"}],
+      "exampleInput":[],"scene":"milk-tea","checks":[{"name":"奶进杯、桌面干燥、最后盖好","input":[],"expectedState":{"filled":1,"spilled":0,"cupOpen":false}}],"minutes":25
+    },
+    {
+      "id":"town-pearl-mountain","number":2,"chapterId":"milk-tea-opening",
+      "title":"三颗珍珠，还是三百颗？","subtitle":"珍珠外卖已经送到屋顶了","hook":"订单只要三颗珍珠，卜卜却搬来了三百颗：今天的招牌，是爬山奶茶。",
+      "mission":"找到决定珍珠数量的变量，把这杯饮料改成三颗珍珠。再试自己的数量，观察小镇发生什么。","concept":"变量给一个值起名字；后面使用这个名字的动作会取出它当前的值。",
+      "starterCode":"from xuya.stage import cup, pour, pearls, lid, say\n\npearl_count = 300\ncup()\npour(1)\npearls(pearl_count)\nlid()\nsay(\"今天喝奶茶，明天考登山证。\")\n",
+      "referenceCode":"from xuya.stage import cup, pour, pearls, lid, say\n\npearl_count = 3\ncup()\npour(1)\npearls(pearl_count)\nlid()\nsay(\"三颗到齐，屋顶终于不用送外卖了。\")\n",
+      "hints":["先看看舞台上的珍珠数量。哪个名字像是控制这座山的开关？","pearl_count = 300 把 300 放进 pearl_count；pearls(pearl_count) 使用盒子里的数。","把 pearl_count 的值改为 3，不用改 pearls(pearl_count)。再试 0 和 12，比较场景。"],
+      "prediction":"只改 pearl_count，不碰 pearls(pearl_count)，珍珠数量会变吗？你准备先试哪个数？",
+      "remixes":[{"title":"无珠奶茶研究所","description":"让珍珠数量为 0，给怕噎住的怪兽做无珠奶茶，改一句欢迎语。"},{"title":"节日珍珠挑战","description":"做 12 颗珍珠的节日款，杯中奶改成 2 份。舞台会显示真实数量，大数量只抽样画出珍珠。"}],
+      "transfer":"为两个顾客做不同数量：先给 pearl_count 一个值并调用 pearls，再换一个值重新调用。为什么第二次会不同？",
+      "dialogue":[{"speaker":"咕噜","text":"我写的是三颗，怎么大家在我的珍珠上搭帐篷？"},{"speaker":"卜卜","text":"已为订单升级地形服务。奶茶附送一座山。"},{"speaker":"小奇","text":"同一个动作，数量由哪个名字决定？改那个名字里的值，看看山会不会缩小。"},{"speaker":"咕噜","text":"第零号订单第二页写着：我想要多到忘掉烦恼。是谁替我夸了张？"}],
+      "exampleInput":[],"scene":"milk-tea","checks":[{"name":"三颗珍珠并保留正常倒奶顺序","input":[],"expectedState":{"pearls":3,"filled":1,"spilled":0,"cupOpen":false}}],"minutes":25
+    },
+    {
+      "id":"town-double-order","number":3,"chapterId":"milk-tea-opening",
+      "title":"三杯加三杯，怎么是三十三杯？","subtitle":"订单排到了隔壁早餐店","hook":"两位顾客各点三杯，卜卜高兴地摆出了三十三杯。小奇说：加号也有两种工作？",
+      "mission":"让两位顾客的杯数真的相加。保留 input，让新顾客自己决定数量，再检查另一组订单。","concept":"input 得到文字；int 把数字文字转换成整数后，+ 才做数量相加。",
+      "starterCode":"from xuya.stage import cup, pour, lid, drink, say\n\nfirst = input(\"第一位顾客要几杯？\")\nsecond = input(\"第二位顾客要几杯？\")\ntotal = first + second\ncup()\npour(1)\nlid()\ndrink(\"云朵奶茶\", total)\nsay(\"这次制作了 \" + str(total) + \" 杯。\")\n",
+      "referenceCode":"from xuya.stage import cup, pour, lid, drink, say\n\nfirst = int(input(\"第一位顾客要几杯？\"))\nsecond = int(input(\"第二位顾客要几杯？\"))\ntotal = first + second\ncup()\npour(1)\nlid()\ndrink(\"云朵奶茶\", total)\nsay(\"这次制作了 \" + str(total) + \" 杯。\")\n",
+      "hints":["用 3 和 3 运行，再用 2 和 4 运行。结果像数字相加，还是把两段文字贴在一起？","input 给你的是文字。比如 int(\"3\") 把文字变成整数 3。","让 first 和 second 分别接住 int(input(...)) 的结果，保留 total = first + second。验证两组新订单。"],
+      "prediction":"3 与 3 如果是数量应该得 6；如果是两张写着‘3’的纸贴起来，会变成什么？",
+      "remixes":[{"title":"第三位顾客插队","description":"增加第三次 input，把三个人的数量相加，并让舞台真的制作这个数量。"},{"title":"礼物杯算进去","description":"在总数中增加一杯赠品，再给赠品写一句离谱广告。解释为什么文字要转换、赠品数不需要。"}],
+      "transfer":"换成 2 与 4、1 与 7：你的方法都有效吗？如果输入‘好多杯’，哪一步会出错？下一章会继续设计能处理例外的规则。",
+      "dialogue":[{"speaker":"卜卜","text":"三加三等于三十三，今天的顾客特别整齐。"},{"speaker":"咕噜","text":"整齐到把我排出了店。"},{"speaker":"小奇","text":"加号看到两个数字会加数量，看到两段文字会把它们连起来。先查查 input 送来什么。"},{"speaker":"咕噜","text":"订单第三页写着：两位顾客，一份愿望。这个第零号，真会连字。"}],
+      "exampleInput":["3","3"],"scene":"milk-tea","checks":[{"name":"三杯加三杯是六杯","input":["3","3"],"expectedState":{"drinks":6,"spilled":0}},{"name":"二杯加四杯也是六杯","input":["2","4"],"expectedState":{"drinks":6,"spilled":0}},{"name":"一杯加七杯是八杯","input":["1","7"],"expectedState":{"drinks":8,"spilled":0}}],"minutes":25
+    },
+    {
+      "id":"town-weird-drink","number":4,"chapterId":"milk-tea-opening",
+      "title":"怪味窗口，请把点子交出来","subtitle":"你的第一家小镇店铺","hook":"奶茶店终于能营业了，咕噜请你开一个自由配方窗口。名字越怪，顾客越想试。",
+      "mission":"保留顾客输入的口味和数量，制作对应的怪味饮料；给它设计自己的珍珠配方与广告，再把作品带进创作室。","concept":"综合使用动作顺序、变量、文字拼接和数字输入；这一集主要创造自己的版本。",
+      "starterCode":"from xuya.stage import cup, pour, pearls, lid, drink, say\n\nflavour = input(\"今天想试什么口味？\")\namount = int(input(\"要几杯？\"))\npearl_count = 3\ncup()\npour(1)\npearls(pearl_count)\nlid()\ndrink(flavour + \"奶茶\", amount)\nsay(\"欢迎尝尝 \" + flavour + \"奶茶：喝一口，点子开始跳舞！\")\n",
+      "referenceCode":"from xuya.stage import cup, pour, pearls, lid, drink, say\n\nflavour = input(\"怪味配方叫什么？\")\namount = int(input(\"今天请几位朋友喝？\"))\npearl_count = amount * 2\ncup()\npour(2)\npearls(pearl_count)\nlid()\ndrink(flavour + \"奶茶\", amount)\nsay(\"欢迎尝尝 \" + flavour + \"奶茶：喝一口，云朵打嗝！\")\n",
+      "hints":["先用一个你喜欢的口味运行，再换一个。舞台上的名称和数量真的跟着你变了吗？","flavour 是顾客的口味；amount 是杯数。配方、杯中奶量和广告可以各自改。","可试 pearl_count = amount * 2，让珍珠跟着杯数变化。留下你自己的规则，再用另一组输入测试。"],
+      "prediction":"顾客换口味和数量时，哪些地方应该跟着变？你想让店里多出哪条自己的规则？",
+      "remixes":[{"title":"双份奶与联动珍珠","description":"把奶改成两份，珍珠按每位顾客两颗计算。数量从 2 换到 4 时，珍珠也要变。"},{"title":"请朋友一起喝","description":"额外输入朋友杯数并加入 amount。保留口味输入，制作两个人合起来的数量，广告写出邀请句。"}],
+      "transfer":"把奶茶店改成怪兽礼物店或怪味冰淇淋窗口。保留顾客的两种输入，至少有一个你自己决定的行为规则，并解释它。",
+      "dialogue":[{"speaker":"咕噜","text":"开店第一天三次停业，这回请你设计一个靠谱又离谱的窗口。"},{"speaker":"卜卜","text":"申请销售拖鞋味云朵。我的味觉模块已经放假。"},{"speaker":"小奇","text":"你来决定规则：哪一步让顾客选择，哪一步是你的独家配方？"},{"speaker":"咕噜","text":"第零号订单最后留着一句：愿望越大越好。我们带着你的店，去查查隔壁的门。"}],
+      "exampleInput":["云朵打嗝","2"],"scene":"milk-tea","checks":[{"name":"顾客的口味与两杯数量保留","input":["云朵打嗝","2"],"expectedState":{"drinks":2,"flavour":"云朵打嗝奶茶","spilled":0}},{"name":"另一位顾客四杯新口味","input":["彩虹","4"],"expectedState":{"drinks":4,"flavour":"彩虹奶茶","spilled":0}}],"minutes":25
+    }
+  ]
+}

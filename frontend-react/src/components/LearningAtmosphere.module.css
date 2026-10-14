@@ -1,0 +1,72 @@
+.panel {
+  padding: 14px 16px;
+  border: 1px solid var(--learning-line, #edcbdc);
+  border-radius: 18px;
+  background: var(--learning-soft, #fff2f7);
+  margin-bottom: 16px;
+}
+.heading,
+.options,
+.themes,
+.controls {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.heading {
+  margin-bottom: 14px;
+  color: var(--learning-ink, #7d3c5c);
+}
+.heading span {
+  font-size: 14px;
+  color: var(--muted);
+}
+.options {
+  justify-content: space-between;
+}
+.themes {
+  gap: 8px;
+}
+.controls {
+  padding-left: 14px;
+  border-left: 1px solid var(--learning-line, #edcbdc);
+}
+.themes .button,
+.controls .button {
+  padding: 9px 13px;
+  font-size: 14px;
+}
+.panel small {
+  display: block;
+  margin-top: 12px;
+  color: var(--muted);
+}
+@media (max-width: 600px) {
+  .panel {
+    padding: 16px;
+  }
+  .heading span {
+    width: 100%;
+  }
+  .options {
+    align-items: flex-start;
+    gap: 14px;
+  }
+  .themes {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    width: 100%;
+    gap: 6px;
+  }
+  .themes .button {
+    flex-direction: column;
+    padding: 9px 5px;
+    font-size: 14px;
+    gap: 5px;
+  }
+  .controls {
+    border: 0;
+    padding: 0;
+  }
+}

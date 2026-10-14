@@ -1,0 +1,437 @@
+.adventure-intro {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  align-items: stretch;
+  gap: 18px;
+  margin-bottom: 18px;
+}
+.adventure-intro > section {
+  margin: 0;
+  min-width: 0;
+}
+.adventure-story {
+  background: #fff4e9;
+  border: 1px solid #f0dac5;
+  border-radius: 24px;
+  padding: 18px 20px;
+  margin-bottom: 18px;
+}
+@media (max-width: 1100px) {
+  .adventure-intro {
+    grid-template-columns: 1fr;
+  }
+}
+.adventure-story h2 {
+  font-size: 20px;
+  max-width: 900px;
+  line-height: 1.6;
+}
+.adventure-dialogue {
+  display: grid;
+  gap: 8px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.adventure-dialogue p {
+  background: #ffffffb8;
+  padding: 12px;
+  border-radius: 14px;
+  margin: 0;
+  line-height: 1.8;
+}
+.adventure-dialogue strong {
+  display: block;
+  color: #8f512d;
+  font-size: 14px;
+}
+.adventure-workbench {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 22px;
+  align-items: start;
+}
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 22px;
+  min-width: 0;
+}
+.panel-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+.panel-heading h2 {
+  font-size: 20px;
+  margin: 0;
+}
+.panel-heading span {
+  font-size: 14px;
+  color: var(--muted);
+}
+.adventure-mission {
+  line-height: 1.8;
+}
+.adventure-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 16px 0;
+}
+.adventure-code :global(.code-editor) {
+  height: 360px;
+}
+.adventure-draft {
+  display: block;
+  margin: 12px 0;
+  color: var(--muted);
+}
+.adventure-debug,
+.adventure-console,
+.adventure-reference {
+  margin-top: 16px;
+  border-top: 1px solid var(--line);
+  padding-top: 14px;
+}
+summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+label {
+  display: block;
+  margin: 10px 0;
+  font-size: 14px;
+}
+textarea,
+input,
+select {
+  display: block;
+  width: 100%;
+  margin-top: 8px;
+}
+pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 14px;
+  line-height: 1.7;
+  max-height: 260px;
+  overflow: auto;
+}
+.adventure-input {
+  padding: 16px;
+  background: #f5f0ff;
+  border-radius: 14px;
+}
+.adventure-input button {
+  margin-right: 8px;
+}
+.adventure-checks {
+  list-style: none;
+  padding: 0;
+}
+.adventure-checks li {
+  padding: 10px;
+  background: #fff0dd;
+  border-radius: 10px;
+  margin-top: 8px;
+  font-size: 14px;
+}
+.adventure-checks .passed {
+  background: #e8f3e6;
+}
+.adventure-clue {
+  padding: 16px;
+  background: #faf3c6;
+  border-radius: 12px;
+  line-height: 1.8;
+}
+.adventure-investigation {
+  display: grid;
+  grid-template-columns: minmax(0, 1.08fr) minmax(0, 1fr);
+  align-items: start;
+  gap: 22px;
+  margin-top: 22px;
+}
+.adventure-investigation h2 {
+  font-size: 20px;
+  margin-top: 6px;
+  line-height: 1.4;
+}
+.investigation-lab,
+.remix-lab {
+  padding: 26px;
+  border-top: 3px solid #8778dd;
+}
+.remix-lab {
+  border-top-color: #59b9b2;
+}
+.lab-heading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 22px;
+}
+.lab-heading > div {
+  min-width: 0;
+}
+.lab-icon {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  background: #efebff;
+  color: #6955bc;
+  border: 1px solid #e0d9fb;
+  border-radius: 14px;
+}
+.remix-lab .lab-icon {
+  color: #267a75;
+  background: #eaf7f3;
+  border-color: #d0e9e2;
+}
+.lab-tag {
+  margin-left: auto;
+  flex-shrink: 0;
+  font-size: 14px;
+  color: #68768b;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 5px 9px;
+}
+.prediction-note {
+  display: flex;
+  align-items: start;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid #e3def5;
+  border-radius: 13px;
+  background: #f7f5ff;
+}
+.prediction-note svg {
+  flex-shrink: 0;
+  color: #7d69ca;
+  margin-top: 4px;
+}
+.prediction-note p {
+  line-height: 1.8;
+  font-size: 14px;
+}
+.clue-meter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin: 20px 0 16px;
+  font-size: 14px;
+  color: var(--muted);
+}
+.clue-meter div {
+  display: flex;
+  gap: 5px;
+}
+.clue-meter i {
+  width: 24px;
+  height: 5px;
+  border-radius: 3px;
+  background: #e5e6f0;
+}
+.clue-meter .found {
+  background: #8573d7;
+}
+.adventure-hint {
+  padding: 14px 16px;
+  margin: 12px 0;
+  border-left: 3px solid #a395dc;
+  background: #f4f1fc;
+  border-radius: 12px;
+  line-height: 1.8;
+}
+.adventure-reference {
+  margin-bottom: 12px;
+}
+.adventure-reference p {
+  margin: 12px 0;
+  color: var(--muted);
+  font-size: 14px;
+}
+.adventure-reference pre {
+  background: #f3f6fc;
+  border: 1px solid var(--line);
+  padding: 16px;
+  border-radius: 12px;
+}
+.remix-intro {
+  color: var(--muted);
+  margin-bottom: 16px;
+  font-size: 14px;
+}
+.adventure-remix {
+  display: flex;
+  align-items: start;
+  gap: 12px;
+  padding: 18px;
+  margin-bottom: 12px;
+  background: #f6fafb;
+  border: 1px solid #dfeaec;
+  border-radius: 14px;
+}
+.remix-number {
+  font-family: ui-monospace, monospace;
+  font-weight: 700;
+  font-size: 14px;
+  background: #e1efef;
+  color: #327c78;
+  padding: 8px;
+  border-radius: 10px;
+}
+.adventure-remix > div {
+  flex: 1;
+  min-width: 0;
+}
+.adventure-remix h3 {
+  font-size: 16px;
+  margin-bottom: 7px;
+}
+.adventure-remix p {
+  line-height: 1.8;
+  font-size: 14px;
+  color: #50657a;
+}
+.remix-rule {
+  font-size: 14px;
+  color: var(--muted);
+  padding: 4px 2px 20px;
+}
+.remix-launch {
+  border-top: 1px solid var(--line);
+  padding-top: 20px;
+  display: grid;
+  grid-template-columns: 24px 1fr;
+  gap: 12px;
+}
+.remix-launch > svg {
+  color: #8b79cf;
+}
+.remix-launch p {
+  font-size: 14px;
+  color: var(--muted);
+}
+.remix-launch button {
+  grid-column: 1 / -1;
+  justify-self: start;
+}
+.adventure-reflection {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 270px;
+  margin-top: 24px;
+  overflow: hidden;
+  border: 1px solid #dbe3ef;
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: var(--shadow);
+}
+.reflection-main {
+  padding: 26px;
+}
+.reflection-main .lab-icon {
+  color: #507797;
+  background: #edf5fb;
+  border-color: #d8e6f1;
+}
+.reflection-main h2 {
+  font-size: 20px;
+  margin-top: 6px;
+}
+.reflection-main > p {
+  color: var(--muted);
+  font-size: 14px;
+}
+.reflection-main label {
+  margin: 18px 0 12px;
+  font-weight: 600;
+}
+.reflection-main textarea {
+  font-weight: 400;
+  min-height: 106px;
+}
+.reflection-main small {
+  color: var(--muted);
+  font-size: 14px;
+}
+.reflection-next {
+  padding: 30px 24px;
+  background: #edf2fc;
+  border-left: 1px solid #dbe3ef;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: start;
+}
+.reflection-next h3 {
+  font-size: 17px;
+  margin: 12px 0;
+  line-height: 1.6;
+}
+.reflection-next p {
+  color: var(--muted);
+  font-size: 14px;
+  margin-bottom: 18px;
+}
+.reflection-next a {
+  color: #5546ad;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.8;
+}
+@media (max-width: 1250px) {
+  .lab-tag {
+    display: none;
+  }
+}
+.adventure-message {
+  margin-bottom: 20px;
+}
+@media (max-width: 1100px) {
+  .adventure-workbench,
+  .adventure-investigation {
+    grid-template-columns: 1fr;
+  }
+  .adventure-dialogue {
+    grid-template-columns: 1fr;
+  }
+  .adventure-reflection {
+    grid-template-columns: 1fr;
+  }
+  .reflection-next {
+    border-left: 0;
+    border-top: 1px solid #dbe3ef;
+  }
+}
+@media (max-width: 600px) {
+  .adventure-story {
+    padding: 20px;
+  }
+  .panel,
+  .reflection-main {
+    padding: 20px;
+  }
+  .lab-heading {
+    gap: 10px;
+  }
+  .lab-icon {
+    width: 42px;
+    height: 42px;
+  }
+  .lab-heading .eyebrow {
+    font-size: 14px;
+    letter-spacing: 0.5px;
+  }
+  .lab-heading h2 {
+    font-size: 18px;
+  }
+  .adventure-remix {
+    padding: 14px;
+  }
+}

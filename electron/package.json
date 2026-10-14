@@ -1,0 +1,92 @@
+{
+  "name": "@xuya/desktop",
+  "version": "0.2.1",
+  "private": true,
+  "description": "叙芽岛桌面客户端",
+  "author": "XuyaIsland",
+  "main": "build/main/main.cjs",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "start": "node scripts/start.mjs",
+    "build:main": "node scripts/build-main.mjs",
+    "typecheck": "tsc --noEmit",
+    "dev": "node scripts/dev.mjs",
+    "prepare:java": "node scripts/prepare-java-runtime.mjs",
+    "prepare:python": "node scripts/prepare-python-runtime.mjs",
+    "prepare:electron": "node node_modules/electron/install.js",
+    "pack": "node scripts/build-desktop.mjs pack",
+    "dist": "node scripts/build-desktop.mjs dist",
+    "test:desktop": "node scripts/test-desktop.mjs",
+    "format": "prettier --write \"src/*.cts\" \"scripts/*.mjs\" \"tsconfig.json\"",
+    "format:check": "prettier --check \"src/*.cts\" \"scripts/*.mjs\" \"tsconfig.json\""
+  },
+  "dependencies": {
+    "electron-updater": "6.7.3"
+  },
+  "devDependencies": {
+    "electron": "44.7.0",
+    "electron-builder": "26.15.3",
+    "typescript": "5.9.3",
+    "@types/node": "24.10.1",
+    "prettier": "3.9.9"
+  },
+  "build": {
+    "appId": "com.xuya.island",
+    "productName": "叙芽岛",
+    "asar": false,
+    "electronDist": "node_modules/electron/dist",
+    "artifactName": "XuyaIsland-Setup-${version}.${ext}",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "build/main/**/*",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "../frontend-react/public/art/login/xiaoqi-passport.png",
+        "to": "art/xiaoqi-passport.png"
+      },
+      {
+        "from": "../backend/dist/xuya-backend.jar",
+        "to": "backend/xuya-backend.jar"
+      },
+      {
+        "from": "../backend/config/ports.example.json",
+        "to": "backend/ports.json"
+      },
+      {
+        "from": "build/runtime",
+        "to": "runtime"
+      },
+      {
+        "from": "build/python",
+        "to": "python"
+      },
+      {
+        "from": "resources/scripts",
+        "to": "scripts"
+      }
+    ],
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "faixiang2010",
+        "repo": "xuya-island"
+      }
+    ],
+    "win": {
+      "target": "nsis",
+      "signAndEditExecutable": false
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "deleteAppDataOnUninstall": false
+    }
+  }
+}
