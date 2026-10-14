@@ -1,6 +1,6 @@
 .media {
   border: 1px solid var(--line);
-  border-radius: 14px;
+  border-radius: var(--radius);
   background: var(--surface);
   margin: 18px 0;
 }
@@ -8,8 +8,8 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 8px;
-  padding: 16px;
+  gap: var(--sp-2);
+  padding: var(--sp-4);
   cursor: pointer;
   color: var(--learning-ink, #7d3c5c);
   font-weight: 600;
@@ -17,21 +17,21 @@
 .media > summary span {
   margin-left: auto;
   color: var(--muted);
-  font-size: 14px;
+  font-size: var(--fs-sm);
   font-weight: 400;
 }
 .body {
-  padding: 0 16px 16px;
+  padding: 0 var(--sp-4) var(--sp-4);
 }
 .body video {
   display: block;
   width: 100%;
   max-width: 720px;
-  border-radius: 12px;
-  background: #18243b;
+  border-radius: var(--radius-sm);
+  background: var(--ink);
 }
 .body details {
-  margin: 12px 0;
+  margin: var(--sp-3) 0;
 }
 .body summary {
   cursor: pointer;

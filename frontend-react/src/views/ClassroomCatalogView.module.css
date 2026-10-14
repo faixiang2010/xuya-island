@@ -3,9 +3,9 @@
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 20px;
   padding: 24px 28px;
-  border-radius: 18px;
-  background: #e9f6ef;
-  border: 1px solid #d1e8da;
+  border-radius: var(--radius-lg);
+  background: var(--brand-soft);
+  border: 1px solid var(--brand-soft-strong);
 }
 .recommendation {
   display: flex;
@@ -13,15 +13,15 @@
   gap: 16px;
   padding: 22px;
   margin-top: 20px;
-  border-radius: 16px;
-  background: #f0edfc;
-  border: 1px solid #ddd6f5;
+  border-radius: var(--radius-lg);
+  background: var(--sky-soft);
+  border: 1px solid #cfe2f4;
 }
 .recommendation > div {
   flex: 1;
 }
 .recommendation h2 {
-  font-size: 18px;
+  font-size: var(--fs-lg);
   margin-bottom: 8px;
 }
 .recommendation small {
@@ -37,7 +37,7 @@
   border-top: 1px solid var(--line);
   margin-top: 12px;
   padding-top: 12px;
-  font-size: 14px;
+  font-size: var(--fs-sm);
 }
 .catalog-overview div {
   display: flex;
@@ -45,12 +45,12 @@
   gap: 6px;
 }
 .catalog-overview strong {
-  color: #327055;
-  font-size: 28px;
+  color: var(--brand-ink);
+  font-size: var(--fs-2xl);
 }
 .catalog-overview span {
-  color: #537966;
-  font-size: 14px;
+  color: var(--muted);
+  font-size: var(--fs-sm);
 }
 .catalog-toolbar {
   display: flex;
@@ -61,8 +61,8 @@
 }
 .catalog-toolbar p,
 .catalog-extra p {
-  color: #77717d;
-  font-size: 14px;
+  color: var(--muted);
+  font-size: var(--fs-sm);
   line-height: 1.8;
 }
 .catalog-toolbar label {
@@ -70,29 +70,29 @@
   align-items: center;
   gap: 10px;
   flex-shrink: 0;
-  color: #6b526d;
-  font-size: 14px;
+  color: var(--muted);
+  font-size: var(--fs-sm);
 }
 .catalog-toolbar select {
   max-width: 100%;
   padding: 10px 12px;
-  border: 1px solid #d9d0e1;
-  border-radius: 10px;
-  background: #fffdfa;
-  color: #6b526d;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--ink);
   font: inherit;
 }
 .catalog-phase .eyebrow {
-  color: #746180;
+  color: var(--muted-soft);
   letter-spacing: 1px;
 }
 .catalog-phase h2 {
   margin: 9px 0;
-  font-size: 21px;
+  font-size: var(--fs-xl);
 }
 .catalog-phase .section-heading p {
-  color: #77717d;
-  font-size: 14px;
+  color: var(--muted);
+  font-size: var(--fs-sm);
   line-height: 1.8;
 }
 .catalog-lesson {
@@ -102,35 +102,35 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  color: #746180;
-  font-size: 14px;
+  color: var(--muted);
+  font-size: var(--fs-sm);
 }
 .catalog-number {
   display: grid;
   place-items: center;
   width: 36px;
   height: 36px;
-  border-radius: 10px;
-  background: #e8f5ed;
-  color: #397659;
-  font-size: 16px;
-  font-weight: 600;
+  border-radius: var(--radius-sm);
+  background: var(--brand-soft);
+  color: var(--brand-ink);
+  font-size: var(--fs-body);
+  font-weight: 700;
 }
 .catalog-lesson h3 {
   line-height: 1.5;
 }
 .catalog-lesson p {
-  color: #77717d;
-  font-size: 14px;
+  color: var(--muted);
+  font-size: var(--fs-sm);
   line-height: 1.7;
 }
 .catalog-extra {
   margin-top: 32px;
   padding-top: 24px;
-  border-top: 1px solid #e2ddd2;
+  border-top: 1px solid var(--line);
 }
 .catalog-extra h2 {
-  font-size: 18px;
+  font-size: var(--fs-lg);
 }
 .catalog-extra p {
   margin: 10px 0 16px;

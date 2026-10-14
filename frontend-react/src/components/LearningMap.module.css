@@ -15,24 +15,24 @@
   height: 310px;
   object-fit: contain;
   object-position: left center;
-  margin-bottom: 20px;
+  margin-bottom: var(--sp-5);
 }
 .invitation {
-  font-family: 'KaiTi', 'STKaiti', 'Microsoft YaHei', serif;
+  font-family: var(--font-hand);
   font-size: clamp(27px, 2.8vw, 42px);
   line-height: 1.45;
-  margin: 0 0 20px;
-  color: #233a56;
+  margin: 0 0 var(--sp-5);
+  color: var(--ink);
   font-synthesis: weight;
   font-weight: 700;
 }
 .skill {
   display: flex;
   align-items: flex-start;
-  gap: 12px;
+  gap: var(--sp-3);
 }
 .skill > svg {
-  color: #b64e80;
+  color: var(--accent-ink);
   flex-shrink: 0;
   margin-top: 3px;
 }
@@ -41,31 +41,31 @@
   margin: 0 0 7px;
 }
 .skill p {
-  font-size: 16px;
-  color: #61708a;
+  font-size: var(--fs-body);
+  color: var(--muted);
   line-height: 1.8;
 }
 .progress {
-  color: #6c7584;
-  font-size: 14px;
-  margin: 12px 0 18px;
+  color: var(--muted);
+  font-size: var(--fs-sm);
+  margin: var(--sp-3) 0 18px;
 }
 .start:global(.button) {
   width: 100%;
   min-height: 56px;
-  font-size: 18px;
-  border-radius: 15px;
+  font-size: var(--fs-lg);
+  border-radius: var(--radius);
   gap: 14px;
 }
 .details {
   margin: 14px 0;
-  font-size: 14px;
-  color: #61708a;
+  font-size: var(--fs-sm);
+  color: var(--muted);
   position: relative;
   width: fit-content;
   max-width: 100%;
-  padding-inline: 8px;
-  background: #fffdf8f0;
+  padding-inline: var(--sp-2);
+  background: var(--surface);
 }
 .details > summary {
   cursor: pointer;
@@ -81,13 +81,13 @@
 }
 .shortcut,
 .textButton {
-  color: #456184;
-  font-size: 14px;
+  color: var(--muted);
+  font-size: var(--fs-sm);
   line-height: 1.8;
   text-decoration: underline;
   text-underline-offset: 4px;
-  background: #fffdf8f0;
-  padding: 4px 8px;
+  background: var(--surface);
+  padding: var(--sp-1) var(--sp-2);
   width: fit-content;
   margin-inline: auto;
   position: relative;
@@ -100,8 +100,8 @@
 }
 .cache {
   margin-top: 14px;
-  font-size: 14px;
-  color: #896442;
+  font-size: var(--fs-sm);
+  color: var(--sun-ink);
 }
 .route {
   min-width: 0;
@@ -142,44 +142,44 @@
   gap: 5px;
   padding: 0;
   border: 0;
-  border-radius: 14px;
+  border-radius: var(--radius);
   background: transparent;
-  color: #263e5a;
+  color: var(--ink);
   cursor: pointer;
 }
 .stage:hover .stageTitle {
-  color: #b64e80;
+  color: var(--accent-ink);
 }
 .stage:focus-visible {
-  outline: 3px solid #b64e80;
+  outline: 3px solid var(--accent-ink);
   outline-offset: 5px;
-  background: #fffdf830;
+  background: var(--surface);
 }
 .marker {
   width: 34px;
   height: 34px;
-  border: 2px solid #294463;
-  background: #fffcf6;
+  border: 2px solid var(--ink);
+  background: var(--surface);
   border-radius: 50%;
   display: grid;
   place-items: center;
-  color: #294463;
-  font-family: 'KaiTi', 'Microsoft YaHei', serif;
-  font-size: 22px;
+  color: var(--ink);
+  font-family: var(--font-hand);
+  font-size: var(--fs-xl);
 }
 .selected .marker {
   color: #fff;
-  background: #b64e80;
-  border-color: #b64e80;
-  box-shadow: 0 0 0 5px #edccd955;
+  background: var(--accent-ink);
+  border-color: var(--accent-ink);
+  box-shadow: 0 0 0 5px var(--accent-soft);
 }
 .here {
   position: absolute;
   bottom: calc(100% + 6px);
   color: #fff;
-  background: #b64e80;
-  border-radius: 14px 14px 14px 2px;
-  font-size: 14px;
+  background: var(--accent-ink);
+  border-radius: var(--radius) var(--radius) var(--radius) 2px;
+  font-size: var(--fs-sm);
   padding: 5px 11px;
   white-space: nowrap;
 }
@@ -192,13 +192,13 @@
   display: none;
 }
 .stageTitle {
-  font-family: 'KaiTi', 'STKaiti', 'Microsoft YaHei', serif;
+  font-family: var(--font-hand);
   font-synthesis: weight;
   font-size: clamp(14px, 1.35vw, 20px);
   font-weight: 700;
   line-height: 1.6;
   white-space: nowrap;
-  background: #fbf8f1ed;
+  background: var(--canvas);
   padding-inline: 3px;
 }
 .optional .marker {
@@ -208,14 +208,14 @@
   height: clamp(60px, 7.5vw, 105px);
 }
 .selected .stageTitle {
-  color: #b64e80;
+  color: var(--accent-ink);
 }
 .optional .stageTitle {
   font-size: clamp(13px, 1.05vw, 16px);
 }
 .optional small {
-  font-size: 14px;
-  color: #69758a;
+  font-size: var(--fs-sm);
+  color: var(--muted);
 }
 .mobileGuide {
   display: none;
@@ -237,17 +237,17 @@
 @media (min-width: 1101px) and (max-height: 820px) {
   .clue {
     height: 155px;
-    margin-bottom: 12px;
+    margin-bottom: var(--sp-3);
   }
   .invitation {
-    font-size: 28px;
+    font-size: var(--fs-2xl);
     margin-bottom: 14px;
   }
   .skill h3 {
     font-size: 20px;
   }
   .progress {
-    margin: 9px 0 12px;
+    margin: 9px 0 var(--sp-3);
   }
   .details {
     margin: 9px 0;
@@ -269,20 +269,20 @@
     padding-top: 8px;
   }
   .invitation {
-    font-size: 28px;
-    margin-bottom: 16px;
+    font-size: var(--fs-2xl);
+    margin-bottom: var(--sp-4);
   }
   .skill {
-    gap: 8px;
+    gap: var(--sp-2);
   }
   .skill h3 {
     font-size: 20px;
   }
   .skill p {
-    font-size: 14px;
+    font-size: var(--fs-sm);
   }
   .stageTitle {
-    font-size: 14px;
+    font-size: var(--fs-sm);
   }
   .artSpace {
     height: 49px;
@@ -293,24 +293,24 @@
   .marker {
     width: 29px;
     height: 29px;
-    font-size: 18px;
+    font-size: var(--fs-lg);
   }
   .optional .marker {
     width: 24px;
     height: 24px;
-    font-size: 14px;
+    font-size: var(--fs-sm);
   }
 }
 @media (max-width: 850px) {
   .notebook {
     grid-template-columns: 1fr;
-    gap: 24px;
+    gap: var(--sp-6);
   }
   .task {
     max-width: 640px;
     display: grid;
     grid-template-columns: 160px minmax(0, 1fr);
-    gap: 0 20px;
+    gap: 0 var(--sp-5);
   }
   .clue {
     grid-column: 1;
@@ -327,7 +327,7 @@
   .invitation {
     font-size: 25px;
     line-height: 1.4;
-    margin-bottom: 12px;
+    margin-bottom: var(--sp-3);
   }
   .start,
   .details,
@@ -337,7 +337,7 @@
     grid-column: 1 / -1;
   }
   .start {
-    margin-top: 8px;
+    margin-top: var(--sp-2);
   }
   .route {
     max-width: 740px;
@@ -346,10 +346,10 @@
   .marker {
     width: 34px;
     height: 34px;
-    font-size: 22px;
+    font-size: var(--fs-xl);
   }
   .stageTitle {
-    font-size: 16px;
+    font-size: var(--fs-body);
   }
   .artSpace {
     height: 76px;
@@ -371,13 +371,13 @@
     font-size: 24px;
   }
   .skill h3 {
-    font-size: 18px;
+    font-size: var(--fs-lg);
   }
   .skill > svg {
     display: none;
   }
   .progress {
-    margin: 9px 0 12px;
+    margin: 9px 0 var(--sp-3);
   }
   .route {
     aspect-ratio: auto;
@@ -387,14 +387,14 @@
   }
   .mobileGuide {
     display: block;
-    margin-bottom: 20px;
-    font-size: 14px;
-    color: #6b7685;
+    margin-bottom: var(--sp-5);
+    font-size: var(--fs-sm);
+    color: var(--muted);
   }
   .steps {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 25px 16px;
+    gap: 25px var(--sp-4);
   }
   .steps li {
     width: 100%;
@@ -421,7 +421,7 @@
     position: absolute;
     right: -18px;
     top: 48px;
-    color: #c4849f;
+    color: var(--accent);
     pointer-events: none;
   }
   .steps li:nth-child(3) .mobileConnector {
@@ -439,13 +439,13 @@
     height: 42px;
     display: grid;
     place-items: center;
-    color: #526a7f;
+    color: var(--muted);
   }
   .artSpace svg {
     display: block;
   }
   .selected .artSpace {
-    color: #b64e80;
+    color: var(--accent-ink);
   }
   .stageTitle {
     font-size: 15px;
@@ -456,19 +456,19 @@
     bottom: auto;
     top: -12px;
     left: calc(50% + 18px);
-    font-size: 14px;
+    font-size: var(--fs-sm);
     padding: 3px 6px;
   }
   .marker {
     width: 30px;
     height: 30px;
-    font-size: 18px;
+    font-size: var(--fs-lg);
   }
   .optional .artSpace {
     height: 40px;
   }
   .optional {
-    border-top: 1px dashed #b9b9b4;
+    border-top: 1px dashed var(--line-strong);
     padding-top: 15px;
   }
 }
@@ -504,13 +504,13 @@
     height: 0;
     max-width: 310px;
     object-position: center;
-    margin: 0 auto 12px;
+    margin: 0 auto var(--sp-3);
   }
   .invitation {
     flex-shrink: 0;
     font-size: clamp(24px, 4cqh, 36px);
     line-height: 1.35;
-    margin-bottom: 12px;
+    margin-bottom: var(--sp-3);
   }
   .skill {
     flex-shrink: 0;
@@ -518,25 +518,25 @@
   }
   .skill h3 {
     font-size: clamp(18px, 2.7cqh, 24px);
-    margin-bottom: 4px;
+    margin-bottom: var(--sp-1);
   }
   .skill p {
     font-size: clamp(12px, 1.8cqh, 15px);
     line-height: 1.7;
   }
   .progress {
-    margin: 8px 0 12px;
+    margin: var(--sp-2) 0 var(--sp-3);
     flex-shrink: 0;
   }
   .start:global(.button) {
     min-height: 48px;
     flex-shrink: 0;
-    border-radius: 12px;
+    border-radius: var(--radius-sm);
   }
   .details {
     position: relative;
     flex-shrink: 0;
-    margin: 8px 0 4px;
+    margin: var(--sp-2) 0 var(--sp-1);
     padding: 0;
     background: transparent;
   }
@@ -548,22 +548,22 @@
     bottom: calc(100% + 8px);
     max-height: min(240px, calc(100cqh - 130px));
     overflow: auto;
-    padding: 16px;
-    background: #fffdf8;
-    border: 1px solid #e5d9cb;
-    border-radius: 10px;
-    box-shadow: 0 4px 20px #24334c16;
+    padding: var(--sp-4);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-2);
   }
   .shortcut,
   .textButton {
     flex-shrink: 0;
     margin: 0;
-    padding: 4px 0;
+    padding: var(--sp-1) 0;
     background: transparent;
   }
   .cache {
     flex-shrink: 0;
-    font-size: 14px;
+    font-size: var(--fs-sm);
     margin-top: 6px;
     line-height: 1.5;
   }

@@ -133,7 +133,7 @@ export default function App() {
           <span className="avatar">{family.user!.nickname.slice(0, 1)}</span>
           <span>
             {family.user!.nickname}
-            <small>和家人一起探索</small>
+            <small>一起探索</small>
           </span>
           <button type="button" className="account-switch" onClick={() => void signOut()}>
             切换

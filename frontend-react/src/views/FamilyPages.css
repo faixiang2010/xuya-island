@@ -2,63 +2,63 @@
   box-sizing: border-box;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 32px;
+  padding: var(--sp-8);
   color: var(--ink);
-  font-size: 16px;
+  font-size: var(--fs-body);
   line-height: 1.65;
 }
 .family-heading {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: 20px;
-  margin-bottom: 24px;
+  gap: var(--sp-5);
+  margin-bottom: var(--sp-6);
 }
 .family-heading h1 {
-  margin: 0 0 8px;
+  margin: 0 0 var(--sp-2);
   font-size: 30px;
 }
 .family-heading p {
   margin: 0;
   color: var(--muted);
-  font-size: 16px;
+  font-size: var(--fs-body);
 }
 .family-heading > div {
   flex: 1;
   min-width: 0;
 }
 .family-panel {
-  font-size: 16px;
+  font-size: var(--fs-body);
   line-height: 1.65;
 }
 .family-mobile-list {
   display: none;
 }
 .family-mobile-list article {
-  padding: 16px 0;
-  border-bottom: 1px dashed #ded9cc;
+  padding: var(--sp-4) 0;
+  border-bottom: 1px dashed var(--line);
   overflow-wrap: anywhere;
 }
 .family-paper,
 .family-page .ant-pro-table > .ant-pro-card {
-  background: #fffdf6;
-  border: 1px solid #ded9cc;
-  border-radius: 14px;
-  padding: 24px;
-  box-shadow: 0 3px 0 #e9dfcf70;
-  margin-bottom: 20px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: var(--sp-6);
+  box-shadow: var(--shadow-1);
+  margin-bottom: var(--sp-5);
   min-width: 0;
 }
 .family-paper h2 {
-  font-size: 22px;
+  font-size: var(--fs-xl);
   margin: 0 0 10px;
 }
 .family-paper h3 {
-  font-size: 18px;
+  font-size: var(--fs-lg);
 }
 .family-paper p {
-  margin: 8px 0 16px;
-  font-size: 16px;
+  margin: var(--sp-2) 0 var(--sp-4);
+  font-size: var(--fs-body);
 }
 .family-paper .ant-pro-table > .ant-pro-card {
   border: 0;
@@ -68,11 +68,11 @@
   padding: 0;
 }
 .family-paper .ant-table-placeholder .ant-table-cell {
-  padding-block: 24px;
+  padding-block: var(--sp-6);
 }
 .family-page .ant-select,
 .family-panel .ant-select {
-  font-size: 16px;
+  font-size: var(--fs-body);
 }
 .family-page .ant-tabs,
 .family-page .ant-btn,
@@ -82,7 +82,7 @@
 .family-panel .ant-form,
 .family-panel .ant-input,
 .family-page .ant-input {
-  font-size: 16px;
+  font-size: var(--fs-body);
 }
 .family-page .ant-btn:not(.ant-btn-link),
 .family-panel .ant-btn:not(.ant-btn-link),
@@ -90,7 +90,7 @@
   min-height: 44px;
 }
 .family-page .button {
-  font-size: 16px;
+  font-size: var(--fs-body);
 }
 .family-page .ant-btn-link,
 .family-panel .ant-btn-link {
@@ -112,7 +112,7 @@
 }
 .family-page .ant-tabs-tab,
 .family-panel .ant-tabs-tab {
-  font-size: 16px;
+  font-size: var(--fs-body);
 }
 .family-page .ant-tabs-ink-bar,
 .family-panel .ant-tabs-ink-bar {
@@ -124,7 +124,7 @@
 }
 .family-page .ant-table,
 .family-panel .ant-table {
-  font-size: 14px;
+  font-size: var(--fs-sm);
 }
 .family-page .ant-pro-table,
 .family-panel .ant-pro-table {
@@ -135,41 +135,41 @@
 }
 .family-page .ant-table-container,
 .family-page .ant-table-cell {
-  background: #fffdf6;
+  background: var(--surface);
 }
 .family-panel .ant-drawer-content {
-  background: #fffdf6;
+  background: var(--surface);
   color: var(--ink);
 }
 .family-panel .ant-drawer-title {
-  font-size: 22px;
+  font-size: var(--fs-xl);
   color: var(--ink);
 }
 .family-actions {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--sp-3);
   flex-wrap: wrap;
-  margin: 16px 0;
+  margin: var(--sp-4) 0;
 }
 .family-secondary {
   color: var(--muted);
-  font-size: 14px;
+  font-size: var(--fs-sm);
 }
 .family-status {
   display: inline-block;
-  padding: 4px 12px;
-  border-radius: 20px;
+  padding: var(--sp-1) var(--sp-3);
+  border-radius: var(--radius-lg);
   background: var(--learning-soft, #eef2fa);
   color: var(--learning-ink, #324961);
-  font-size: 14px;
+  font-size: var(--fs-sm);
 }
 .family-error {
-  padding: 16px;
-  border-radius: 10px;
-  background: #fff1ed;
-  color: #8b3d36;
-  margin-bottom: 16px;
+  padding: var(--sp-4);
+  border-radius: var(--radius-sm);
+  background: var(--accent-soft);
+  color: var(--accent-ink);
+  margin-bottom: var(--sp-4);
 }
 .family-page details,
 .family-panel details {
@@ -180,12 +180,12 @@
   cursor: pointer;
   padding: 10px 0;
   min-height: 44px;
-  font-size: 14px;
+  font-size: var(--fs-sm);
   color: var(--muted);
 }
 .family-page small,
 .family-panel small {
-  font-size: 14px;
+  font-size: var(--fs-sm);
 }
 .family-page button:focus-visible,
 .family-page a:focus-visible,
@@ -196,10 +196,10 @@
   outline-offset: 3px;
 }
 .family-empty {
-  padding: 24px 0;
+  padding: var(--sp-6) 0;
 }
 .family-paper.family-empty {
-  padding: 24px;
+  padding: var(--sp-6);
 }
 .family-empty h2 {
   margin-top: 0;
@@ -221,7 +221,7 @@
     display: block;
   }
   .family-page {
-    padding: 24px 16px;
+    padding: var(--sp-6) var(--sp-4);
   }
   .family-heading {
     flex-wrap: wrap;
@@ -234,6 +234,6 @@
     padding: 18px;
   }
   .family-panel .ant-drawer-body {
-    padding: 16px;
+    padding: var(--sp-4);
   }
 }

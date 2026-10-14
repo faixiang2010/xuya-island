@@ -42,6 +42,8 @@ npm.cmd --prefix frontend-react run test:e2e
 
 首页使用 `public/art/notebook` 下的放大镜、路线、桌面纸张和任务纸页，交互文字由HTML承担。主题支持粉色侦探社、云朵绘画馆、星光琴房及减少动效；琴音默认关闭。本地教学视频可主动播放/重播，生成入口为 `prepare:learning-media`，需要FFmpeg与字体，日常启动无需重新生成。
 
+全站视觉由 `src/styles-theme.css` 的设计 token 统一提供：颜色、圆角、间距、字号、阴影与动效只有这一处来源，页面样式只引用变量、不再硬编码色值；成人 codex 工作台的 `--cx-*` 变量同样映射到这套 token，全站共用一套明亮配色（芽绿、珊瑚粉、阳光黄）。
+
 产品、课程与技术规格在本机 `.codex/design/plan.md`（不进 Git）。
 
 契约检查需要已启动的本机后端（`XUYA_OPENAPI_URL`指定实际地址），或通过 `--from-files`读取导出的两个OpenAPI JSON；默认43172未启动时会连接失败。独立隔离验收可运行 `npm.cmd --prefix frontend-react run test:e2e -- --reuse-build codex.spec.ts -g OpenAPI`，只比较现有类型，不改写源码。

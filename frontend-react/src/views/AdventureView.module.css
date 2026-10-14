@@ -10,10 +10,10 @@
   min-width: 0;
 }
 .adventure-story {
-  background: #fff4e9;
-  border: 1px solid #f0dac5;
-  border-radius: 24px;
-  padding: 18px 20px;
+  background: var(--sun-soft);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-xl);
+  padding: 18px var(--sp-5);
   margin-bottom: 18px;
 }
 @media (max-width: 1100px) {
@@ -28,20 +28,20 @@
 }
 .adventure-dialogue {
   display: grid;
-  gap: 8px;
+  gap: var(--sp-2);
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 .adventure-dialogue p {
-  background: #ffffffb8;
-  padding: 12px;
-  border-radius: 14px;
+  background: var(--surface);
+  padding: var(--sp-3);
+  border-radius: var(--radius);
   margin: 0;
   line-height: 1.8;
 }
 .adventure-dialogue strong {
   display: block;
-  color: #8f512d;
-  font-size: 14px;
+  color: var(--sun-ink);
+  font-size: var(--fs-sm);
 }
 .adventure-workbench {
   display: grid;
@@ -52,7 +52,7 @@
 .panel {
   background: var(--surface);
   border: 1px solid var(--line);
-  border-radius: 20px;
+  border-radius: var(--radius-lg);
   padding: 22px;
   min-width: 0;
 }
@@ -60,14 +60,14 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 12px;
+  gap: var(--sp-3);
 }
 .panel-heading h2 {
   font-size: 20px;
   margin: 0;
 }
 .panel-heading span {
-  font-size: 14px;
+  font-size: var(--fs-sm);
   color: var(--muted);
 }
 .adventure-mission {
@@ -75,22 +75,22 @@
 }
 .adventure-actions {
   display: flex;
-  gap: 8px;
+  gap: var(--sp-2);
   flex-wrap: wrap;
-  margin: 16px 0;
+  margin: var(--sp-4) 0;
 }
 .adventure-code :global(.code-editor) {
   height: 360px;
 }
 .adventure-draft {
   display: block;
-  margin: 12px 0;
+  margin: var(--sp-3) 0;
   color: var(--muted);
 }
 .adventure-debug,
 .adventure-console,
 .adventure-reference {
-  margin-top: 16px;
+  margin-top: var(--sp-4);
   border-top: 1px solid var(--line);
   padding-top: 14px;
 }
@@ -101,30 +101,30 @@ summary {
 label {
   display: block;
   margin: 10px 0;
-  font-size: 14px;
+  font-size: var(--fs-sm);
 }
 textarea,
 input,
 select {
   display: block;
   width: 100%;
-  margin-top: 8px;
+  margin-top: var(--sp-2);
 }
 pre {
   white-space: pre-wrap;
   overflow-wrap: anywhere;
-  font-size: 14px;
+  font-size: var(--fs-sm);
   line-height: 1.7;
   max-height: 260px;
   overflow: auto;
 }
 .adventure-input {
-  padding: 16px;
-  background: #f5f0ff;
-  border-radius: 14px;
+  padding: var(--sp-4);
+  background: var(--accent-soft);
+  border-radius: var(--radius);
 }
 .adventure-input button {
-  margin-right: 8px;
+  margin-right: var(--sp-2);
 }
 .adventure-checks {
   list-style: none;
@@ -132,18 +132,18 @@ pre {
 }
 .adventure-checks li {
   padding: 10px;
-  background: #fff0dd;
-  border-radius: 10px;
-  margin-top: 8px;
-  font-size: 14px;
+  background: var(--sun-soft);
+  border-radius: var(--radius-sm);
+  margin-top: var(--sp-2);
+  font-size: var(--fs-sm);
 }
 .adventure-checks .passed {
-  background: #e8f3e6;
+  background: var(--brand-soft);
 }
 .adventure-clue {
-  padding: 16px;
-  background: #faf3c6;
-  border-radius: 12px;
+  padding: var(--sp-4);
+  background: var(--sun-soft);
+  border-radius: var(--radius-sm);
   line-height: 1.8;
 }
 .adventure-investigation {
@@ -161,15 +161,15 @@ pre {
 .investigation-lab,
 .remix-lab {
   padding: 26px;
-  border-top: 3px solid #8778dd;
+  border-top: 3px solid var(--accent);
 }
 .remix-lab {
-  border-top-color: #59b9b2;
+  border-top-color: var(--brand);
 }
 .lab-heading {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--sp-3);
   margin-bottom: 22px;
 }
 .lab-heading > div {
@@ -181,50 +181,50 @@ pre {
   flex-shrink: 0;
   width: 48px;
   height: 48px;
-  background: #efebff;
-  color: #6955bc;
-  border: 1px solid #e0d9fb;
-  border-radius: 14px;
+  background: var(--accent-soft);
+  color: var(--accent-ink);
+  border: 1px solid var(--accent-soft);
+  border-radius: var(--radius);
 }
 .remix-lab .lab-icon {
-  color: #267a75;
-  background: #eaf7f3;
-  border-color: #d0e9e2;
+  color: var(--brand-ink);
+  background: var(--brand-soft);
+  border-color: var(--brand-soft-strong);
 }
 .lab-tag {
   margin-left: auto;
   flex-shrink: 0;
-  font-size: 14px;
-  color: #68768b;
+  font-size: var(--fs-sm);
+  color: var(--muted);
   border: 1px solid var(--line);
-  border-radius: 20px;
+  border-radius: var(--radius-lg);
   padding: 5px 9px;
 }
 .prediction-note {
   display: flex;
   align-items: start;
-  gap: 12px;
-  padding: 16px;
-  border: 1px solid #e3def5;
-  border-radius: 13px;
-  background: #f7f5ff;
+  gap: var(--sp-3);
+  padding: var(--sp-4);
+  border: 1px solid var(--accent-soft);
+  border-radius: var(--radius);
+  background: var(--accent-soft);
 }
 .prediction-note svg {
   flex-shrink: 0;
-  color: #7d69ca;
-  margin-top: 4px;
+  color: var(--accent-ink);
+  margin-top: var(--sp-1);
 }
 .prediction-note p {
   line-height: 1.8;
-  font-size: 14px;
+  font-size: var(--fs-sm);
 }
 .clue-meter {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 18px;
-  margin: 20px 0 16px;
-  font-size: 14px;
+  margin: var(--sp-5) 0 var(--sp-4);
+  font-size: var(--fs-sm);
   color: var(--muted);
 }
 .clue-meter div {
@@ -235,87 +235,87 @@ pre {
   width: 24px;
   height: 5px;
   border-radius: 3px;
-  background: #e5e6f0;
+  background: var(--line);
 }
 .clue-meter .found {
-  background: #8573d7;
+  background: var(--accent);
 }
 .adventure-hint {
-  padding: 14px 16px;
-  margin: 12px 0;
-  border-left: 3px solid #a395dc;
-  background: #f4f1fc;
-  border-radius: 12px;
+  padding: 14px var(--sp-4);
+  margin: var(--sp-3) 0;
+  border-left: 3px solid var(--accent);
+  background: var(--accent-soft);
+  border-radius: var(--radius-sm);
   line-height: 1.8;
 }
 .adventure-reference {
-  margin-bottom: 12px;
+  margin-bottom: var(--sp-3);
 }
 .adventure-reference p {
-  margin: 12px 0;
+  margin: var(--sp-3) 0;
   color: var(--muted);
-  font-size: 14px;
+  font-size: var(--fs-sm);
 }
 .adventure-reference pre {
-  background: #f3f6fc;
+  background: var(--sky-soft);
   border: 1px solid var(--line);
-  padding: 16px;
-  border-radius: 12px;
+  padding: var(--sp-4);
+  border-radius: var(--radius-sm);
 }
 .remix-intro {
   color: var(--muted);
-  margin-bottom: 16px;
-  font-size: 14px;
+  margin-bottom: var(--sp-4);
+  font-size: var(--fs-sm);
 }
 .adventure-remix {
   display: flex;
   align-items: start;
-  gap: 12px;
+  gap: var(--sp-3);
   padding: 18px;
-  margin-bottom: 12px;
-  background: #f6fafb;
-  border: 1px solid #dfeaec;
-  border-radius: 14px;
+  margin-bottom: var(--sp-3);
+  background: var(--brand-soft);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
 }
 .remix-number {
   font-family: ui-monospace, monospace;
   font-weight: 700;
-  font-size: 14px;
-  background: #e1efef;
-  color: #327c78;
-  padding: 8px;
-  border-radius: 10px;
+  font-size: var(--fs-sm);
+  background: var(--brand-soft);
+  color: var(--brand-ink);
+  padding: var(--sp-2);
+  border-radius: var(--radius-sm);
 }
 .adventure-remix > div {
   flex: 1;
   min-width: 0;
 }
 .adventure-remix h3 {
-  font-size: 16px;
+  font-size: var(--fs-body);
   margin-bottom: 7px;
 }
 .adventure-remix p {
   line-height: 1.8;
-  font-size: 14px;
-  color: #50657a;
+  font-size: var(--fs-sm);
+  color: var(--muted);
 }
 .remix-rule {
-  font-size: 14px;
+  font-size: var(--fs-sm);
   color: var(--muted);
-  padding: 4px 2px 20px;
+  padding: var(--sp-1) 2px var(--sp-5);
 }
 .remix-launch {
   border-top: 1px solid var(--line);
-  padding-top: 20px;
+  padding-top: var(--sp-5);
   display: grid;
   grid-template-columns: 24px 1fr;
-  gap: 12px;
+  gap: var(--sp-3);
 }
 .remix-launch > svg {
-  color: #8b79cf;
+  color: var(--accent);
 }
 .remix-launch p {
-  font-size: 14px;
+  font-size: var(--fs-sm);
   color: var(--muted);
 }
 .remix-launch button {
@@ -325,20 +325,20 @@ pre {
 .adventure-reflection {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 270px;
-  margin-top: 24px;
+  margin-top: var(--sp-6);
   overflow: hidden;
-  border: 1px solid #dbe3ef;
-  border-radius: 20px;
-  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
   box-shadow: var(--shadow);
 }
 .reflection-main {
   padding: 26px;
 }
 .reflection-main .lab-icon {
-  color: #507797;
-  background: #edf5fb;
-  border-color: #d8e6f1;
+  color: var(--sky-ink);
+  background: var(--sky-soft);
+  border-color: var(--sky-soft);
 }
 .reflection-main h2 {
   font-size: 20px;
@@ -346,10 +346,10 @@ pre {
 }
 .reflection-main > p {
   color: var(--muted);
-  font-size: 14px;
+  font-size: var(--fs-sm);
 }
 .reflection-main label {
-  margin: 18px 0 12px;
+  margin: 18px 0 var(--sp-3);
   font-weight: 600;
 }
 .reflection-main textarea {
@@ -358,12 +358,12 @@ pre {
 }
 .reflection-main small {
   color: var(--muted);
-  font-size: 14px;
+  font-size: var(--fs-sm);
 }
 .reflection-next {
-  padding: 30px 24px;
-  background: #edf2fc;
-  border-left: 1px solid #dbe3ef;
+  padding: 30px var(--sp-6);
+  background: var(--sky-soft);
+  border-left: 1px solid var(--line);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -371,17 +371,17 @@ pre {
 }
 .reflection-next h3 {
   font-size: 17px;
-  margin: 12px 0;
+  margin: var(--sp-3) 0;
   line-height: 1.6;
 }
 .reflection-next p {
   color: var(--muted);
-  font-size: 14px;
+  font-size: var(--fs-sm);
   margin-bottom: 18px;
 }
 .reflection-next a {
-  color: #5546ad;
-  font-size: 14px;
+  color: var(--accent-ink);
+  font-size: var(--fs-sm);
   font-weight: 600;
   line-height: 1.8;
 }
@@ -391,7 +391,7 @@ pre {
   }
 }
 .adventure-message {
-  margin-bottom: 20px;
+  margin-bottom: var(--sp-5);
 }
 @media (max-width: 1100px) {
   .adventure-workbench,
@@ -406,16 +406,16 @@ pre {
   }
   .reflection-next {
     border-left: 0;
-    border-top: 1px solid #dbe3ef;
+    border-top: 1px solid var(--line);
   }
 }
 @media (max-width: 600px) {
   .adventure-story {
-    padding: 20px;
+    padding: var(--sp-5);
   }
   .panel,
   .reflection-main {
-    padding: 20px;
+    padding: var(--sp-5);
   }
   .lab-heading {
     gap: 10px;
@@ -425,11 +425,11 @@ pre {
     height: 42px;
   }
   .lab-heading .eyebrow {
-    font-size: 14px;
+    font-size: var(--fs-sm);
     letter-spacing: 0.5px;
   }
   .lab-heading h2 {
-    font-size: 18px;
+    font-size: var(--fs-lg);
   }
   .adventure-remix {
     padding: 14px;

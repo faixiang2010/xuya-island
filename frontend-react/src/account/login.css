@@ -1,10 +1,10 @@
 .passport-page {
   box-sizing: border-box;
-  font-size: 16px;
+  font-size: var(--fs-body);
   min-height: 100vh;
-  background: #fbf5e9;
-  color: #233a55;
-  padding: 32px 6vw 20px;
+  background: var(--canvas);
+  color: var(--ink);
+  padding: var(--sp-8) 6vw var(--sp-5);
   font-family: inherit;
   background-image: radial-gradient(#b5a18b25 0.7px, transparent 0.7px);
   background-size: 8px 8px;
@@ -19,10 +19,10 @@
   font-size: 23px;
 }
 .passport-brand > span {
-  border: 2px solid #233a55;
-  border-radius: 12px;
-  padding: 5px 12px;
-  background: #f4b5ac;
+  border: 2px solid var(--ink);
+  border-radius: var(--radius-sm);
+  padding: 5px var(--sp-3);
+  background: var(--accent);
   transform: rotate(-8deg);
 }
 .passport-brand small {
@@ -33,11 +33,11 @@
 }
 .passport-brand button {
   margin-left: auto;
-  font-size: 14px;
-  border: 1px solid #233a5540;
-  border-radius: 20px;
-  padding: 8px 14px;
-  background: #fffaf1;
+  font-size: var(--fs-sm);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-lg);
+  padding: var(--sp-2) 14px;
+  background: var(--surface);
   color: inherit;
   min-height: 44px;
 }
@@ -55,25 +55,25 @@
 }
 .passport-eyebrow {
   margin-top: 30px;
-  font-size: 14px;
+  font-size: var(--fs-sm);
   font-weight: 700;
 }
 .passport-story h1 {
   font-size: clamp(32px, 3.4vw, 49px);
   line-height: 1.35;
   letter-spacing: 2px;
-  margin: 10px 0 16px;
+  margin: 10px 0 var(--sp-4);
 }
 .passport-story > p:not(.passport-eyebrow) {
   font-size: 15px;
   line-height: 1.9;
-  color: #647184;
+  color: var(--muted);
 }
 .passport-stamp {
   display: inline-block;
-  border: 2px dashed #ba7067;
-  border-radius: 8px;
-  color: #a9635b;
+  border: 2px dashed var(--accent);
+  border-radius: var(--radius-sm);
+  color: var(--accent-ink);
   padding: 6px 13px;
   transform: rotate(-7deg);
   font-weight: 700;
@@ -90,31 +90,31 @@
   animation: none;
 }
 .xiaoqi-speech {
-  background: #fffdf8;
-  border: 1.5px solid #233a55;
-  border-radius: 16px;
-  padding: 12px;
+  background: var(--surface);
+  border: 1.5px solid var(--ink);
+  border-radius: var(--radius);
+  padding: var(--sp-3);
   text-align: center;
-  font-size: 14px;
+  font-size: var(--fs-sm);
   max-width: 350px;
   margin: auto;
-  box-shadow: 3px 3px #233a5510;
+  box-shadow: var(--shadow-1);
 }
 .passport-footnote {
   display: block;
   text-align: center;
-  font-size: 14px;
-  margin: 20px 0;
-  color: #768071;
+  font-size: var(--fs-sm);
+  margin: var(--sp-5) 0;
+  color: var(--muted);
   letter-spacing: 2px;
 }
 .passport-card {
   position: relative;
   padding: 36px 38px 65px;
-  background: #fffdf7;
-  border: 2px solid #233a55;
-  border-radius: 12px;
-  box-shadow: 8px 9px 0 #e6d9c5;
+  background: var(--surface);
+  border: 2px solid var(--ink);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-2);
   transform: none;
 }
 .passport-card:before {
@@ -128,47 +128,47 @@
   transform: rotate(-5deg);
 }
 .passport-ticket {
-  font-size: 14px;
+  font-size: var(--fs-sm);
   letter-spacing: 2px;
-  border-bottom: 1px dashed #233a5550;
+  border-bottom: 1px dashed var(--line-strong);
   display: block;
   padding-bottom: 18px;
 }
 .passport-card h2 {
   font-size: 24px;
-  margin: 23px 0 8px;
+  margin: 23px 0 var(--sp-2);
 }
 .passport-card > p {
-  font-size: 14px;
+  font-size: var(--fs-sm);
   line-height: 1.7;
-  color: #738091;
+  color: var(--muted);
 }
 .passport-card form {
   margin-top: 25px;
 }
 .passport-card label {
   display: block;
-  font-size: 16px;
+  font-size: var(--fs-body);
   font-weight: 700;
   margin-bottom: 17px;
 }
 .passport-card input {
   display: block;
   width: 100%;
-  margin-top: 8px;
-  background: #faf7ee;
-  border: 1.5px solid #d9d4c8;
-  border-radius: 8px;
-  padding: 12px;
+  margin-top: var(--sp-2);
+  background: var(--surface-soft);
+  border: 1.5px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  padding: var(--sp-3);
   font: inherit;
-  font-size: 16px;
+  font-size: var(--fs-body);
   min-height: 48px;
-  color: #233a55;
+  color: var(--ink);
   box-sizing: border-box;
 }
 .passport-card input:focus {
-  outline: 3px solid #edb5ae60;
-  border-color: #a4645b;
+  outline: 3px solid var(--accent);
+  border-color: var(--accent-ink);
 }
 .passport-captcha {
   display: flex;
@@ -187,7 +187,7 @@
   border: 0;
   padding: 0;
   width: 145px;
-  color: #647184;
+  color: var(--muted);
   cursor: pointer;
 }
 .passport-captcha img {
@@ -197,70 +197,70 @@
 }
 .passport-captcha small {
   display: block;
-  font-size: 14px;
+  font-size: var(--fs-sm);
 }
 .passport-submit {
   width: 100%;
-  border: 2px solid #233a55;
-  border-radius: 9px;
-  background: #f4b2a6;
-  color: #233a55;
-  font-size: 16px;
+  border: 2px solid var(--ink);
+  border-radius: var(--radius-sm);
+  background: var(--accent);
+  color: var(--ink);
+  font-size: var(--fs-body);
   font-weight: 800;
   padding: 14px;
-  box-shadow: 3px 4px #233a55;
+  box-shadow: var(--shadow-1);
   cursor: pointer;
 }
 .passport-submit span {
   float: right;
 }
 .passport-submit:hover {
-  background: #f7c6b8;
+  background: var(--accent-soft);
 }
 .passport-submit:disabled {
   opacity: 0.65;
   cursor: wait;
 }
 .passport-card .passport-error {
-  color: #ad3939;
-  font-size: 14px;
+  color: var(--accent-ink);
+  font-size: var(--fs-sm);
   margin: 0 0 15px;
 }
 .passport-card .passport-help {
-  font-size: 14px;
-  margin-top: 20px;
-  color: #52627a;
+  font-size: var(--fs-sm);
+  margin-top: var(--sp-5);
+  color: var(--muted);
 }
 .passport-seal {
   position: absolute;
   bottom: 17px;
   right: 27px;
-  border: 2px solid #98a38a;
+  border: 2px solid var(--brand-soft-strong);
   border-radius: 50%;
   padding: 9px 13px;
   text-align: center;
-  font-size: 14px;
-  color: #82936e;
+  font-size: var(--fs-sm);
+  color: var(--brand-ink);
   transform: rotate(-13deg);
 }
 .passport-footer {
   text-align: center;
-  font-size: 14px;
-  color: #818575;
+  font-size: var(--fs-sm);
+  color: var(--muted);
   padding: 18px 0;
 }
 .passport-loading {
-  padding: 18vh 20px;
+  padding: 18vh var(--sp-5);
   text-align: center;
-  background: #fbf5e9;
+  background: var(--canvas);
   min-height: 100vh;
-  color: #233a55;
+  color: var(--ink);
 }
 .passport-loading button {
   display: block;
-  margin: 20px auto;
-  padding: 12px 22px;
-  border-radius: 10px;
+  margin: var(--sp-5) auto;
+  padding: var(--sp-3) 22px;
+  border-radius: var(--radius-sm);
 }
 .passport-page[data-quiet='true'] .xiaoqi-sticker {
   animation: none;
@@ -285,7 +285,7 @@
 }
 @media (max-width: 960px) {
   .passport-page {
-    padding: 20px;
+    padding: var(--sp-5);
   }
   .passport-spread {
     grid-template-columns: 1fr;
@@ -314,7 +314,7 @@
     display: none;
   }
   .passport-card {
-    padding: 27px 24px 65px;
+    padding: 27px var(--sp-6) 65px;
     transform: none;
   }
   .passport-brand {
@@ -334,13 +334,13 @@
   }
   .passport-story h1 {
     font-size: 24px;
-    margin: 0 0 8px;
+    margin: 0 0 var(--sp-2);
   }
   .xiaoqi-speech {
-    padding: 8px;
+    padding: var(--sp-2);
   }
   .passport-page {
-    padding: 20px 16px;
+    padding: var(--sp-5) var(--sp-4);
   }
   .passport-captcha button {
     width: 125px;

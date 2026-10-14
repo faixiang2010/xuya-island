@@ -44,16 +44,14 @@
   }
 }
 .cx-shell {
-  --cx-ink: #232529;
-  --cx-muted: #7a7d82;
-  --cx-line: #e9eaec;
-  font:
-    14px/1.6 'Microsoft YaHei',
-    'PingFang SC',
-    system-ui,
-    sans-serif;
+  --cx-ink: var(--ink);
+  --cx-muted: var(--muted);
+  --cx-line: var(--line);
+  font-family: var(--font-sans);
+  font-size: var(--fs-sm);
+  line-height: 1.6;
   color: var(--cx-ink);
-  background: #fff;
+  background: var(--surface);
   display: flex;
   height: 100dvh;
   min-height: 560px;
@@ -70,7 +68,7 @@
   text-align: left;
 }
 .cx-shell button:hover {
-  background: #f1f2f4;
+  background: var(--shell-hover);
 }
 .cx-shell button:disabled {
   cursor: default;
@@ -85,21 +83,21 @@
 .cx-shell select {
   font: inherit;
   color: inherit;
-  border: 1px solid #dedfe3;
-  border-radius: 8px;
-  background: white;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
   padding: 9px 11px;
   min-width: 0;
 }
 .cx-shell input:focus,
 .cx-shell textarea:focus,
 .cx-shell select:focus {
-  outline: 2px solid #b7d3ee;
+  outline: 2px solid var(--focus);
   outline-offset: 1px;
 }
 .cx-shell button:focus-visible,
 .cx-shell a:focus-visible {
-  outline: 2px solid #a4c9ed;
+  outline: 2px solid var(--focus);
   outline-offset: 2px;
 }
 .cx-shell h1 {
@@ -2176,15 +2174,15 @@
 
 /* Codex 独立桌面：聊天常驻，专业功能以工具抽屉打开。 */
 .cx-shell {
-  --cx-surface: #fff;
-  --cx-sidebar-bg: #f9f9fa;
-  --cx-soft: #f3f4f6;
-  --cx-hover: #eeeef0;
-  --cx-accent: #327fba;
-  --cx-user: #edf4fc;
-  --cx-shadow: 0 14px 45px #171f2b12;
+  --cx-surface: var(--surface);
+  --cx-sidebar-bg: var(--shell-bg);
+  --cx-soft: var(--surface-soft);
+  --cx-hover: var(--shell-hover);
+  --cx-accent: var(--brand);
+  --cx-user: var(--brand-soft);
+  --cx-shadow: var(--shadow-2);
   isolation: isolate;
-  font-family: 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif;
+  font-family: var(--font-sans);
   letter-spacing: 0.05px;
   min-height: 0;
   background: var(--cx-surface);
@@ -2198,7 +2196,7 @@
   letter-spacing: -0.7px;
 }
 .cx-brand > svg:first-child {
-  color: #353942;
+  color: var(--ink);
 }
 .cx-brand > svg:last-child {
   color: var(--cx-muted);

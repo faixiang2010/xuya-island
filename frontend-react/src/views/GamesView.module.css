@@ -6,28 +6,37 @@
 .card {
   background: var(--surface);
   border: 1px solid var(--line);
-  border-radius: 22px;
+  border-radius: var(--radius-xl);
   padding: 30px;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: 14px;
+  box-shadow: var(--shadow-1);
+  transition:
+    transform var(--dur-2) var(--ease-out),
+    box-shadow var(--dur-2) var(--ease-out);
+}
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-2);
 }
 .card:nth-child(2) {
-  background: #f3fbf7;
+  background: var(--brand-soft);
+  border-color: var(--brand-soft-strong);
 }
 .icon {
   color: var(--accent);
   padding: 18px;
-  border-radius: 16px;
-  background: #eeebfc;
+  border-radius: var(--radius-lg);
+  background: var(--accent-soft);
 }
 .card:nth-child(2) .icon {
-  color: #327055;
-  background: #e1f3e9;
+  color: var(--brand-ink);
+  background: var(--brand-soft-strong);
 }
 .card h2 {
-  font-size: 24px;
+  font-size: var(--fs-xl);
 }
 .card p,
 .note p {
@@ -52,7 +61,7 @@
   display: flex;
   align-items: center;
   gap: 4px;
-  color: #327055;
+  color: var(--brand-ink);
 }
 .card small {
   color: var(--muted);
@@ -61,7 +70,7 @@
   margin-top: 28px;
   padding: 26px;
   border: 1px solid var(--line);
-  border-radius: 20px;
+  border-radius: var(--radius-lg);
   background: var(--surface);
   display: grid;
   gap: 12px;

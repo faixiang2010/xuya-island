@@ -1,8 +1,8 @@
 .quest {
-  padding: 16px 20px;
-  margin: 16px 0;
+  padding: var(--sp-4) var(--sp-5);
+  margin: var(--sp-4) 0;
   border: 1px solid var(--learning-line, #edcbdc);
-  border-radius: 20px;
+  border-radius: var(--radius-lg);
   background: var(--learning-soft, #fff2f7);
 }
 .heading {
@@ -16,22 +16,22 @@
   flex: 1;
 }
 .heading span {
-  font-size: 14px;
+  font-size: var(--fs-sm);
 }
 .heading h2 {
-  font-size: 18px;
+  font-size: var(--fs-lg);
   margin-top: 6px;
   line-height: 1.6;
 }
 .heading small {
-  font-size: 14px;
+  font-size: var(--fs-sm);
   color: var(--muted);
 }
 .steps {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 8px;
-  margin: 12px 0 10px;
+  gap: var(--sp-2);
+  margin: var(--sp-3) 0 10px;
 }
 .steps button {
   display: flex;
@@ -39,11 +39,11 @@
   justify-content: center;
   flex-wrap: wrap;
   gap: 6px;
-  padding: 9px 8px;
-  background: #ffffffa8;
+  padding: 9px var(--sp-2);
+  background: var(--surface);
   color: var(--learning-ink, #7d3c5c);
   border: 1px solid var(--learning-line, #edcbdc);
-  border-radius: 10px;
+  border-radius: var(--radius-sm);
 }
 .steps button[aria-pressed='true'] {
   background: var(--surface);
@@ -62,7 +62,7 @@
 }
 .actions span {
   color: var(--muted);
-  font-size: 14px;
+  font-size: var(--fs-sm);
 }
 @media (max-width: 700px) {
   .steps {

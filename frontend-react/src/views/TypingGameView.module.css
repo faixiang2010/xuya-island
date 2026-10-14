@@ -2,23 +2,23 @@
 .actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: var(--sp-3);
 }
 .levels {
-  margin-top: 12px;
-  padding-top: 12px;
+  margin-top: var(--sp-3);
+  padding-top: var(--sp-3);
   border-top: 1px solid var(--learning-line, #edcbdc);
 }
 .configuration {
   width: 100%;
-  padding: 14px 16px;
-  margin-bottom: 16px;
+  padding: 14px var(--sp-4);
+  margin-bottom: var(--sp-4);
   border: 1px solid var(--learning-line, #edcbdc);
-  border-radius: 18px;
+  border-radius: var(--radius-lg);
   background: var(--surface);
 }
 .page :global(.page-heading) {
-  margin-bottom: 16px;
+  margin-bottom: var(--sp-4);
 }
 .page.page {
   padding-top: 26px;
@@ -34,42 +34,42 @@
   display: none;
 }
 .compactSettings {
-  margin-bottom: 12px;
+  margin-bottom: var(--sp-3);
   border: 1px solid var(--learning-line, #edcbdc);
-  border-radius: 12px;
+  border-radius: var(--radius-sm);
   background: var(--learning-soft, #fff2f7);
 }
 .compactSettings > summary {
   padding: 11px 14px;
   cursor: pointer;
   color: var(--learning-ink, #7d3c5c);
-  font-size: 14px;
+  font-size: var(--fs-sm);
 }
 .compactSettings > section {
   border: 0;
   margin: 0;
-  padding: 12px;
+  padding: var(--sp-3);
 }
 .levelSelect {
   margin-bottom: 14px;
-  font-size: 14px;
+  font-size: var(--fs-sm);
   color: var(--muted);
 }
 .levelSelect select {
   width: 100%;
-  padding: 10px 12px;
+  padding: 10px var(--sp-3);
   margin-top: 6px;
   border: 1px solid var(--line);
-  border-radius: 10px;
+  border-radius: var(--radius-sm);
   background: var(--surface);
   color: var(--ink);
   font: inherit;
-  font-size: 14px;
+  font-size: var(--fs-sm);
 }
 .play {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr);
-  gap: 24px;
+  gap: var(--sp-6);
   align-items: start;
 }
 .inputPane,
@@ -80,17 +80,17 @@
   display: flex;
   justify-content: center;
   gap: 10px;
-  padding: 4px 0 12px;
+  padding: var(--sp-1) 0 var(--sp-3);
 }
 .route > span {
   min-width: 0;
   width: 64px;
   display: grid;
   justify-items: center;
-  gap: 4px;
-  padding: 4px 2px;
+  gap: var(--sp-1);
+  padding: var(--sp-1) 2px;
   border: 1px dashed var(--learning-line, #edcbdc);
-  border-radius: 10px;
+  border-radius: var(--radius-sm);
   color: var(--muted);
   opacity: 0.65;
 }
@@ -101,25 +101,25 @@
   color: var(--learning-ink, #7d3c5c);
 }
 .route small {
-  font-size: 14px;
+  font-size: var(--fs-sm);
   white-space: nowrap;
 }
 .inputSteps {
   padding: 22px;
   background: var(--canvas);
-  border-radius: 14px;
+  border-radius: var(--radius);
   color: var(--learning-ink, #7d3c5c);
 }
 .inputSteps h2 {
-  font-size: 18px;
-  margin-top: 12px;
+  font-size: var(--fs-lg);
+  margin-top: var(--sp-3);
 }
 .inputSteps ol {
   padding-left: 20px;
   line-height: 2.2;
 }
 .inputSteps p {
-  font-size: 14px;
+  font-size: var(--fs-sm);
   color: var(--muted);
 }
 .round {
@@ -127,7 +127,7 @@
   padding: 22px;
   background: var(--surface);
   border: 1px solid var(--line);
-  border-radius: 22px;
+  border-radius: var(--radius-lg);
 }
 .page :global(.page-heading .back-link + .eyebrow) {
   display: block;
@@ -136,10 +136,10 @@
 .scene {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 12px;
-  margin-bottom: 12px;
-  border-radius: 14px;
+  gap: var(--sp-3);
+  padding: var(--sp-3);
+  margin-bottom: var(--sp-3);
+  border-radius: var(--radius);
   background: var(--learning-soft, #fff2f7);
   color: var(--learning-ink, #7d3c5c);
 }
@@ -150,68 +150,68 @@
   flex: 1;
 }
 .scene p {
-  font-size: 14px;
+  font-size: var(--fs-sm);
   color: var(--muted);
   margin-top: 5px;
 }
 .auto {
   padding: 6px 10px;
-  font-size: 14px;
+  font-size: var(--fs-sm);
   border: 1px solid var(--learning-line, #edcbdc);
   background: var(--surface);
-  border-radius: 20px;
+  border-radius: var(--radius-lg);
   white-space: nowrap;
 }
 .stats {
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: var(--sp-2);
   color: var(--muted);
 }
 .round progress {
   width: 100%;
   height: 10px;
   accent-color: var(--accent);
-  margin: 16px 0;
+  margin: var(--sp-4) 0;
 }
 .target {
   display: grid;
   justify-items: center;
-  gap: 8px;
+  gap: var(--sp-2);
   padding: 14px;
-  border-radius: 16px;
+  border-radius: var(--radius);
   background: var(--learning-soft, #fff2f7);
   color: var(--learning-ink, #7d3c5c);
   position: relative;
   transition:
-    box-shadow 180ms,
-    background 180ms;
+    box-shadow var(--dur-2),
+    background var(--dur-2);
 }
 .target[data-correct='true'] {
-  box-shadow: inset 0 0 0 2px #69a78b;
+  box-shadow: inset 0 0 0 2px var(--brand);
 }
 .matched {
-  color: #327055;
+  color: var(--brand-ink);
 }
 .delivery {
   position: absolute;
   right: 24px;
   bottom: 20px;
-  animation: send-clue 180ms ease-out both;
+  animation: send-clue var(--dur-2) var(--ease-out) both;
 }
 .reveal {
-  animation: reveal-clue 450ms ease-out both;
+  animation: reveal-clue 450ms var(--ease-out) both;
 }
 .discovery {
   width: 100%;
-  padding: 20px;
+  padding: var(--sp-5);
   background: var(--learning-soft, #fff2f7);
   border: 1px solid var(--learning-line, #edcbdc);
-  border-radius: 16px;
+  border-radius: var(--radius);
 }
 .discovery p {
-  margin: 8px 0;
+  margin: var(--sp-2) 0;
 }
 .discovery small {
   color: var(--muted);
@@ -263,8 +263,8 @@
   flex: 1;
   width: 100%;
   border: 2px solid var(--line);
-  border-radius: 12px;
-  padding: 12px 16px;
+  border-radius: var(--radius-sm);
+  padding: var(--sp-3) var(--sp-4);
   font-size: 24px;
 }
 .feedback {
@@ -275,10 +275,10 @@
 .keyboard {
   display: grid;
   justify-items: center;
-  gap: 8px;
-  padding: 20px 8px;
+  gap: var(--sp-2);
+  padding: var(--sp-5) var(--sp-2);
   background: var(--canvas);
-  border-radius: 14px;
+  border-radius: var(--radius);
 }
 .keyboard > div {
   display: flex;
@@ -290,8 +290,8 @@
   width: 100%;
   height: 40px;
   font: inherit;
-  background: white;
-  border: 1px solid #c4cfdf;
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
   border-bottom-width: 3px;
   border-radius: 7px;
 }
@@ -301,42 +301,42 @@
 .keyboard .highlight {
   background: var(--accent);
   border-color: var(--learning-ink, #7d3c5c);
-  color: white;
-  outline: 2px solid #b9adeb;
+  color: #fff;
+  outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
 .keyboard .modifiers {
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
-  gap: 12px;
-  margin-top: 8px;
+  gap: var(--sp-3);
+  margin-top: var(--sp-2);
 }
 .keyboard .modifiers kbd {
   width: auto;
   min-width: 60px;
-  padding: 0 12px;
+  padding: 0 var(--sp-3);
 }
 .modifiers span {
-  font-size: 14px;
+  font-size: var(--fs-sm);
   color: var(--muted);
 }
 .keyboard small {
-  margin-top: 8px;
+  margin-top: var(--sp-2);
   text-align: center;
   color: var(--muted);
 }
 .help {
   color: var(--muted);
-  margin: 12px 0;
-  font-size: 14px;
+  margin: var(--sp-3) 0;
+  font-size: var(--fs-sm);
 }
 .finish {
   padding: 30px 0;
   display: grid;
   gap: 18px;
   justify-items: start;
-  color: #327055;
+  color: var(--brand-ink);
 }
 .finish p {
   color: var(--muted);
@@ -346,7 +346,7 @@
     padding: 0;
     background: transparent;
     border: 0;
-    margin-bottom: 12px;
+    margin-bottom: var(--sp-3);
   }
   .desktopSettings,
   .levels {
@@ -367,7 +367,7 @@
     font-size: 25px;
   }
   .page :global(.page-heading p) {
-    font-size: 14px;
+    font-size: var(--fs-sm);
     line-height: 1.7;
   }
   .scene .auto {
@@ -377,7 +377,7 @@
     padding: 10px;
   }
   .stats {
-    font-size: 14px;
+    font-size: var(--fs-sm);
   }
 }
 @media (min-width: 1101px) and (max-height: 820px) {
@@ -397,8 +397,8 @@
   }
   .feedback {
     min-height: 40px;
-    padding: 8px 0;
-    font-size: 14px;
+    padding: var(--sp-2) 0;
+    font-size: var(--fs-sm);
     line-height: 1.5;
   }
 }
@@ -408,16 +408,16 @@
   }
   .scene {
     flex-wrap: wrap;
-    padding: 12px;
+    padding: var(--sp-3);
   }
   .auto {
-    margin-left: 40px;
+    margin-left: var(--sp-10);
   }
   .round {
     padding: 18px;
   }
   .target {
-    padding: 20px 12px;
+    padding: var(--sp-5) var(--sp-3);
   }
   .form .actions {
     flex-direction: column;
@@ -436,7 +436,7 @@
   .hints {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 16px;
+    gap: var(--sp-4);
   }
   .hints > details {
     margin-top: 0;

@@ -50,15 +50,38 @@ class ChromeBridgeTest {
     }
 
     @AfterEach
-    void cleanup() throws IOException {
+    void cleanup() {
         com.xuya.island.account.AccountScope.clear();
-        if (root != null
-                && root.startsWith(
+        if (root == null
+                || !root.startsWith(
                         Path.of("target/codex-platform-tests").toAbsolutePath().normalize()))
-            try (var walk = Files.walk(root)) {
-                for (Path path : walk.sorted(Comparator.reverseOrder()).toList())
-                    Files.deleteIfExists(path);
+            return;
+        // Windows 上刚编译并执行过的 NativeBridge.exe 可能被安全软件短暂占用，删除会抛 AccessDenied；
+        // 重试消化这类瞬时锁，避免清理动作掩盖真实测试结果（残留目录仍位于 target/ 下，由构建清理）。
+        for (int attempt = 0; attempt < 6; attempt++) {
+            try {
+                deleteTree(root);
+                return;
+            } catch (IOException locked) {
+                if (attempt == 5) {
+                    System.err.println("清理临时目录时仍被占用，已保留：" + root);
+                    return;
+                }
             }
+            try {
+                Thread.sleep(250L * (attempt + 1));
+            } catch (InterruptedException interrupted) {
+                Thread.currentThread().interrupt();
+                return;
+            }
+        }
+    }
+
+    private static void deleteTree(Path directory) throws IOException {
+        try (var walk = Files.walk(directory)) {
+            for (Path path : walk.sorted(Comparator.reverseOrder()).toList())
+                Files.deleteIfExists(path);
+        }
     }
 
     @Test

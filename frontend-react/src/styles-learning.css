@@ -1,66 +1,66 @@
 /* 学习正文采用更易读的字号和对比度，辅助装饰保持轻盈。 */
 .mission-card p {
-  font-size: 14px;
-  color: #6e765e;
+  font-size: var(--fs-sm);
+  color: var(--sun-ink);
 }
 .mission-card strong {
-  font-size: 14px;
+  font-size: var(--fs-sm);
 }
 .guide-message,
 .hint-card p {
-  font-size: 14px;
-  color: #746180;
+  font-size: var(--fs-sm);
+  color: var(--ink-soft);
 }
 .guide-header h2 {
-  font-size: 16px;
+  font-size: var(--fs-body);
 }
 .guide-header small,
 .hint-card span {
-  font-size: 14px;
-  color: #82738e;
+  font-size: var(--fs-sm);
+  color: var(--sky-ink);
 }
 .guide-panel h3 {
-  font-size: 14px;
-  color: #756581;
+  font-size: var(--fs-sm);
+  color: var(--sky-ink);
 }
 .goals li {
-  font-size: 14px;
-  color: #796888;
+  font-size: var(--fs-sm);
+  color: var(--ink-soft);
 }
 .hint-button,
 .button {
-  font-size: 14px;
+  font-size: var(--fs-sm);
 }
 .console pre,
 .story-output {
-  font-size: 14px;
+  font-size: var(--fs-sm);
 }
 .story-title {
   font-size: 21px;
 }
 .save-form label {
-  font-size: 14px;
-  color: #81728b;
+  font-size: var(--fs-sm);
+  color: var(--muted);
 }
 .save-form input,
 .ai-section textarea {
-  font-size: 14px;
+  font-size: var(--fs-sm);
 }
 .ai-section p {
-  font-size: 14px;
-  color: #796888;
+  font-size: var(--fs-sm);
+  color: var(--ink-soft);
 }
 .ai-section .ai-answer {
-  font-size: 14px;
+  font-size: var(--fs-sm);
 }
 .hero-copy p,
 .page-heading p {
-  color: #77717d;
+  color: var(--muted);
 }
 .error-details {
   margin: 12px 0;
-  font-size: 14px;
-  color: #9b8070;
+  font-size: var(--fs-sm);
+  color: var(--accent-ink);
 }
 .error-details summary {
   cursor: pointer;
@@ -84,9 +84,9 @@
 }
 .learning-path details,
 .case-card {
-  background: var(--surface, #faf9f6);
-  border: 1px solid #e7e3dc;
-  border-radius: 12px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
   padding: 14px;
 }
 .learning-path summary,
@@ -103,9 +103,9 @@
   max-height: 360px;
   overflow: auto;
   padding: 16px;
-  background: #f2f0eb;
+  background: var(--surface-soft);
   white-space: pre;
-  font-size: 14px;
+  font-size: var(--fs-sm);
 }
 .reflection-form,
 .input-form {
@@ -123,12 +123,12 @@
 .console textarea,
 .input-form input,
 select {
-  border: 1px solid #d8d3c9;
-  border-radius: 8px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
   padding: 10px;
   font: inherit;
-  background: white;
-  color: #493964;
+  background: var(--surface);
+  color: var(--ink);
   max-width: 100%;
 }
 .console details {
@@ -147,19 +147,19 @@ select {
 .first-program-guide {
   padding: 20px 24px;
   margin: 18px 0;
-  border: 1px solid #d4e8dc;
-  border-radius: 16px;
-  background: #edf8f1;
+  border: 1px solid var(--brand-soft-strong);
+  border-radius: var(--radius-lg);
+  background: var(--brand-soft);
 }
 .first-program-guide h2 {
-  font-size: 18px;
-  color: #327055;
+  font-size: var(--fs-lg);
+  color: var(--brand-ink);
 }
 .first-program-guide ol {
   padding-left: 22px;
   line-height: 1.9;
 }
 .first-program-guide p {
-  color: #516f61;
+  color: var(--ink-soft);
   margin-bottom: 8px;
 }

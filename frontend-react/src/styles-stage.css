@@ -1,16 +1,16 @@
 .stage-preview {
   overflow: hidden;
-  border: 1px solid #dccde9;
-  border-radius: 22px;
-  background: #fffcf8;
-  color: #5e426e;
+  border: 1px solid var(--accent-soft);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  color: var(--accent-ink);
 }
 .stage-heading {
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
-  gap: 8px;
-  padding: 16px 19px 11px;
+  gap: var(--sp-2);
+  padding: var(--sp-4) 19px 11px;
 }
 .stage-location {
   font-weight: 800;
@@ -20,14 +20,14 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  color: #786580;
+  color: var(--muted);
   font-size: 0.875rem;
 }
 .stage-live i {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #86b986;
+  background: var(--brand);
 }
 .town-stage {
   display: block;
@@ -38,12 +38,12 @@
 }
 .stage-speech {
   position: relative;
-  padding: 12px 16px;
-  border: 2px solid #8d739e;
-  border-radius: 17px 17px 17px 3px;
-  background: #fffef9;
-  color: #5e426e;
-  font-size: 14px;
+  padding: var(--sp-3) var(--sp-4);
+  border: 2px solid var(--accent);
+  border-radius: var(--radius-lg) var(--radius-lg) var(--radius-lg) 3px;
+  background: var(--surface);
+  color: var(--accent-ink);
+  font-size: var(--fs-sm);
   font-weight: 650;
   line-height: 1.45;
   overflow-wrap: anywhere;
@@ -55,18 +55,18 @@
   align-items: center;
   flex-wrap: wrap;
   gap: 5px 14px;
-  padding: 12px 17px 4px;
+  padding: var(--sp-3) 17px var(--sp-1);
   font-size: 0.875rem;
   line-height: 1.7;
 }
 .stage-facts b {
   font-size: 0.96rem;
-  color: #664183;
+  color: var(--accent-ink);
 }
 .stage-flavour {
   border-radius: 7px;
-  background: #f0e7f8;
-  padding: 1px 8px;
+  background: var(--accent-soft);
+  padding: 1px var(--sp-2);
 }
 .stage-controls {
   display: flex;
@@ -77,16 +77,16 @@
 }
 .stage-controls button {
   padding: 6px 9px;
-  border: 1px solid #dfd2e9;
-  border-radius: 8px;
-  background: #fff;
-  color: #715383;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--accent-ink);
   font: inherit;
   font-size: 0.875rem;
   cursor: pointer;
 }
 .stage-controls button:focus-visible {
-  outline: 3px solid #d8ac75;
+  outline: 3px solid var(--sun);
   outline-offset: 2px;
 }
 .stage-controls button:disabled {
@@ -95,15 +95,15 @@
 }
 .stage-controls > span {
   margin-left: auto;
-  color: #8f7f98;
+  color: var(--muted-soft);
   font-size: 0.875rem;
 }
 .stage-puddle {
-  animation: town-spill 0.45s ease-out;
+  animation: town-spill 0.45s var(--ease-out);
   transform-origin: center;
 }
 .cup-bounce {
-  animation: town-bounce 0.4s ease-out;
+  animation: town-bounce 0.4s var(--ease-out);
   transform-origin: center;
 }
 @keyframes town-spill {
@@ -127,7 +127,7 @@
 }
 @media (max-width: 600px) {
   .stage-heading {
-    padding: 12px;
+    padding: var(--sp-3);
   }
   .stage-controls {
     gap: 5px;

@@ -1,14 +1,14 @@
 @import url('./FamilyPages.css');
 .growth-tabs {
   display: flex;
-  gap: 8px;
-  border-bottom: 1px solid #ded9cc;
-  margin-bottom: 24px;
+  gap: var(--sp-2);
+  border-bottom: 1px solid var(--line);
+  margin-bottom: var(--sp-6);
 }
 .growth-tabs button {
   font: inherit;
   min-height: 48px;
-  padding: 10px 20px;
+  padding: 10px var(--sp-5);
   border: 0;
   border-bottom: 3px solid transparent;
   background: transparent;
@@ -24,14 +24,14 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 24px;
+  gap: var(--sp-6);
 }
 .growth-balance {
   flex-shrink: 0;
   text-align: center;
-  padding: 12px 24px;
+  padding: var(--sp-3) var(--sp-6);
   background: var(--learning-soft, #fff1f7);
-  border-radius: 12px;
+  border-radius: var(--radius-sm);
 }
 .growth-balance strong {
   display: block;
@@ -48,7 +48,7 @@
 .growth-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
-  gap: 20px;
+  gap: var(--sp-5);
 }
 .growth-history {
   width: 100%;
@@ -57,9 +57,9 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: var(--sp-4);
   border: 0;
-  border-bottom: 1px dashed #dcd4c7;
+  border-bottom: 1px dashed var(--line);
   padding: 18px 0;
   text-align: left;
   font: inherit;
@@ -83,9 +83,9 @@ button.growth-history:hover {
   flex-shrink: 0;
 }
 .growth-notice {
-  padding: 16px;
+  padding: var(--sp-4);
   background: var(--learning-soft, #fff1f7);
-  border-radius: 10px;
+  border-radius: var(--radius-sm);
 }
 .growth-more details {
   margin: 0;
@@ -100,6 +100,6 @@ button.growth-history:hover {
   }
   .growth-tabs button {
     flex: 1;
-    padding: 10px 12px;
+    padding: 10px var(--sp-3);
   }
 }

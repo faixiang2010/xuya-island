@@ -1,8 +1,8 @@
 .panel {
   padding: 14px 16px;
-  border: 1px solid var(--learning-line, #edcbdc);
-  border-radius: 18px;
-  background: var(--learning-soft, #fff2f7);
+  border: 1px solid var(--learning-line, var(--line));
+  border-radius: var(--radius-lg);
+  background: var(--learning-soft, var(--surface-soft));
   margin-bottom: 16px;
 }
 .heading,
@@ -16,10 +16,10 @@
 }
 .heading {
   margin-bottom: 14px;
-  color: var(--learning-ink, #7d3c5c);
+  color: var(--learning-ink, var(--accent-ink));
 }
 .heading span {
-  font-size: 14px;
+  font-size: var(--fs-sm);
   color: var(--muted);
 }
 .options {
@@ -30,12 +30,12 @@
 }
 .controls {
   padding-left: 14px;
-  border-left: 1px solid var(--learning-line, #edcbdc);
+  border-left: 1px solid var(--learning-line, var(--line));
 }
 .themes .button,
 .controls .button {
   padding: 9px 13px;
-  font-size: 14px;
+  font-size: var(--fs-sm);
 }
 .panel small {
   display: block;
@@ -62,7 +62,7 @@
   .themes .button {
     flex-direction: column;
     padding: 9px 5px;
-    font-size: 14px;
+    font-size: var(--fs-sm);
     gap: 5px;
   }
   .controls {
