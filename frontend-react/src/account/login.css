@@ -13,7 +13,7 @@
   display: flex;
   align-items: center;
   gap: 13px;
-  max-width: 1200px;
+  max-width: var(--page-max);
   margin: auto;
   font-weight: 800;
   font-size: 23px;
@@ -43,9 +43,9 @@
 }
 .passport-spread {
   display: grid;
-  grid-template-columns: 1.1fr 1fr;
-  gap: 48px;
-  max-width: 1070px;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 560px);
+  gap: clamp(32px, 4vw, 96px);
+  max-width: 1760px;
   margin: 60px auto 30px;
   align-items: start;
 }
@@ -79,8 +79,9 @@
   font-weight: 700;
 }
 .xiaoqi-sticker {
-  width: 330px;
-  height: 330px;
+  width: clamp(280px, 22vw, 440px);
+  height: auto;
+  aspect-ratio: 1;
   margin: -7px auto -4px;
   background: url('/art/login/xiaoqi-passport.png') left center/200% 100% no-repeat;
   animation: xiaoqi-wave 4s ease-in-out infinite;

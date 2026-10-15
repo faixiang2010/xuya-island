@@ -1,4 +1,4 @@
-import { useRef, useState, type CSSProperties, type KeyboardEvent } from 'react'
+import { useMemo, useRef, useState, type CSSProperties, type KeyboardEvent } from 'react'
 import { Link } from 'react-router-dom'
 import {
   Keyboard,
@@ -16,8 +16,9 @@ import {
   RotateCcw,
 } from 'lucide-react'
 import { useClassroomStore } from '../stores/classroom'
-import { gameFinished, useGameProgress } from '../games/progress'
+import { useGameProgress } from '../games/progress'
 import { lessonStatus, nextLesson } from '../learning/path'
+import { stationDone, type StationId } from '../learning/stations'
 import { typingGames, type GameId } from '../games/content'
 import styles from './LearningMap.module.css'
 
@@ -68,6 +69,7 @@ const positions = [
 
 export default function LearningMap() {
   const lessons = useClassroomStore((state) => state.lessons)
+  const curriculum = useClassroomStore((state) => state.curriculum)
   const progress = useClassroomStore((state) => state.progress)
   const records = useGameProgress((state) => state.records)
   const drafts = useGameProgress((state) => state.drafts)
@@ -76,6 +78,11 @@ export default function LearningMap() {
   const buttons = useRef<(HTMLButtonElement | null)[]>([])
   const startLink = useRef<HTMLAnchorElement>(null)
   const suggested = nextLesson(lessons, progress)
+  // 每一站的阶段作品：让孩子在出发前就看见“学完能做出什么”。
+  const stationProjects = useMemo(
+    () => new Map((curriculum?.phases ?? []).map((phase) => [phase.id, phase.project])),
+    [curriculum],
+  )
   const nodes = steps.map((step) => {
     if ('gameId' in step) {
       const gameId: GameId = step.gameId
@@ -96,7 +103,8 @@ export default function LearningMap() {
       return {
         ...step,
         optional: false,
-        done: gameFinished(gameId, records),
+        done: stationDone(step.id as StationId, { lessons, progress, records }),
+        ratio: game.levels.length ? matched.length / game.levels.length : 0,
         status: draft
           ? `${draft.nextIndex} / ${next.tasks.length} 卡 · 可继续`
           : matched.length
@@ -130,7 +138,8 @@ export default function LearningMap() {
     return {
       ...step,
       optional,
-      done: activities.length > 0 && completed === activities.length,
+      done: stationDone(step.id as StationId, { lessons, progress, records }),
+      ratio: activities.length ? completed / activities.length : 0,
       status: needsReview
         ? '建议复习'
         : activities.length
@@ -234,9 +243,14 @@ export default function LearningMap() {
           <ArrowRight size={20} aria-hidden="true" />
         </Link>
         <details className={styles.details} key={creating ? 'create' : active.id}>
-          <summary>学习详情</summary>
+          <summary>
+            {!creating && stationProjects.get(active.id) ? '学习详情 · 这一站的作品' : '学习详情'}
+          </summary>
           <div className={styles.detailBody}>
             <p>{creating ? '把熟悉的本领用在自己的想法上。' : active.goal}</p>
+            {!creating && stationProjects.get(active.id) && (
+              <p>这一站的作品：{stationProjects.get(active.id)}</p>
+            )}
             <p>{creating ? '自由创作室 · 可以随时返回作品集' : active.detail}</p>
             <small>
               {creating
@@ -284,8 +298,10 @@ export default function LearningMap() {
                   {
                     '--x': `${positions[index][0]}%`,
                     '--y': `${positions[index][1]}%`,
+                    '--station-progress': `${Math.round(Math.min(1, Math.max(0, node.ratio)) * 100)}%`,
                   } as CSSProperties
                 }
+                data-state={node.done ? 'done' : node.ratio > 0 ? 'doing' : 'todo'}
                 className={`${node.optional ? styles.optional : ''} ${selected ? styles.selected : ''}`}
               >
                 <button

@@ -21,6 +21,8 @@ import LearningMedia from '../components/LearningMedia'
 import styles from './TypingGameView.module.css'
 import { LearningRecorder, type LearningReceipt } from '../growth/outbox'
 import { newId } from '../shared/id'
+import Xiaoqi from '../motivation/Xiaoqi'
+import { celebrate } from '../motivation/celebrate'
 const keyRows = ['1234567890', 'qwertyuiop', 'asdfghjkl', 'zxcvbnm']
 const themeIcons = { detective: ScanSearch, painting: Palette, piano: Music2 }
 export default function TypingGameView() {
@@ -220,6 +222,17 @@ function TypingRound({
     world.delivery,
   ])
 
+  // 练完一个级别时给一次看得见的庆祝；复习轮与中途休息不打扰。
+  useEffect(() => {
+    if (!done || review) return
+    celebrate({
+      kind: 'level',
+      title: '这个级别练完啦！',
+      detail: `${game.title} · ${publishedLevel.title.replace(/^\d+\s*·\s*/, '')} 全部送达。`,
+      id: `level-${gameId}-${levelId}`,
+    })
+  }, [done, review, gameId, levelId, game.title, publishedLevel.title])
+
   useEffect(() => {
     if (!done && !checkpoint && !paused) input.current?.focus({ preventScroll: true })
   }, [index, done, checkpoint, paused])
@@ -344,6 +357,11 @@ function TypingRound({
         </div>
         {done || checkpoint ? (
           <div className={styles.finish} data-testid="mission-result">
+            <Xiaoqi
+              mood={done ? 'cheer' : 'hello'}
+              size={96}
+              message={done ? '这一级全部送达，真棒！' : '你送出了一组线索。'}
+            />
             <CheckCircle2 className={motion ? styles.reveal : ''} size={48} aria-hidden="true" />
             <h2>{done ? '这一轮卡片都送到了！' : world.achievement}</h2>
             <p>

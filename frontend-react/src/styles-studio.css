@@ -1,6 +1,6 @@
 .studio-page {
   padding: 36px 38px 60px;
-  max-width: 1600px;
+  max-width: var(--page-max);
   margin: auto;
   color: var(--ink);
 }

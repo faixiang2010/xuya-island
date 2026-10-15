@@ -208,7 +208,7 @@ p {
   font-size: var(--fs-sm);
 }
 .page {
-  max-width: 1540px;
+  max-width: var(--page-max);
   padding: 38px 42px 42px;
   margin: auto;
 }

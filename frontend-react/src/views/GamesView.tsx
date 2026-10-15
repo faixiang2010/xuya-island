@@ -60,9 +60,16 @@ export default function GamesView() {
                     : '继续练习'}
                 <ArrowRight size={17} aria-hidden="true" />
               </Link>
-              <small>
-                {count} / {game.levels.length} 级已练完 · 自动送达，进度可继续
-              </small>
+              <div className={styles.progress}>
+                <progress
+                  value={count}
+                  max={game.levels.length}
+                  aria-label={`${game.title} 已完成级别`}
+                />
+                <small>
+                  {count} / {game.levels.length} 级已练完 · 自动送达，进度可继续
+                </small>
+              </div>
             </section>
           )
         })}

@@ -25,6 +25,7 @@ npm.cmd --prefix frontend-react run test:e2e
 |---|---|
 | `src/account`、`src/growth` | 登录权限、家庭管理、学习事实、积分与续学 |
 | `src/views`、`src/components` | 页面、编辑器、学习地图与舞台 |
+| `src/learning`、`src/motivation` | 进度口径与学习偏好；徽章、庆祝反馈与小奇陪伴形象 |
 | `src/stores`、`src/api` | 状态、浏览器草稿、版本冲突与接口校验 |
 | `src/runner` | 正式原生Python HTTP控制、输入、输出及舞台协议 |
 | `runner` | 历史iframe/Worker兼容源码，不是正式运行入口 |
@@ -42,7 +43,9 @@ npm.cmd --prefix frontend-react run test:e2e
 
 首页使用 `public/art/notebook` 下的放大镜、路线、桌面纸张和任务纸页，交互文字由HTML承担。主题支持粉色侦探社、云朵绘画馆、星光琴房及减少动效；琴音默认关闭。本地教学视频可主动播放/重播，生成入口为 `prepare:learning-media`，需要FFmpeg与字体，日常启动无需重新生成。
 
-全站视觉由 `src/styles-theme.css` 的设计 token 统一提供：颜色、圆角、间距、字号、阴影与动效只有这一处来源，页面样式只引用变量、不再硬编码色值；成人 codex 工作台的 `--cx-*` 变量同样映射到这套 token，全站共用一套明亮配色（芽绿、珊瑚粉、阳光黄）。
+全站视觉由 `src/styles-theme.css` 的设计 token 统一提供：颜色、圆角、间距、字号、阴影与动效只有这一处来源，页面样式只引用变量、不再硬编码色值；成人 codex 工作台的 `--cx-*` 变量同样映射到这套 token，全站共用一套明亮配色（芽绿、珊瑚粉、阳光黄）。版心宽度集中在 `--page-max`，页面按可用宽度铺开，只在超宽屏留极窄的呼吸区；长文用 `ch` 上限保持可读行宽，卡片网格在超宽屏锁定列数，避免被拉成超宽条。
+
+学习激励由 `src/motivation` 提供：徽章只由真实的打字练习与课堂记录派生，不按一次通过判断掌握，也不补造历史；进入后首次只静默记录已有收获，之后新增才弹出一次庆祝。庆祝层不拦截点击（只自动消失），并跟随“减少动效”设置。首页标题区显示八站总进度与每站进度环，游戏中心显示每站练习进度，成长手册首位是“我的徽章”。
 
 产品、课程与技术规格在本机 `.codex/design/plan.md`（不进 Git）。
 

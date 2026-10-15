@@ -15,6 +15,8 @@ import { useGameProgress, synchronizeGameProgress } from './games/progress'
 import { useLearningPreferences } from './learning/preferences'
 import styles from './App.module.css'
 import { useFamily, signOut } from './account/AuthGate'
+import Celebration from './motivation/Celebration'
+import { useBadgeWatch } from './motivation/useBadges'
 const menuClasses: Record<string, string> = {
   '/': 'home',
   '/games': 'games',
@@ -49,6 +51,9 @@ export default function App() {
     useGameProgress.getState().hydrate()
     useLearningPreferences.getState().hydrate()
   }, [])
+
+  // 学习数据就绪后才开始监听：避免空数据算出“新徽章”，也避免刷新时重复庆祝。
+  useBadgeWatch(ready)
 
   async function start() {
     if (ready) return
@@ -164,6 +169,7 @@ export default function App() {
           <Outlet key={location.pathname} />
         )}
       </div>
+      <Celebration />
     </div>
   )
 }

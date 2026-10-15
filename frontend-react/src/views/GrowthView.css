@@ -50,6 +50,12 @@
   grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
   gap: var(--sp-5);
 }
+/* 超宽屏限制礼物列数，避免卡片被拉成超宽条。 */
+@media (min-width: 1600px) {
+  .growth-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
 .growth-history {
   width: 100%;
   background: transparent;

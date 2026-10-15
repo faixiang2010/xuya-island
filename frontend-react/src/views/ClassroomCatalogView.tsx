@@ -124,8 +124,9 @@ export default function ClassroomCatalogView() {
               <h2 id={`phase-${phase.id}`}>
                 {phaseSkills[phase.id] ?? phase.title} · {phase.title}
               </h2>
-              <p>
-                {phase.description} 阶段作品：{phase.project}
+              <p>{phase.description}</p>
+              <p className={styles['catalog-project']}>
+                <span className="pill">这一阶段的作品 · {phase.project}</span>
               </p>
             </div>
           </div>

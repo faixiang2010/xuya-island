@@ -1,0 +1,272 @@
+/* 激励层样式：小奇陪伴形象、全局庆祝反馈与徽章墙。颜色与尺度一律引用 styles-theme.css 的设计 token。 */
+
+/* ================= 小奇 ================= */
+.xiaoqi {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-2);
+}
+.xiaoqi-image {
+  display: block;
+  width: var(--xiaoqi-size, 88px);
+  height: var(--xiaoqi-size, 88px);
+  /* 贴图是左右两帧：左侧挥手，右侧捂眼。 */
+  background: url('/art/login/xiaoqi-passport.png') left center / 200% 100% no-repeat;
+}
+.xiaoqi[data-mood='quiet'] .xiaoqi-image {
+  background-position: right center;
+}
+.xiaoqi[data-mood='hello'] .xiaoqi-image {
+  animation: xiaoqi-greet 4s var(--ease-out) infinite;
+}
+.xiaoqi[data-mood='cheer'] .xiaoqi-image {
+  animation: xiaoqi-cheer 900ms var(--ease-spring) infinite;
+}
+.xiaoqi-bubble {
+  max-width: 260px;
+  margin: 0;
+  padding: var(--sp-3);
+  border: 1px solid var(--line);
+  border-radius: var(--radius) var(--radius) var(--radius) 4px;
+  background: var(--surface);
+  box-shadow: var(--shadow-1);
+  color: var(--ink-soft);
+  font-size: var(--fs-sm);
+  text-align: center;
+}
+@keyframes xiaoqi-greet {
+  0%,
+  62%,
+  100% {
+    transform: rotate(-2deg) translateY(0);
+  }
+  74% {
+    transform: rotate(3deg) translateY(-5px);
+  }
+  86% {
+    transform: rotate(-2deg) translateY(0);
+  }
+}
+@keyframes xiaoqi-cheer {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+  40% {
+    transform: translateY(-9px) scale(1.04);
+  }
+  70% {
+    transform: translateY(0) scale(0.99);
+  }
+}
+
+/* ================= 庆祝反馈 ================= */
+.celebration-layer {
+  position: fixed;
+  z-index: 40;
+  left: 0;
+  right: 0;
+  bottom: clamp(18px, 4vh, 40px);
+  display: flex;
+  justify-content: center;
+  padding-inline: var(--sp-4);
+  pointer-events: none;
+}
+.celebration-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-4);
+  max-width: min(560px, 100%);
+  padding: var(--sp-4) var(--sp-5);
+  border: 1px solid var(--brand-soft-strong);
+  border-radius: var(--radius-xl);
+  background: var(--surface);
+  box-shadow: var(--shadow-3);
+  animation: celebration-rise 320ms var(--ease-spring) both;
+}
+.celebration-card[data-kind='level'] {
+  border-color: var(--sun-soft);
+}
+.celebration-copy {
+  min-width: 0;
+}
+.celebration-copy strong {
+  display: block;
+  color: var(--brand-ink);
+  font-size: var(--fs-lg);
+  font-weight: 700;
+}
+.celebration-card[data-kind='level'] .celebration-copy strong {
+  color: var(--sun-ink);
+}
+.celebration-copy p {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: var(--fs-sm);
+  line-height: 1.6;
+}
+.celebration-sparks {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.celebration-sparks > span {
+  position: absolute;
+  left: var(--spark-x);
+  top: var(--spark-y);
+  width: 10px;
+  height: 10px;
+  margin: -5px 0 0 -5px;
+  border-radius: 50%;
+  background: var(--sun);
+  animation: celebration-spark 1100ms var(--ease-out) both;
+  animation-delay: var(--spark-delay);
+}
+.celebration-sparks > span:nth-child(3n) {
+  background: var(--accent);
+}
+.celebration-sparks > span:nth-child(3n + 1) {
+  background: var(--brand);
+}
+@keyframes celebration-rise {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+@keyframes celebration-spark {
+  0% {
+    opacity: 0;
+    transform: scale(0.2);
+  }
+  35% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.4) translateY(-14px);
+  }
+}
+
+/* ================= 徽章墙 ================= */
+.badge-wall {
+  display: grid;
+  gap: var(--sp-4);
+}
+.badge-wall-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--sp-4);
+}
+.badge-wall-heading h2 {
+  font-size: var(--fs-xl);
+  font-weight: 700;
+}
+.badge-wall-heading p {
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: var(--fs-sm);
+}
+.badge-wall-count {
+  flex-shrink: 0;
+  padding: 6px 14px;
+  border-radius: var(--radius-pill);
+  background: var(--brand-soft);
+  color: var(--brand-ink);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+}
+.badge-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: var(--sp-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+/* 超宽屏固定五列：十枚徽章正好两行，卡片不会被拉成超宽条。 */
+@media (min-width: 1700px) {
+  .badge-grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+}
+.badge-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-3);
+  min-width: 0;
+  padding: var(--sp-3);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+.badge-item[data-earned='true'] {
+  border-color: var(--brand-soft-strong);
+  background: var(--brand-soft);
+}
+.badge-medal {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-sm);
+  background: var(--surface-soft);
+  color: var(--muted-soft);
+}
+.badge-item[data-earned='true'] .badge-medal {
+  background: var(--surface);
+  color: var(--brand);
+  box-shadow: var(--shadow-1);
+}
+.badge-copy {
+  min-width: 0;
+}
+.badge-copy strong {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--muted);
+  font-size: var(--fs-body);
+}
+.badge-item[data-earned='true'] .badge-copy strong {
+  color: var(--brand-ink);
+}
+.badge-copy p {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: var(--fs-sm);
+  line-height: 1.6;
+}
+.badge-copy small {
+  display: block;
+  margin-top: 6px;
+  color: var(--muted-soft);
+  font-size: var(--fs-sm);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .xiaoqi-image,
+  .celebration-card,
+  .celebration-sparks > span {
+    animation: none !important;
+  }
+}
+@media (max-width: 600px) {
+  .badge-grid {
+    grid-template-columns: 1fr;
+  }
+  .celebration-card {
+    flex-wrap: wrap;
+    gap: var(--sp-3);
+  }
+}

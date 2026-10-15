@@ -1,8 +1,8 @@
 .family-page {
   box-sizing: border-box;
-  max-width: 1200px;
+  max-width: var(--page-max);
   margin: 0 auto;
-  padding: var(--sp-8);
+  padding: var(--sp-6) var(--sp-8) var(--sp-8);
   color: var(--ink);
   font-size: var(--fs-body);
   line-height: 1.65;
@@ -59,6 +59,10 @@
 .family-paper p {
   margin: var(--sp-2) 0 var(--sp-4);
   font-size: var(--fs-body);
+}
+/* 宽屏下长文保持可读行宽，卡片本身仍铺满版心。 */
+.family-paper details p {
+  max-width: 92ch;
 }
 .family-paper .ant-pro-table > .ant-pro-card {
   border: 0;

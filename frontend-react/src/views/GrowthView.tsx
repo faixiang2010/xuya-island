@@ -7,6 +7,8 @@ import { newId } from '../shared/id'
 import { synchronizeLearning } from '../growth/outbox'
 import FamilyPanel from '../components/FamilyPanel'
 import LegacyLearningImport from '../account/LegacyLearningImport'
+import BadgeGallery from '../motivation/BadgeGallery'
+import { useBadges } from '../motivation/useBadges'
 import { exportLearningReport } from '../growth/export'
 import { knowledgeTitle } from '../growth/labels'
 import {
@@ -21,6 +23,7 @@ import {
 import './GrowthView.css'
 
 export default function GrowthView() {
+  const badges = useBadges()
   const [data, setData] = useState<Dashboard>()
   const [gifts, setGifts] = useState<Reward[]>([])
   const [tab, setTab] = useState('recent')
@@ -229,6 +232,9 @@ export default function GrowthView() {
       )}
       {data && !error && tab === 'recent' && (
         <>
+          <section className="family-paper">
+            <BadgeGallery badges={badges} />
+          </section>
           {data.sessions.length || data.savedRuns.length ? (
             <section className="family-paper">
               <div className="family-heading">

@@ -31,6 +31,43 @@
   z-index: 5;
   flex-shrink: 0;
 }
+/* 八站总进度：只占标题行原有高度，不影响地图与任务卡布局。 */
+.tools {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  flex-shrink: 0;
+}
+.journey {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: 8px var(--sp-3);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  color: var(--muted);
+  font-size: var(--fs-sm);
+}
+.journey strong {
+  color: var(--brand-ink);
+  font-weight: 700;
+}
+.journeyBar {
+  display: block;
+  width: 74px;
+  height: 8px;
+  border-radius: var(--radius-pill);
+  background: var(--brand-soft);
+  overflow: hidden;
+}
+.journeyBar i {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--brand);
+  transition: width var(--dur-2) var(--ease-out);
+}
 .settings > summary {
   display: flex;
   align-items: center;
@@ -112,6 +149,9 @@
   }
   .heading p {
     font-size: var(--fs-sm);
+  }
+  .journey {
+    display: none;
   }
 }
 @media (max-width: 600px) {

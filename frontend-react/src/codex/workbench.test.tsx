@@ -21,8 +21,21 @@ vi.mock('./api', () => ({
 }))
 vi.mock('../stores/classroom', () => ({
   useClassroomStore: (
-    select: (state: { savedCount: number; initialize: () => Promise<void> }) => unknown,
-  ) => select({ savedCount: 0, initialize: mocks.classroom }),
+    select: (state: {
+      lessons: unknown[]
+      progress: unknown[]
+      works: unknown[]
+      savedCount: number
+      initialize: () => Promise<void>
+    }) => unknown,
+  ) =>
+    select({
+      lessons: [],
+      progress: [],
+      works: [],
+      savedCount: 0,
+      initialize: mocks.classroom,
+    }),
 }))
 
 const original = useCodexStore.getState()

@@ -104,6 +104,16 @@ export default function ClassroomView() {
       })),
     [lesson, lessons],
   )
+  // 四个小步的真实状态：运行过、改过并再次运行、保存过作品、写下过自己的发现。
+  const questProgress = useMemo(
+    () => [
+      Boolean(executedCode),
+      Boolean(executedCode) && executedCode !== (lesson?.starterCode ?? ''),
+      Boolean(draft.workId),
+      Boolean(currentProgress?.reflection?.trim()),
+    ],
+    [executedCode, lesson?.starterCode, draft.workId, currentProgress?.reflection],
+  )
   const errorHint = useMemo(() => {
     const detail = result?.error ?? ''
     if (detail.includes('IndentationError'))
@@ -469,6 +479,7 @@ export default function ClassroomView() {
                 creation={lesson.creation}
                 firstProgram={lesson.number === 1}
                 editorId="classroom-editor"
+                progress={questProgress}
               />
             </div>
             {lesson.number === 1 && (

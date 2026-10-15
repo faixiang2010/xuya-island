@@ -55,6 +55,9 @@
   --radius-xl: 28px;
   --radius-pill: 999px;
 
+  /* ---- 版心：内容按可用宽度铺开，只在超宽屏留极窄的呼吸区 ---- */
+  --page-max: 2400px;
+
   /* ---- 间距 ---- */
   --sp-1: 4px;
   --sp-2: 8px;
@@ -542,14 +545,14 @@ input::placeholder {
 
 /* ================= 页面栅格 ================= */
 .main-shell > .topbar {
-  padding-inline: max(clamp(18px, 2vw, 32px), calc((100% - 1600px) / 2 + 32px));
+  padding-inline: max(clamp(18px, 2vw, 34px), calc((100% - var(--page-max)) / 2 + 34px));
 }
 .main-shell .page,
 .main-shell .studio-page {
   width: 100%;
-  max-width: 1600px;
+  max-width: var(--page-max);
   margin-inline: auto;
-  padding: 26px clamp(18px, 2vw, 32px) 40px;
+  padding: 22px clamp(18px, 2vw, 34px) 40px;
 }
 .page-heading {
   margin-bottom: 20px;

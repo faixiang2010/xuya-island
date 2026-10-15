@@ -95,6 +95,10 @@
   font-size: var(--fs-sm);
   line-height: 1.8;
 }
+/* 阶段作品是“学完能做出什么”，单独成行更醒目。 */
+.catalog-project {
+  margin-top: var(--sp-2);
+}
 .catalog-lesson {
   display: block;
 }

@@ -50,8 +50,20 @@
   box-shadow: inset 0 -3px var(--accent);
   font-weight: 700;
 }
+/* 走过的小步用绿勾与浅绿底标出来，孩子一眼看出还剩几步。 */
+.steps button[data-done='true'] {
+  color: var(--brand-ink);
+  border-color: var(--brand-soft-strong);
+  background: var(--brand-soft);
+}
 .quest > p {
   color: var(--ink);
+}
+.quest > .tally {
+  margin: 0 0 var(--sp-2);
+  color: var(--muted);
+  font-size: var(--fs-sm);
+  line-height: 1.6;
 }
 .actions {
   display: flex;

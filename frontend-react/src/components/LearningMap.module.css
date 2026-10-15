@@ -156,6 +156,7 @@
   background: var(--surface);
 }
 .marker {
+  position: relative;
   width: 34px;
   height: 34px;
   border: 2px solid var(--ink);
@@ -212,6 +213,34 @@
 }
 .optional .stageTitle {
   font-size: clamp(13px, 1.05vw, 16px);
+}
+/* 站点进度：已完成加深标题，进行中在圆形标记外画一圈进度环（不改变点击区）。 */
+.marker::before {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  background: conic-gradient(
+    var(--brand) var(--station-progress, 0%),
+    var(--line) var(--station-progress, 0%)
+  );
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 3px));
+  mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 3px));
+  pointer-events: none;
+  opacity: 0;
+}
+[data-state='doing'] .marker::before,
+[data-state='done'] .marker::before {
+  opacity: 1;
+}
+[data-state='doing'] .marker::before {
+  background: conic-gradient(
+    var(--accent) var(--station-progress, 0%),
+    var(--line) var(--station-progress, 0%)
+  );
+}
+[data-state='done'] .stageTitle {
+  color: var(--brand-ink);
 }
 .optional small {
   font-size: var(--fs-sm);

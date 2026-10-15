@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { ScanSearch, Palette, Music2, Eye, PencilLine, Sparkles, Share2 } from 'lucide-react'
+import { ScanSearch, Palette, Music2, Eye, PencilLine, Sparkles, Share2, Check } from 'lucide-react'
 import { learningThemes, useLearningPreferences } from '../learning/preferences'
 import styles from './LearningQuest.module.css'
 
@@ -9,6 +9,8 @@ interface Props {
   creation: string
   firstProgram?: boolean
   editorId: string
+  /** 四个小步各自的完成状态，由课堂真实动作决定（运行、改代码、保存、写发现）。 */
+  progress?: boolean[]
 }
 const icons = { detective: ScanSearch, painting: Palette, piano: Music2 }
 export default function LearningQuest({
@@ -17,6 +19,7 @@ export default function LearningQuest({
   creation,
   firstProgram,
   editorId,
+  progress,
 }: Props) {
   const [step, setStep] = useState(0)
   const theme = useLearningPreferences((state) => state.theme)
@@ -44,6 +47,8 @@ export default function LearningQuest({
       text: '告诉家人：我改了哪里，结果怎样变化？还想试什么？也可以在下方“我的发现”里留一句话。',
     },
   ]
+  const done = progress ?? []
+  const doneCount = steps.filter((_, index) => done[index]).length
   return (
     <section className={styles.quest} aria-label="今天的小冒险">
       <div className={styles.heading}>
@@ -56,8 +61,17 @@ export default function LearningQuest({
       </div>
       <div className={styles.steps} role="group" aria-label="探索节奏">
         {steps.map((item, index) => (
-          <button key={item.title} aria-pressed={step === index} onClick={() => setStep(index)}>
-            <item.icon size={17} aria-hidden="true" />
+          <button
+            key={item.title}
+            aria-pressed={step === index}
+            data-done={done[index] ? 'true' : 'false'}
+            onClick={() => setStep(index)}
+          >
+            {done[index] ? (
+              <Check size={17} aria-hidden="true" />
+            ) : (
+              <item.icon size={17} aria-hidden="true" />
+            )}
             <span>
               {index + 1} · {item.title}
             </span>
@@ -65,6 +79,11 @@ export default function LearningQuest({
         ))}
       </div>
       <p>{steps[step].text}</p>
+      <p className={styles.tally}>
+        {doneCount >= steps.length
+          ? '四个小步都走过了，随时可以回来再改一版。'
+          : `已经走过 ${doneCount} / ${steps.length} 步，不用一次做完。`}
+      </p>
       <div className={styles.actions}>
         <button
           className="button primary"
