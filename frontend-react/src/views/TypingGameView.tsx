@@ -19,12 +19,14 @@ import {
 } from '../learning/audio'
 import LearningAtmosphere from '../components/LearningAtmosphere'
 import LearningMedia from '../components/LearningMedia'
+import FingerKeyboard from '../components/FingerKeyboard'
+import FallingGameView from './FallingGameView'
+import PassageView from './PassageView'
 import styles from './TypingGameView.module.css'
 import { LearningRecorder, type LearningReceipt } from '../growth/outbox'
 import { newId } from '../shared/id'
 import Xiaoqi from '../motivation/Xiaoqi'
 import { celebrate } from '../motivation/celebrate'
-const keyRows = ['1234567890', 'qwertyuiop', 'asdfghjkl', 'zxcvbnm']
 const themeIcons = { detective: ScanSearch, painting: Palette, piano: Music2 }
 export default function TypingGameView() {
   const { gameId } = useParams()
@@ -33,6 +35,23 @@ export default function TypingGameView() {
   const id = gameId as GameId
   const game = typingGames[id]
   const level = game.levels.find((item) => item.id === search.get('level')) ?? game.levels[0]
+  if (game.kind === 'falling')
+    return (
+      <FallingGameView
+        key={id + ':' + level.id}
+        levelId={level.id}
+        onLevel={(next) => setSearch({ level: next })}
+      />
+    )
+  if (game.kind === 'passage')
+    return (
+      <PassageView
+        key={id + ':' + level.id}
+        gameId={id as 'passage' | 'passage-en'}
+        levelId={level.id}
+        onLevel={(next) => setSearch({ level: next })}
+      />
+    )
   return (
     <TypingRound
       key={id + ':' + level.id + ':' + search.get('review')}
@@ -77,6 +96,10 @@ function TypingRound({
   const [composing, setComposing] = useState(false)
   const [paused, setPaused] = useState(false)
   const [capsLock, setCapsLock] = useState<boolean>()
+  const [blind, setBlind] = useState(false)
+  const [stats, setStats] = useState({ correct: 0, mistakes: 0, streak: 0, best: 0 })
+  const [now, setNow] = useState(Date.now())
+  const startedAt = useRef(0)
   const [delivered, setDelivered] = useState('')
   const [replayError, setReplayError] = useState(false)
   const [missionStart, setMissionStart] = useState(
@@ -112,6 +135,13 @@ function TypingRound({
       ? nextRequiredCharacter(task.target, answer)
       : ''
   const needsShift = /^[A-Z]$/.test(nextKey)
+  const accuracy =
+    stats.correct + stats.mistakes > 0
+      ? Math.round((stats.correct / (stats.correct + stats.mistakes)) * 100)
+      : 100
+  const cpm = startedAt.current
+    ? Math.round(stats.correct / Math.max(1 / 60, (now - startedAt.current) / 60000))
+    : 0
 
   useEffect(() => {
     const value = new LearningRecorder(
@@ -245,7 +275,33 @@ function TypingRound({
   useEffect(() => {
     if (!done && !checkpoint && !paused) input.current?.focus({ preventScroll: true })
   }, [index, done, checkpoint, paused])
+  useEffect(() => {
+    if (game.input !== 'keyboard' || done || paused) return
+    setNow(Date.now())
+    const timer = window.setInterval(() => setNow(Date.now()), 1000)
+    return () => window.clearInterval(timer)
+  }, [game.input, done, paused])
   function edit(value: string) {
+    if (game.input === 'keyboard' && !composition.current && value !== answer) {
+      if (!startedAt.current) startedAt.current = Date.now()
+      if (value.length > answer.length) {
+        let correct = 0
+        let mistakes = 0
+        for (let position = answer.length; position < value.length; position += 1) {
+          if (value[position] === task.target[position]) correct += 1
+          else mistakes += 1
+        }
+        setStats((current) => {
+          const streak = mistakes ? 0 : current.streak + correct
+          return {
+            correct: current.correct + correct,
+            mistakes: current.mistakes + mistakes,
+            streak,
+            best: Math.max(current.best, streak),
+          }
+        })
+      }
+    }
     latestAnswer.current = value
     setAnswer(value)
     setDelivered('')
@@ -274,6 +330,9 @@ function TypingRound({
     setGrowthId(newId())
     setReceipt(undefined)
     setGrowthMessage('')
+    setStats({ correct: 0, mistakes: 0, streak: 0, best: 0 })
+    startedAt.current = 0
+    setNow(Date.now())
     wrongAnswers.current.clear()
   }
   function continueMission() {
@@ -349,6 +408,11 @@ function TypingRound({
             本级已送达 {index} / {level.tasks.length} 张
           </span>
           <span>这次先送 {missionEnd - missionStart} 张 · 不计时</span>
+          {game.input === 'keyboard' && !isChoice && (
+            <span>
+              准确率 {accuracy}% · 连击 {stats.streak} · {cpm} 字符/分钟
+            </span>
+          )}
         </div>
         <progress value={index} max={level.tasks.length} aria-label="本级练习进度" />
         <div className={styles.route} aria-label="本次冒险进度">
@@ -593,38 +657,32 @@ function TypingRound({
               ) : (
                 <>
                   {game.input === 'keyboard' && (
-                    <div className={styles.keyboard} aria-label={'键位提示：下一位 ' + nextKey}>
-                      {keyRows.map((row) => (
-                        <div
-                          key={row}
-                          className={styles.keyRow}
-                          style={{
-                            gridTemplateColumns: `repeat(${row.length}, minmax(0, 1fr))`,
-                            width: `${row.length * 10}%`,
-                          }}
-                        >
-                          {[...row].map((key) => (
-                            <kbd
-                              key={key}
-                              className={key === nextKey.toLowerCase() ? styles.highlight : ''}
-                            >
-                              {key.toUpperCase()}
-                            </kbd>
-                          ))}
-                        </div>
-                      ))}
-                      <div className={styles.modifiers}>
-                        <kbd className={needsShift ? styles.highlight : ''}>Shift</kbd>
-                        <span>{needsShift ? '按住 Shift + 亮起的字母键' : '不用按住 Shift'}</span>
-                        <kbd className={capsLock ? styles.highlight : ''}>Caps Lock</kbd>
+                    <div className={styles.fingerGuide}>
+                      <FingerKeyboard
+                        nextKey={nextKey}
+                        needsShift={needsShift}
+                        showLetters={!blind}
+                        ariaLabel={'键位提示：下一位 ' + nextKey}
+                      />
+                      <div className={styles.keyboardTools}>
+                        {gameId === 'finger' && (
+                          <button
+                            type="button"
+                            className="button secondary"
+                            aria-pressed={blind}
+                            onClick={() => setBlind((value) => !value)}
+                          >
+                            {blind ? '显示键帽' : '开启盲打模式'}
+                          </button>
+                        )}
+                        <small>
+                          {capsLock === true
+                            ? 'Caps Lock 已打开，输入小写时记得关掉。'
+                            : capsLock === false
+                              ? 'Caps Lock 已关闭。'
+                              : '亮起的是目标键；按完记得让手指回到 ASDF JKL; 家位。'}
+                        </small>
                       </div>
-                      <small>
-                        {capsLock === true
-                          ? 'Caps Lock 已打开，输入小写时记得关掉。'
-                          : capsLock === false
-                            ? 'Caps Lock 已关闭。'
-                            : '亮起的是目标键。键盘印着大写，目标大小写仍要看清楚。'}
-                      </small>
                     </div>
                   )}
                   {game.input === 'pinyin' && (

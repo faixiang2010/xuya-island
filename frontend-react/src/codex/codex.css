@@ -691,12 +691,36 @@
 .cx-message.assistant {
   padding-right: 10px;
 }
-.cx-copy-message {
-  opacity: 0;
-  margin-top: 3px;
+.cx-message-actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin-top: 6px;
 }
-.cx-message:hover .cx-copy-message {
-  opacity: 0.7;
+.cx-message-action {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--cx-muted);
+  cursor: pointer;
+}
+.cx-message-action:hover {
+  background: #f1f2f4;
+  color: var(--cx-ink);
+}
+.cx-message-action.active {
+  color: #2f7d52;
+  background: #eaf6ef;
+}
+.cx-message-action:disabled {
+  opacity: 0.35;
+  background: transparent;
+  cursor: default;
 }
 .cx-markdown {
   font-size: 14px;

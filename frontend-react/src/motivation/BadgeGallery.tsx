@@ -3,12 +3,14 @@ import {
   CalendarDays,
   CheckCircle2,
   Gamepad2,
+  Hand,
   Keyboard,
   Languages,
   Palette,
   Search,
   Sprout,
   WandSparkles,
+  Zap,
   type LucideIcon,
 } from 'lucide-react'
 import { earnedBadges, type Badge, type BadgeIcon } from './badges'
@@ -17,6 +19,8 @@ import './motivation.css'
 const icons: Record<BadgeIcon, LucideIcon> = {
   keyboard: Keyboard,
   pinyin: Languages,
+  hand: Hand,
+  meteor: Zap,
   sprout: Sprout,
   book: BookOpen,
   palette: Palette,

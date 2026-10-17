@@ -1,0 +1,235 @@
+.wrap {
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+  border-radius: var(--radius);
+  background: var(--canvas);
+}
+.screen {
+  display: grid;
+  gap: 4px;
+}
+.row {
+  display: flex;
+  gap: 4px;
+  min-width: 0;
+}
+.key {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-width: 0;
+  height: 40px;
+  padding: 0;
+  overflow: hidden;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink);
+  background: color-mix(in srgb, var(--finger) 12%, var(--surface));
+  border: 1px solid var(--line-strong);
+  border-bottom-width: 3px;
+  border-radius: 6px;
+  transition:
+    transform var(--dur-1) var(--ease-out),
+    box-shadow var(--dur-1) var(--ease-out);
+}
+.tint {
+  position: absolute;
+  inset: 0 0 auto;
+  height: 3px;
+  background: var(--finger);
+  opacity: 0.85;
+}
+.cap {
+  position: relative;
+  padding-top: 2px;
+  white-space: nowrap;
+}
+.bump {
+  position: absolute;
+  bottom: 5px;
+  width: 12px;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--learning-ink, #7d3c5c);
+  opacity: 0.55;
+}
+.hot {
+  color: #fff;
+  background: var(--brand-ink, #7d3c5c);
+  border-color: var(--brand-ink, #7d3c5c);
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-1);
+}
+.hot .tint {
+  background: #fff;
+  opacity: 0.9;
+}
+.hot .bump {
+  background: #fff;
+}
+.hint {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  min-height: 22px;
+  font-size: var(--fs-sm);
+  color: var(--muted);
+}
+.hint strong {
+  color: var(--learning-ink, #7d3c5c);
+}
+.hint b {
+  color: var(--ink);
+}
+.fingerDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+.handsStage {
+  position: relative;
+  height: 128px;
+  margin-top: -10px;
+  pointer-events: none;
+}
+.handLeft,
+.handRight {
+  position: absolute;
+  bottom: 0;
+  width: 46%;
+  height: 100%;
+  opacity: 0.96;
+}
+.handLeft {
+  left: 2%;
+}
+.handRight {
+  right: 2%;
+}
+.handSvg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.handShadow {
+  fill: rgba(125, 60, 92, 0.12);
+}
+.wrist {
+  fill: #ffe3d5;
+  stroke: #e7b6a3;
+  stroke-width: 2;
+}
+.palm {
+  fill: #ffe3d5;
+  stroke: #e7b6a3;
+  stroke-width: 2;
+}
+.handFinger {
+  stroke: rgba(125, 60, 92, 0.2);
+  stroke-width: 1.5;
+  transform-box: fill-box;
+  transform-origin: center top;
+}
+.handFingerActive {
+  stroke: #fff;
+  stroke-width: 3.5;
+  animation: hand-tap 1.05s ease-in-out infinite;
+  filter: drop-shadow(0 3px 5px rgba(125, 60, 92, 0.42));
+}
+.knuckle {
+  stroke: rgba(125, 60, 92, 0.18);
+  stroke-width: 1.5;
+}
+.nail {
+  fill: rgba(255, 255, 255, 0.68);
+}
+.tipHalo {
+  fill: none;
+  stroke-width: 3;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: tip-halo 1.05s ease-in-out infinite;
+}
+.tipPulse {
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: tip-pulse 1.05s ease-out infinite;
+}
+@keyframes hand-tap {
+  0%,
+  55%,
+  100% {
+    transform: translateY(0) scaleY(1);
+  }
+  22% {
+    transform: translateY(11px) scaleY(0.93);
+  }
+}
+@keyframes tip-halo {
+  0%,
+  100% {
+    opacity: 0.4;
+    transform: scale(0.9);
+  }
+  50% {
+    opacity: 0.95;
+    transform: scale(1.12);
+  }
+}
+@keyframes tip-pulse {
+  0% {
+    opacity: 0.75;
+    transform: scale(0.55);
+  }
+  65%,
+  100% {
+    opacity: 0;
+    transform: scale(1.8);
+  }
+}
+:global(.app-shell[data-learning-motion='quiet']) .handFingerActive {
+  animation: none;
+  transform: translateY(8px) scaleY(0.95);
+}
+:global(.app-shell[data-learning-motion='quiet']) .tipPulse {
+  display: none;
+}
+:global(.app-shell[data-learning-motion='quiet']) .tipHalo {
+  animation: none;
+  opacity: 0.9;
+}
+.compact {
+  padding: 10px;
+  gap: 8px;
+}
+.compact .key {
+  height: 32px;
+  font-size: 10px;
+}
+.compact .bump {
+  bottom: 3px;
+  width: 9px;
+  height: 2px;
+}
+.compact .handsStage {
+  height: 84px;
+  margin-top: -4px;
+}
+@media (max-width: 600px) {
+  .key {
+    height: 30px;
+    font-size: 9px;
+  }
+  .row {
+    gap: 3px;
+  }
+  .handsStage {
+    height: 84px;
+  }
+}

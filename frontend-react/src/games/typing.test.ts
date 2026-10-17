@@ -43,6 +43,9 @@ describe('入门打字练习', () => {
     expect(checkTyping('pinyin', '山', ' 山 ').correct).toBe(true)
     expect(nextRequiredCharacter('Ab3', 'ab')).toBe('A')
     expect(nextRequiredCharacter('Ab3', 'A')).toBe('b')
+    expect(checkTyping('finger', ';', ';').correct).toBe(true)
+    expect(checkTyping('finger', ',', ',').correct).toBe(true)
+    expect(checkTyping('finger', ';', '。').state).toBe('invalid')
   })
   it('损坏、未知版本与伪完成记录不能点亮地图', () => {
     const storage = (value: string) => ({ getItem: () => value })

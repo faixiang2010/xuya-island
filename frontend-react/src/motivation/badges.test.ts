@@ -48,7 +48,8 @@ function badge(input: BadgeInput, id: string) {
 describe('徽章只由真实记录派生', () => {
   it('全新账户没有任何徽章，且进度都是 0', () => {
     const badges = computeBadges(emptyInput())
-    expect(badges).toHaveLength(8 + Object.values(typingGames).length)
+    // 语文/英语课文共用一个“课文打字员”徽章，不再按游戏数量各生成一枚。
+    expect(badges).toHaveLength(8 + Object.values(typingGames).length - 1)
     expect(badges.every((item) => !item.earned && item.current === 0)).toBe(true)
     expect(badge(emptyInput(), 'keyboard-pro').total).toBe(typingGames.keyboard.levels.length)
   })

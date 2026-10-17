@@ -12,7 +12,17 @@ import {
 
 /** 徽章图标键名，由展示组件映射到具体图标，保持本模块是纯函数、便于测试。 */
 export type BadgeIcon =
-  'keyboard' | 'pinyin' | 'sprout' | 'book' | 'palette' | 'gamepad' | 'search' | 'wand' | 'calendar'
+  | 'keyboard'
+  | 'pinyin'
+  | 'hand'
+  | 'meteor'
+  | 'sprout'
+  | 'book'
+  | 'palette'
+  | 'gamepad'
+  | 'search'
+  | 'wand'
+  | 'calendar'
 
 export interface BadgeInput extends StationContext {
   drafts: GameDraft[]
@@ -85,19 +95,24 @@ function badge(
  * 不用一次通过推断掌握，也不补造任何历史。
  */
 export function computeBadges(input: BadgeInput): Badge[] {
-  const typingBadges = Object.values(typingGames).map((item) =>
-    badge(
-      {
-        id: `${item.id}-pro`,
-        title: item.badgeTitle,
-        description: `把${item.title}的 ${item.levels.length} 个级别都练完。`,
-        group: '起步',
-        icon: item.icon,
-      },
-      typedLevelsDone(item.id, input.records),
-      item.levels.length,
-    ),
-  )
+  const typingBadges = Object.values(typingGames)
+    .filter((item) => item.id !== 'passage' && item.id !== 'passage-en')
+    .map((item) =>
+      badge(
+        {
+          id: `${item.id}-pro`,
+          title: item.badgeTitle,
+          description: `把${item.title}的 ${item.levels.length} 个级别都练完。`,
+          group: '起步',
+          icon: item.icon,
+        },
+        typedLevelsDone(item.id, input.records),
+        item.levels.length,
+      ),
+    )
+  const passagesDone = input.records.filter(
+    (record) => record.gameId === 'passage' || record.gameId === 'passage-en',
+  ).length
   const story = stationProgress(input, 'story')
   const art = stationProgress(input, 'art')
   const game = stationProgress(input, 'game')
@@ -117,6 +132,17 @@ export function computeBadges(input: BadgeInput): Badge[] {
       1,
     ),
     ...typingBadges,
+    badge(
+      {
+        id: 'passage-reader',
+        title: '课文打字员',
+        description: '完成任意 3 篇六年级长篇课文。',
+        group: '起步',
+        icon: 'book',
+      },
+      Math.min(passagesDone, 3),
+      3,
+    ),
     badge(
       {
         id: 'first-activity',

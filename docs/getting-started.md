@@ -6,19 +6,45 @@
 
 工具默认路径：Java 17 为 `D:\GreenSoft\java\jdk-17.0.14`，Maven 为 `D:\GreenSoft\apache-maven-3.9.11`，Node.js 需 22.12+。脚本不改系统默认 JDK 8；其他位置用 `XUYA_JAVA_HOME`、`XUYA_MAVEN_HOME` 指定。
 
+先分清两种用法：**正式使用**只看 43172，**开发调试**才用 43171。
+
+| 默认端口 | 用途 | 局域网可访问 |
+|---|---|---|
+| 43171 | React 开发页面（Vite，仅开发时存在） | 否，只绑定 `127.0.0.1` |
+| 43172 | Java 服务；开发时只提供 API，构建后同时提供页面 | 开启共享后可 |
+| 43173 | 历史 Python 资源端口配置，正式原生教学不依赖 | 否 |
+
+端口读 `backend/config/ports.json`（缺失用 `ports.example.json`）；被占用时换空闲端口，以终端输出为准。
+
+### 正式使用（日常运行）
+
+正式使用不要开 Vite。构建时 React 页面会打进 JAR，页面和 API 共用 43172：
+
 ```powershell
 Set-Location 'D:\electron\xuya-island'
+node backend/scripts/build.mjs
+powershell -NoProfile -ExecutionPolicy Bypass -File backend/scripts/run-jar.ps1
+```
+
+- 本机打开 `http://127.0.0.1:43172`。
+- 家人访问：家庭管理 → 运行与共享开启共享并按提示重启，把页面显示的 `http://192.168.x.x:43172` 发给他们；主机需保持运行。
+- 构建会执行后端和前端测试。只想快速出一版日用包时，可先 `$env:XUYA_SKIP_TESTS='1'` 再构建，测试留到专门验证时跑。
+- 每次改完代码都要重新构建再启动 JAR；43171 上正在开发的效果不会自动出现在 43172。
+
+### 开发调试
+
+```powershell
 npm.cmd --prefix frontend-react ci
 node backend/scripts/dev.mjs
 ```
 
-| 默认端口 | 用途 |
-|---|---|
-| 43171 | React 开发页面 |
-| 43172 | Java API；`/api/health` 查看应用身份与就绪 |
-| 43173 | 历史 Python 资源端口配置，正式原生教学不依赖 |
+开发页面是 `http://127.0.0.1:43171`，`/api` 自动代理到后端 43172，改前端即时热更新。启动流程只运行服务，不执行测试；测试按需单独跑：
 
-端口读 `backend/config/ports.json`（缺失用 `ports.example.json`）；被占用时换空闲端口，以终端输出为准。
+```powershell
+& backend/scripts/backend.ps1 -Task test
+```
+
+开发期间不要用 43172 验收页面：它提供的是上一次构建写进 `target/generated-resources/static` 的旧页面。
 
 <a id="first-use"></a>
 

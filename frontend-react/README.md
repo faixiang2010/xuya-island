@@ -1,6 +1,6 @@
 # 叙芽岛 React 前端
 
-正式页面使用 React + TypeScript + Zustand + React Router，包含家庭登录/管理、侦探手册、打字游戏、48 活动课堂、离谱小镇前四集、小奇创作室、作品与成长手册，以及独立成人开发工作台。
+正式页面使用 React + TypeScript + Zustand + React Router，包含家庭登录/管理、侦探手册、指法学院与字母雨/词雨、六年级语文/英语课文打字、48 活动课堂、离谱小镇前四集、小奇创作室、作品与成长手册，以及独立成人开发工作台。
 
 ## 开发与验证
 
@@ -15,7 +15,7 @@ npm.cmd --prefix frontend-react run format:check
 npm.cmd --prefix frontend-react run test:e2e
 ```
 
-工具路径、端口与调试见[本地开发与首次使用](../docs/getting-started.md)。浏览器测试自动构建源码，用临时学习库/随机端口/空模型配置，全部用例经 `tests/support/session.ts` 走真实管理员登录；当前为 12 个 spec、51 条用例，单元测试 25 个文件、93 条。`--reuse-build` 只用于本轮已构建时，`--lan` 走本机私有 IPv4。`test:curriculum`、`test:adventure` 是历史 Pyodide 兼容检查，正式运行由 Java 启动原生 Python。
+工具路径、端口与调试见[本地开发与首次使用](../docs/getting-started.md)。浏览器测试自动构建源码，用临时学习库/随机端口/空模型配置，全部用例经 `tests/support/session.ts` 走真实管理员登录；当前为 13 个 spec、56 条用例，单元测试 28 个文件、101 条。`--reuse-build` 只用于本轮已构建时，`--lan` 走本机私有 IPv4。`test:curriculum`、`test:adventure` 是历史 Pyodide 兼容检查，正式运行由 Java 启动原生 Python。
 
 ## 模块职责
 
@@ -25,6 +25,8 @@ npm.cmd --prefix frontend-react run test:e2e
 | `src/views`、`src/components` | 页面、编辑器、学习地图与舞台 |
 | `src/learning`、`src/motivation` | 进度口径与学习偏好；徽章、庆祝反馈与小奇陪伴形象 |
 | `src/stores`、`src/api` | 状态、浏览器草稿、版本冲突与接口校验 |
+| `src/games` | 指法课程、字母雨词库、语文/英语长篇课文与游戏进度口径 |
+| `src/codex` | 码穹工作台状态、SSE 事件、消息时间线、编辑器和终端 |
 | `src/runner` | 正式原生 Python HTTP 控制、输入、输出及舞台协议 |
 | `runner` | 历史 iframe/Worker 兼容源码，非正式运行入口 |
 | `scripts`、`tests` | 资源准备、契约生成、课程兼容与隔离浏览器验证 |
@@ -32,6 +34,20 @@ npm.cmd --prefix frontend-react run test:e2e
 | `logs`、`dist`、`test-results` | 日志、正式构建、临时浏览器报告 |
 
 模块独立管理 package.json、锁文件、格式配置与依赖，不用根 npm 工作区；生成资源只进后端 `target/generated-resources`。
+
+## 游戏中心
+
+- 指法学院：完整 QWERTY 键盘、十指分区、家位凸点、盲打模式，键盘下方悬浮双手并对目标手指做下压动画。
+- 字母雨/词雨：五档难度，按准确率自适应速度，支持暂停、护盾和结算。
+- 语文/英语课文：分成两张卡和两个入口，只收录约 200–500 字长篇；语文 14 篇、英语 12 篇，按六年级上册、下册分组。历史短篇（古诗、文言文）不再混入长篇列表。
+- 进度、续学和徽章沿用账户学习记录；自定义文章只保存在本机。
+
+## 码穹消息
+
+- 助手消息下方常驻六个操作：复制、重新生成、赞、踩、朗读、分享；不依赖鼠标悬停。
+- 重新生成会重新提交对应的上一条提问，提交期间保留输入框草稿；赞踩按账户保存在本机。
+- 打开历史会话时消息直接完整显示；当前会话里新收到的回答逐字流式展开，并跟随滚动。
+- SSE 事件按 `id` 去重，消息按 `messageId` 累加；断开观察不取消后台运行。
 
 ## 执行与视觉
 

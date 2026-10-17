@@ -1,0 +1,185 @@
+.page {
+  padding-top: 26px;
+}
+.configuration {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  width: 100%;
+  padding: 14px var(--sp-4);
+  margin-bottom: var(--sp-4);
+  border: 1px solid var(--learning-line, #edcbdc);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+}
+.select {
+  display: grid;
+  gap: 6px;
+  min-width: min(420px, 100%);
+  font-size: var(--fs-sm);
+  color: var(--muted);
+}
+.select select {
+  padding: 10px var(--sp-3);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+  font-size: var(--fs-sm);
+}
+.meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--muted);
+  font-size: var(--fs-sm);
+}
+.round {
+  width: 100%;
+  padding: 22px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+}
+.hud {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  color: var(--muted);
+  font-size: var(--fs-sm);
+}
+.hud span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.round progress {
+  width: 100%;
+  height: 10px;
+  margin: var(--sp-3) 0;
+  accent-color: var(--accent);
+}
+.target {
+  padding: 18px var(--sp-5);
+  border-radius: var(--radius);
+  background: var(--learning-soft, #fff2f7);
+  color: var(--learning-ink, #7d3c5c);
+  font-size: clamp(21px, 2.4vw, 28px);
+  line-height: 2;
+  letter-spacing: 1px;
+  overflow-wrap: anywhere;
+}
+.target span {
+  border-radius: 3px;
+}
+.target span[data-state='correct'] {
+  color: #2f7d52;
+  background: color-mix(in srgb, #2f7d52 12%, transparent);
+}
+.target span[data-state='wrong'] {
+  color: #b42318;
+  background: #fee4e2;
+  text-decoration: underline wavy #b42318;
+}
+.target span[data-state='current'] {
+  color: var(--on-brand);
+  background: var(--brand);
+}
+.form {
+  margin-top: var(--sp-4);
+}
+.form label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+.form textarea {
+  width: 100%;
+  min-height: 96px;
+  padding: var(--sp-3) var(--sp-4);
+  border: 2px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+  font-size: 20px;
+  line-height: 1.7;
+  resize: vertical;
+}
+.feedback {
+  min-height: 40px;
+  padding: 10px 0;
+  color: var(--learning-ink, #7d3c5c);
+}
+.done {
+  display: grid;
+  justify-items: start;
+  gap: 12px;
+  padding: 26px 0;
+  color: var(--brand-ink);
+}
+.done p {
+  color: var(--muted);
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+}
+.custom {
+  width: 100%;
+  margin-top: var(--sp-4);
+  padding: 14px var(--sp-4);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+}
+.custom summary {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  color: var(--muted);
+  font-size: var(--fs-sm);
+}
+.customBody {
+  display: grid;
+  gap: var(--sp-3);
+  margin-top: var(--sp-3);
+}
+.customBody label {
+  display: grid;
+  gap: 6px;
+  font-size: var(--fs-sm);
+  color: var(--muted);
+}
+.customBody input,
+.customBody textarea {
+  width: 100%;
+  padding: 10px var(--sp-3);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+}
+.customBody small {
+  color: var(--muted);
+}
+.customBody p {
+  color: var(--danger, #b42318);
+}
+@media (min-width: 1101px) and (max-height: 820px) {
+  .page {
+    padding-top: 14px;
+  }
+  .target {
+    padding: 12px var(--sp-4);
+    line-height: 1.8;
+  }
+}

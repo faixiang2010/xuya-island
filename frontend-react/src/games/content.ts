@@ -1,7 +1,12 @@
-export type GameId = 'keyboard' | 'pinyin' | 'style' | 'quiz'
+import { fallingLevels } from './fallingWords.ts'
+import { fingerLevels } from './fingerCourse.ts'
+import { passageLevels } from './passages.ts'
+
+export type GameId =
+  'keyboard' | 'pinyin' | 'finger' | 'falling' | 'passage' | 'passage-en' | 'style' | 'quiz'
 export type GameInput = 'keyboard' | 'pinyin'
-export type GameKind = 'typing' | 'choice'
-export type GameIcon = 'keyboard' | 'pinyin' | 'palette' | 'gamepad'
+export type GameKind = 'typing' | 'choice' | 'falling' | 'passage'
+export type GameIcon = 'keyboard' | 'pinyin' | 'hand' | 'meteor' | 'palette' | 'gamepad' | 'book'
 export interface TypingTask {
   target: string
   pinyin?: string
@@ -145,6 +150,52 @@ export const typingGames: Record<GameId, TypingGame> = {
         ]),
       },
     ],
+  },
+  finger: {
+    id: 'finger',
+    title: '指法学院',
+    description: '十根手指各管一片区域，从家位开始学会不看键盘。',
+    instruction:
+      '把左手放在 ASDF，右手放在 JKL;。看亮起的键和手指提示，按完让手指回到原位；熟练后可以打开盲打模式。',
+    kind: 'typing',
+    input: 'keyboard',
+    icon: 'hand',
+    badgeTitle: '指法毕业生',
+    levels: fingerLevels,
+  },
+  falling: {
+    id: 'falling',
+    title: '字母雨 · 词雨',
+    description: '字母和单词从天上落下，输入正确就能把它们击落。',
+    instruction: '输入落得最低的词，打对会自动击落；漏掉会扣一格护盾。先保证准确，再慢慢加快。',
+    kind: 'falling',
+    input: 'keyboard',
+    icon: 'meteor',
+    badgeTitle: '词雨守护者',
+    levels: fallingLevels(),
+  },
+  passage: {
+    id: 'passage',
+    title: '语文课文',
+    description: '用六年级语文长篇课文练习整段输入。',
+    instruction:
+      '选一篇语文长篇课文，一段一段照着输入。中文直接使用拼音输入法，选好汉字后继续；整段完成后自动进入下一段。',
+    kind: 'passage',
+    input: 'keyboard',
+    icon: 'book',
+    badgeTitle: '课文打字员',
+    levels: passageLevels('zh'),
+  },
+  'passage-en': {
+    id: 'passage-en',
+    title: '英语课文',
+    description: '用 PEP 六年级英语长文练习整段输入。',
+    instruction: '选一篇英语长篇课文，一段一段照着输入。英文直接敲键盘，打完整段会自动进入下一段。',
+    kind: 'passage',
+    input: 'keyboard',
+    icon: 'book',
+    badgeTitle: '英语课文打字员',
+    levels: passageLevels('en'),
   },
   style: {
     id: 'style',
@@ -370,11 +421,17 @@ export function checkTyping(
   const answer = mode === 'pinyin' ? input.trim() : input
   if (!answer)
     return { correct: false, state: 'empty', message: '点一下输入框，开始寻找第一条线索。' }
-  if (mode === 'keyboard' && !/^[a-z0-9]+$/i.test(answer))
+  if (
+    mode === 'keyboard' &&
+    !(gameId === 'finger' ? /^[a-z0-9;,./-]+$/i : /^[a-z0-9]+$/i).test(answer)
+  )
     return {
       correct: false,
       state: 'invalid',
-      message: '这里只练字母和数字。请切换到英文输入，再试一次。',
+      message:
+        gameId === 'finger'
+          ? '这里练习字母、数字和常用符号。请切换到英文输入，再试一次。'
+          : '这里只练字母和数字。请切换到英文输入，再试一次。',
     }
   if (mode === 'pinyin' && /^[a-z\s']+$/i.test(answer))
     return {

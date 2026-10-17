@@ -3,6 +3,18 @@
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 24px;
 }
+.group {
+  display: grid;
+  gap: var(--sp-3);
+  margin-bottom: 30px;
+}
+.groupHeading h2 {
+  font-size: var(--fs-xl);
+}
+.groupHeading p {
+  margin-top: 4px;
+  color: var(--muted);
+}
 .card {
   position: relative;
   background: var(--surface);
