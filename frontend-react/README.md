@@ -1,6 +1,6 @@
 # 叙芽岛 React 前端
 
-正式页面使用React + TypeScript + Zustand + React Router，包含家庭登录/管理、侦探手册、打字游戏、48活动课堂、离谱小镇前四集、小奇创作室、作品与成长手册，以及独立成人codex工作台。
+正式页面使用 React + TypeScript + Zustand + React Router，包含家庭登录/管理、侦探手册、打字游戏、48 活动课堂、离谱小镇前四集、小奇创作室、作品与成长手册，以及独立成人开发工作台。
 
 ## 开发与验证
 
@@ -15,9 +15,7 @@ npm.cmd --prefix frontend-react run format:check
 npm.cmd --prefix frontend-react run test:e2e
 ```
 
-联合启动、工具路径、端口与调试见[开发快速上手](../docs/getting-started.md)。浏览器测试自动构建当前源码、使用临时学习库/随机端口/空模型配置；`--reuse-build`只用于本轮源码已完成集成构建时。当前家庭流程可用 `npm.cmd --prefix frontend-react run test:e2e -- --reuse-build family-account.spec.ts` 单独验证；`--lan`使用本机私有IPv4。旧免登录测试不能计入当前家庭版通过项。
-
-`test:curriculum`、`test:adventure`使用历史Pyodide Worker检查课程兼容，保留为辅助检查；正式运行由Java启动原生Python，当前运行验收以家庭版浏览器与后端测试为准。
+工具路径、端口与调试见[本地开发与首次使用](../docs/getting-started.md)。浏览器测试自动构建源码，用临时学习库/随机端口/空模型配置，全部用例经 `tests/support/session.ts` 走真实管理员登录；当前为 12 个 spec、51 条用例，单元测试 25 个文件、93 条。`--reuse-build` 只用于本轮已构建时，`--lan` 走本机私有 IPv4。`test:curriculum`、`test:adventure` 是历史 Pyodide 兼容检查，正式运行由 Java 启动原生 Python。
 
 ## 模块职责
 
@@ -27,26 +25,18 @@ npm.cmd --prefix frontend-react run test:e2e
 | `src/views`、`src/components` | 页面、编辑器、学习地图与舞台 |
 | `src/learning`、`src/motivation` | 进度口径与学习偏好；徽章、庆祝反馈与小奇陪伴形象 |
 | `src/stores`、`src/api` | 状态、浏览器草稿、版本冲突与接口校验 |
-| `src/runner` | 正式原生Python HTTP控制、输入、输出及舞台协议 |
-| `runner` | 历史iframe/Worker兼容源码，不是正式运行入口 |
+| `src/runner` | 正式原生 Python HTTP 控制、输入、输出及舞台协议 |
+| `runner` | 历史 iframe/Worker 兼容源码，非正式运行入口 |
 | `scripts`、`tests` | 资源准备、契约生成、课程兼容与隔离浏览器验证 |
 | `public/art`、`public/media/learning` | 正式图像和本地教学视频、字幕 |
 | `logs`、`dist`、`test-results` | 日志、正式构建、临时浏览器报告 |
 
-模块独立管理package.json、锁文件、格式配置和依赖，不使用根npm工作区。生成资源只进入后端 `target/generated-resources`。`prepare:runtime`默认不生成旧Pyodide资源，历史资源仅在显式 `XUYA_LEGACY_RUNNER=1` 时准备。
+模块独立管理 package.json、锁文件、格式配置与依赖，不用根 npm 工作区；生成资源只进后端 `target/generated-resources`。
 
-## 执行与记录
+## 执行与视觉
 
-`usePythonRunner`通过 `/api/v1/execution` 控制主机解释器，不依赖SharedArrayBuffer或浏览器自身Python。管理员选择环境；安装版支持内置/自备切换。实时input、预设EOF、停止、超时、画笔/舞台与文件快照由原生协议提供。任务目录是组织方式，代码仍具有主机Windows用户权限。
+`usePythonRunner` 经 `/api/v1/execution` 控制主机解释器，不依赖 SharedArrayBuffer；实时输入、预设 EOF、停止、超时、画笔/舞台与文件快照由原生协议提供。任务目录只是组织方式，代码仍具有主机 Windows 用户权限。
 
-学习进度和活动事实按账户同步到同一后端，离线事件通过账户IndexedDB队列补交；旧浏览器进度需显式导入，不补造历史积分。浏览器草稿与作品保存分别处理，作品冲突不能强制覆盖。项目文本限制及教学AI边界见[根README](../README.md)。
+学习进度与活动事实按账户同步，离线事件经账户 IndexedDB 队列补交，旧浏览器进度需显式导入。全站视觉由 `src/styles-theme.css` 设计 token 统一提供，学习激励由 `src/motivation` 派生（徽章只来自真实打字与课堂记录，庆祝层不拦截点击、跟随减少动效）。
 
-首页使用 `public/art/notebook` 下的放大镜、路线、桌面纸张和任务纸页，交互文字由HTML承担。主题支持粉色侦探社、云朵绘画馆、星光琴房及减少动效；琴音默认关闭。本地教学视频可主动播放/重播，生成入口为 `prepare:learning-media`，需要FFmpeg与字体，日常启动无需重新生成。
-
-全站视觉由 `src/styles-theme.css` 的设计 token 统一提供：颜色、圆角、间距、字号、阴影与动效只有这一处来源，页面样式只引用变量、不再硬编码色值；成人 codex 工作台的 `--cx-*` 变量同样映射到这套 token，全站共用一套明亮配色（芽绿、珊瑚粉、阳光黄）。版心宽度集中在 `--page-max`，页面按可用宽度铺开，只在超宽屏留极窄的呼吸区；长文用 `ch` 上限保持可读行宽，卡片网格在超宽屏锁定列数，避免被拉成超宽条。
-
-学习激励由 `src/motivation` 提供：徽章只由真实的打字练习与课堂记录派生，不按一次通过判断掌握，也不补造历史；进入后首次只静默记录已有收获，之后新增才弹出一次庆祝。庆祝层不拦截点击（只自动消失），并跟随“减少动效”设置。首页标题区显示八站总进度与每站进度环，游戏中心显示每站练习进度，成长手册首位是“我的徽章”。
-
-产品、课程与技术规格在本机 `.codex/design/plan.md`（不进 Git）。
-
-契约检查需要已启动的本机后端（`XUYA_OPENAPI_URL`指定实际地址），或通过 `--from-files`读取导出的两个OpenAPI JSON；默认43172未启动时会连接失败。独立隔离验收可运行 `npm.cmd --prefix frontend-react run test:e2e -- --reuse-build codex.spec.ts -g OpenAPI`，只比较现有类型，不改写源码。
+产品、课程与技术规格在本机 `.agent/design/plan.md`（不进 Git）。契约检查需已启动后端（`XUYA_OPENAPI_URL` 指定地址）或 `--from-files` 读导出的 OpenAPI JSON。

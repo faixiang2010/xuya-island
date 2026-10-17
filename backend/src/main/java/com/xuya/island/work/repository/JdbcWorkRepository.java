@@ -101,4 +101,14 @@ public class JdbcWorkRepository implements WorkRepository {
                 .param("created", work.gmtModified())
                 .update();
     }
+
+    @Override
+    public int delete(String id) {
+        // 外键已开启：先删历史版本，再删属于当前账户的作品主记录。
+        client.sql("DELETE FROM work_versions WHERE work_id = :id").param("id", id).update();
+        return client.sql("DELETE FROM works WHERE id = :id AND owner_id = :owner")
+                .param("id", id)
+                .param("owner", AccountScope.id())
+                .update();
+    }
 }

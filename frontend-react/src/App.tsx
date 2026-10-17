@@ -16,6 +16,7 @@ import { useLearningPreferences } from './learning/preferences'
 import styles from './App.module.css'
 import { useFamily, signOut } from './account/AuthGate'
 import Celebration from './motivation/Celebration'
+import PageBoundary from './components/PageBoundary'
 import { useBadgeWatch } from './motivation/useBadges'
 const menuClasses: Record<string, string> = {
   '/': 'home',
@@ -166,7 +167,9 @@ export default function App() {
             {startupError && <p className="muted">请先运行 node backend/scripts/dev.mjs。</p>}
           </main>
         ) : (
-          <Outlet key={location.pathname} />
+          <PageBoundary key={location.pathname}>
+            <Outlet />
+          </PageBoundary>
         )}
       </div>
       <Celebration />

@@ -508,9 +508,12 @@
     flex: 1;
     min-height: 0;
     container-type: size;
-    grid-template-columns: minmax(280px, 1fr) minmax(0, 2fr);
+    /* 任务卡定宽，地图列按比例收窄；整组居中，避免宽屏下地图被挤到右下角。 */
+    grid-template-columns: minmax(280px, 420px) minmax(0, 1fr);
     gap: clamp(24px, 2.2vw, 40px);
     align-items: center;
+    width: min(100%, max(520px, calc(460px + (100dvh - 206px) * 1239 / 1269)));
+    margin-inline: auto;
   }
   .task {
     position: relative;
@@ -597,7 +600,7 @@
     line-height: 1.5;
   }
   .route {
-    width: min(100%, calc((100cqh - 90px) * 1239 / 1269));
+    width: min(100%, calc((100cqh - 64px) * 1239 / 1269));
     max-width: none;
     margin: 0;
   }

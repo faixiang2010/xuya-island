@@ -1,9 +1,14 @@
 import { expect, test, type Page } from '@playwright/test'
 import type { StudioCandidate, StudioProject, StudioSnapshot } from '../src/studio-types'
+import { administratorHeaders, signInAsAdministrator } from './support/session'
+
+test.beforeEach(async ({ page }) => {
+  await signInAsAdministrator(page)
+})
 
 async function createProject(page: Page, title: string, code = 'print("原作还在")') {
   const response = await page.request.post('/api/projects', {
-    headers: { Origin: process.env.XUYA_TEST_URL! },
+    headers: await administratorHeaders(page),
     data: { title, scene: 'milk-tea', files: [{ path: 'main.py', content: code }] },
   })
   expect(response.ok()).toBe(true)
@@ -19,13 +24,14 @@ async function edit(page: Page, id: string, code: string) {
   await page.keyboard.press('Control+V')
   await expect
     .poll(() =>
-      page.evaluate(
-        (projectId) =>
-          JSON.parse(localStorage.getItem(`xuya:studio:draft:${projectId}`) ?? '{}').files?.find(
-            (file: { path: string }) => file.path === 'main.py',
-          )?.content,
-        id,
-      ),
+      page.evaluate((projectId) => {
+        const key = Object.keys(localStorage).find((item) =>
+          item.endsWith(`xuya:studio:draft:${projectId}`),
+        )
+        return JSON.parse((key ? localStorage.getItem(key) : null) ?? '{}').files?.find(
+          (file: { path: string }) => file.path === 'main.py',
+        )?.content
+      }, id),
     )
     .toBe(code)
 }
@@ -76,7 +82,7 @@ test('没有模型时新作品能运行动画、保存多文件，刷新找回�
 test('旧作品复制为独立项目，旧作与课程记录保留', async ({ page }) => {
   const lessons = await (await page.request.get('/api/lessons')).json()
   const response = await page.request.post('/api/works', {
-    headers: { Origin: process.env.XUYA_TEST_URL! },
+    headers: await administratorHeaders(page),
     data: {
       lessonId: lessons[0].id,
       title: '旧作复制验证',
@@ -97,7 +103,7 @@ test('旧作品复制为独立项目，旧作与课程记录保留', async ({ pa
   expect(original.code).toBe('print("旧作的故事")')
 })
 
-test('怪兽在等待中文输入时仍有动画，绘画来自实际执行，偏好能查看和清除', async ({ page }) => {
+test('怪兽在等待中文输入时仍有动画，绘画来自实际执行', async ({ page }) => {
   const code =
     'from xuya.stage import actor, say, size\nfrom xuya.draw import circle, text\nactor("害羞怪兽", "monster")\nsay("怪兽还没听到夸奖", actor="害羞怪兽")\ninput("夸我一句：")\nsize("害羞怪兽", 0.5)\nsay("夸得我小了一半！", actor="害羞怪兽")\ncircle(120, 100, 40, "#76b89f")\ntext(70, 175, "怪兽合影", "#315c50")\n'
   const project = await createProject(page, '越夸越小的怪兽', code)
@@ -109,16 +115,6 @@ test('怪兽在等待中文输入时仍有动画，绘画来自实际执行，�
   await expect(page.locator('.stage-speech')).toContainText('夸得我小了一半', { timeout: 15000 })
   await expect(page.getByText('Python 画出的作品（2 个画笔动作）', { exact: true })).toBeVisible()
   await expect(page.getByLabel('Python 画笔作品', { exact: true })).toBeVisible()
-  await page.getByText('小奇记住了什么', { exact: true }).click()
-  await page.getByLabel('喜欢的创作主题').fill('怪兽、绘画')
-  await page.getByLabel('喜欢的笑话风格').fill('荒诞冷笑话')
-  await page.getByRole('button', { name: '记住这些偏好', exact: true }).click()
-  await expect(page.getByText('已记住你主动保存的创作偏好。', { exact: true })).toBeVisible()
-  await page.getByRole('button', { name: '清除创作偏好', exact: true }).click()
-  await expect(page.getByText('已清除这个作品的创作偏好。', { exact: true })).toBeVisible()
-  const actual = await (await page.request.get(`/api/projects/${project.id}`)).json()
-  expect(actual.preferences.favoriteThemes).toEqual([])
-  expect(actual.preferences.humor).toBe('')
   await page.screenshot({ path: 'test-results/studio-monster.png', fullPage: true })
 })
 

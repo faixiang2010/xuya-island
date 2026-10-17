@@ -79,6 +79,33 @@ class WorkServiceIntegrationTest {
     }
 
     @Test
+    void deleteRemovesWorkAndItsHistory() {
+        var created = service.create(new SaveWorkRequest("story-cover", "封面", "print('一')", 0));
+        service.update(created.id(), new SaveWorkRequest("story-cover", "封面", "print('二')", 1));
+
+        var deleted = service.delete(created.id());
+
+        assertEquals(created.id(), deleted.id());
+        assertEquals(0, service.list().size());
+        assertEquals(
+                0,
+                JdbcClient.create(dataSource)
+                        .sql("SELECT COUNT(*) FROM work_versions")
+                        .query(Integer.class)
+                        .single());
+        BusinessException missing =
+                assertThrows(BusinessException.class, () -> service.get(created.id()));
+        assertEquals("WORK_NOT_FOUND", missing.getCode());
+    }
+
+    @Test
+    void deleteRejectsUnknownWork() {
+        BusinessException missing =
+                assertThrows(BusinessException.class, () -> service.delete("not-exist"));
+        assertEquals("WORK_NOT_FOUND", missing.getCode());
+    }
+
+    @Test
     void unknownLessonIsRejectedBeforeWriting() {
         assertThrows(
                 BusinessException.class,

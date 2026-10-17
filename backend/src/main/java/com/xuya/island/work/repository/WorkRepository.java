@@ -20,4 +20,12 @@ public interface WorkRepository {
     int update(WorkDO work, int expectedRevision);
 
     void insertVersion(WorkDO work);
+
+    /**
+     * 删除作品及其历史版本，只允许删除当前账户自己的记录。
+     *
+     * @param id 作品标识
+     * @return 实际删除的作品主记录数，0 表示不属于当前账户
+     */
+    int delete(String id);
 }

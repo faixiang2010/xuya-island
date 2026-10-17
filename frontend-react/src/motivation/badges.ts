@@ -1,5 +1,5 @@
 import type { Progress } from '../types'
-import { typingGames, type GameId } from '../games/content'
+import { typingGames } from '../games/content'
 import type { GameDraft, GameRecord } from '../games/progress'
 import { lessonStatus } from '../learning/path'
 import {
@@ -85,10 +85,19 @@ function badge(
  * 不用一次通过推断掌握，也不补造任何历史。
  */
 export function computeBadges(input: BadgeInput): Badge[] {
-  const keyboardTotal = typingGames.keyboard.levels.length
-  const pinyinTotal = typingGames.pinyin.levels.length
-  const keyboardDone = typedLevelsDone('keyboard' as GameId, input.records)
-  const pinyinDone = typedLevelsDone('pinyin' as GameId, input.records)
+  const typingBadges = Object.values(typingGames).map((item) =>
+    badge(
+      {
+        id: `${item.id}-pro`,
+        title: item.badgeTitle,
+        description: `把${item.title}的 ${item.levels.length} 个级别都练完。`,
+        group: '起步',
+        icon: item.icon,
+      },
+      typedLevelsDone(item.id, input.records),
+      item.levels.length,
+    ),
+  )
   const story = stationProgress(input, 'story')
   const art = stationProgress(input, 'art')
   const game = stationProgress(input, 'game')
@@ -107,28 +116,7 @@ export function computeBadges(input: BadgeInput): Badge[] {
       triedAnyCard(input) ? 1 : 0,
       1,
     ),
-    badge(
-      {
-        id: 'keyboard-pro',
-        title: '键盘小达人',
-        description: `把字母数字小站的 ${keyboardTotal} 个级别都练完。`,
-        group: '起步',
-        icon: 'keyboard',
-      },
-      keyboardDone,
-      keyboardTotal,
-    ),
-    badge(
-      {
-        id: 'pinyin-pro',
-        title: '拼音小达人',
-        description: `把拼音汉字小站的 ${pinyinTotal} 个级别都练完。`,
-        group: '起步',
-        icon: 'pinyin',
-      },
-      pinyinDone,
-      pinyinTotal,
-    ),
+    ...typingBadges,
     badge(
       {
         id: 'first-activity',

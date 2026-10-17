@@ -2,18 +2,20 @@ import { accountStorage } from '../account/session'
 import { LearningRecorder, type LearningReceipt } from '../growth/outbox'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
-import { ScanSearch, FlaskConical, NotebookPen, Lightbulb, Sparkles } from 'lucide-react'
+import { Lightbulb, ArrowRight } from 'lucide-react'
 import CodeEditor from '../components/CodeEditor'
 import StagePreview from '../components/StagePreview'
 import LessonCompanion from '../components/LessonCompanion'
 import LearningAtmosphere from '../components/LearningAtmosphere'
-import LearningQuest from '../components/LearningQuest'
+import SuccessBurst from '../components/SuccessBurst'
+import Xiaoqi from '../motivation/Xiaoqi'
 import { request } from '../api/client'
 import {
   getAdventure,
   getEpisode,
   matchesScene,
   readAdventureDraft,
+  resolveAdventureCode,
   type AdventureEpisode,
 } from '../api/adventure'
 import { usePythonRunner } from '../runner/usePythonRunner'
@@ -29,6 +31,8 @@ export default function AdventureView() {
   const [message, setMessage] = useState('')
   const [draftNote, setDraftNote] = useState('')
   const [hintLevel, setHintLevel] = useState(0)
+  const [hintVisible, setHintVisible] = useState(false)
+  const [burst, setBurst] = useState(0)
   const [referenceOpen, setReferenceOpen] = useState(false)
   const [resetOpen, setResetOpen] = useState(false)
   const [checking, setChecking] = useState(false)
@@ -54,7 +58,6 @@ export default function AdventureView() {
     () => state === 'running' || state === 'waiting' || checking,
     [state, checking],
   )
-  const dialogue = useMemo(() => episode?.dialogue.slice(0, 3) ?? [], [episode])
   const allPassed = useMemo(
     () =>
       !checking &&
@@ -63,6 +66,13 @@ export default function AdventureView() {
       checks.every((check) => check.passed),
     [checking, checks, episode, checkedCode, code],
   )
+  const stageStatus = useMemo(() => {
+    if (state === 'loading') return { tone: 'pending', text: '正在连接舞台' }
+    if (state === 'failed') return { tone: 'failed', text: '舞台未就绪' }
+    if (!result) return { tone: 'idle', text: '等待第一行代码' }
+    if (executedCode !== code) return { tone: 'dirty', text: '代码已改 · 待重跑' }
+    return { tone: 'live', text: '现场已更新' }
+  }, [state, result, executedCode, code])
 
   function edit(value: string) {
     setCode(value)
@@ -98,7 +108,9 @@ export default function AdventureView() {
       if (!aliveRef.current) return
       setEpisode(current)
       setNextEpisode(directory.episodes.find((item) => item.number === current.number + 1))
-      setCode(readAdventureDraft(accountStorage, current.id) ?? current.starterCode)
+      setCode(
+        resolveAdventureCode(readAdventureDraft(accountStorage, current.id), current.starterCode),
+      )
       try {
         const saved = JSON.parse(
           accountStorage.getItem(`xuya:adventure:absurd-town-1.0:${current.id}`) ?? '{}',
@@ -123,13 +135,18 @@ export default function AdventureView() {
     setMessage('')
     setChecks([])
     try {
-      await runner.run(code, {
+      const runResult = await runner.run(code, {
         inputMode,
         presetInput: preset === '' ? [] : preset.split('\n'),
       })
+      if (runResult.status === 'success') setBurst((value) => value + 1)
     } catch (error) {
       setMessage(error instanceof Error ? error.message : '这次运行没有完成。')
     }
+  }
+  function showHint() {
+    setHintVisible(true)
+    if (hintLevel === 0) setHintLevel(1)
   }
   async function checkScene() {
     if (!episode || busy || state !== 'ready') return
@@ -196,8 +213,10 @@ export default function AdventureView() {
         !cancelChecksRef.current &&
         records.length === current.checks.length &&
         records.every((check) => check.passed)
-      )
+      ) {
         learningRecorder.current?.finish()
+        setBurst((value) => value + 1)
+      }
     } catch (error) {
       if (aliveRef.current) setMessage(error instanceof Error ? error.message : '场景检查未完成。')
     } finally {
@@ -257,11 +276,6 @@ export default function AdventureView() {
 
   return (
     <main className="page adventure-page">
-      {message && (
-        <p role="status" className={`inline-notice ${styles['adventure-message']}`}>
-          {message}
-        </p>
-      )}
       {episode ? (
         <>
           <div className="page-heading">
@@ -272,44 +286,39 @@ export default function AdventureView() {
               <h1>{episode.title}</h1>
               <p>{episode.subtitle}</p>
             </div>
-            <Link to="/" className="button secondary">
-              回小镇
-            </Link>
+            <div className="heading-tools">
+              <Link to="/" className="button secondary">
+                回小镇
+              </Link>
+              <LearningAtmosphere />
+            </div>
           </div>
-          <LearningAtmosphere compact />
-          <div className={styles['adventure-intro']}>
-            <LearningQuest
-              prediction={episode.prediction}
-              change="先换一个动作或数字，再运行，看舞台发生了什么变化。一次只改一处，线索更容易发现。"
-              creation={episode.remixes[0]?.description ?? '给小镇设计一种自己的玩法。'}
-              editorId="adventure-editor"
-            />
-            <section className={styles['adventure-story']} aria-label="案发现场">
-              <span className="pill">案发现场</span>
-              <h2>{episode.hook}</h2>
-              <div className={styles['adventure-dialogue']}>
-                {dialogue.map((line, index) => (
+          <section className={styles.hook} aria-label="案发现场">
+            <p>{episode.hook}</p>
+            <details>
+              <summary>看看大家怎么说</summary>
+              <div className={styles.dialogue}>
+                {episode.dialogue.slice(0, 3).map((line, index) => (
                   <p key={index}>
                     <strong>{line.speaker}</strong> {line.text}
                   </p>
                 ))}
               </div>
-            </section>
-          </div>
-          <div className={styles['adventure-workbench']}>
-            <section
-              className={`panel ${styles.panel} ${styles['adventure-code']}`}
-              id="adventure-editor"
-            >
-              <div className={`panel-heading ${styles['panel-heading']}`}>
+            </details>
+          </section>
+          {message && !allPassed && (
+            <p role="status" className="inline-notice">
+              {message}
+            </p>
+          )}
+          <div className={styles.workbench}>
+            <section className={`panel ${styles.panel} ${styles.code}`} id="adventure-editor">
+              <div className={styles['panel-heading']}>
                 <h2>改变小镇的代码</h2>
                 <span>main.py</span>
               </div>
-              <p className={styles['adventure-mission']}>{episode.mission}</p>
-              <p className="muted">
-                第一行是舞台工具箱，先保留它。每次只改一个地方，再运行看看变化。
-              </p>
-              <div className={styles['adventure-actions']}>
+              <p className={styles.mission}>{episode.mission}</p>
+              <div className={styles.actions}>
                 <button
                   className="button primary"
                   disabled={state !== 'ready' || checking}
@@ -329,12 +338,31 @@ export default function AdventureView() {
                 >
                   检查场景
                 </button>
+                <button className="button ghost" disabled={busy} onClick={showHint}>
+                  提示
+                </button>
                 <button className="button ghost" disabled={busy} onClick={() => setResetOpen(true)}>
                   重新开始
                 </button>
               </div>
               <CodeEditor modelValue={code} onUpdateModelValue={edit} />
-              <small className={styles['adventure-draft']}>{draftNote}</small>
+              <small className={styles.draft}>{draftNote}</small>
+              <div className={styles['next-actions']}>
+                <button
+                  className={styles['link-action']}
+                  disabled={copying || busy}
+                  onClick={() => void openStudio()}
+                >
+                  {copying ? '正在保留作品…' : '带进小奇创作室'}
+                  <ArrowRight size={15} aria-hidden="true" />
+                </button>
+                {!allPassed && nextEpisode && (
+                  <Link className={styles['link-action']} to={'/adventure/' + nextEpisode.id}>
+                    下一集
+                    <ArrowRight size={15} aria-hidden="true" />
+                  </Link>
+                )}
+              </div>
               {resetOpen && (
                 <div className="inline-notice" role="alert">
                   恢复开场代码会替换本集草稿。可以先带进创作室保留现在的版本。
@@ -346,8 +374,8 @@ export default function AdventureView() {
                   </button>
                 </div>
               )}
-              <details className={styles['adventure-debug']}>
-                <summary>调试：顾客预设回答</summary>
+              <details className={styles.debug}>
+                <summary>更多设置</summary>
                 <label>
                   输入方式
                   <select
@@ -371,11 +399,16 @@ export default function AdventureView() {
               </details>
             </section>
             <section className={`adventure-stage panel ${styles.panel}`} aria-label="故事舞台">
-              <div className={`panel-heading ${styles['panel-heading']}`}>
+              <div className={styles['panel-heading']}>
                 <h2>奶茶店，营业中？</h2>
-                <span>代码决定现场</span>
+                <span className={styles.state} data-tone={stageStatus.tone} role="status">
+                  {stageStatus.text}
+                </span>
               </div>
-              <StagePreview events={stageEvents} scene={episode.scene} />
+              <div className={styles.stage}>
+                <SuccessBurst burstKey={burst} />
+                <StagePreview events={stageEvents} scene={episode.scene} />
+              </div>
               {result && executedCode !== code && (
                 <p className="inline-notice">
                   舞台来自上一次运行。代码已经改动，运行后看看新规则。
@@ -397,7 +430,7 @@ export default function AdventureView() {
               )}
               {state === 'waiting' && (
                 <form
-                  className={styles['adventure-input']}
+                  className={styles.input}
                   onSubmit={(event) => {
                     event.preventDefault()
                     answerInput()
@@ -420,10 +453,7 @@ export default function AdventureView() {
                   </button>
                 </form>
               )}
-              <details
-                className={styles['adventure-console']}
-                open={!!liveError || state === 'waiting'}
-              >
+              <details className={styles.console} open={!!liveError || state === 'waiting'}>
                 <summary>程序说了什么</summary>
                 <pre data-testid="adventure-output">
                   {liveOutput || '先运行，听听机器人说什么。'}
@@ -445,7 +475,7 @@ export default function AdventureView() {
                 <p className="muted">检查记录按最终执行状态判断；舞台正在逐步重播这些动作。</p>
               )}
               {checks.length > 0 && (
-                <ul className={styles['adventure-checks']}>
+                <ul className={styles.checks}>
                   {checks.map((check) => (
                     <li
                       key={check.name}
@@ -468,150 +498,79 @@ export default function AdventureView() {
                 </ul>
               )}
               {allPassed && (
-                <p className={styles['adventure-clue']}>
+                <p className={styles.clue}>
                   <strong>{episode.dialogue[3]?.speaker}</strong>：{episode.dialogue[3]?.text}
                 </p>
               )}
             </section>
           </div>
-          <div data-testid="adventure-investigation" className={styles['adventure-investigation']}>
+          {hintVisible && (
             <section
-              className={`panel ${styles.panel} ${styles['investigation-lab']}`}
-              aria-labelledby="investigation-title"
+              className={styles.help}
+              aria-label="换一种办法试试"
+              data-testid="adventure-investigation"
             >
-              <div className={styles['lab-heading']}>
-                <span className={styles['lab-icon']}>
-                  <ScanSearch size={25} aria-hidden="true" />
-                </span>
-                <div>
-                  <span className="eyebrow">01 / 小奇陪你找线索</span>
-                  <h2 id="investigation-title">换一种办法试试</h2>
-                </div>
-                <span className={styles['lab-tag']}>线索实验</span>
-              </div>
-              <div className={styles['prediction-note']}>
-                <Lightbulb size={20} aria-hidden="true" />
+              <div className={styles['hint-row']}>
+                <Lightbulb size={19} aria-hidden="true" />
                 <p>{episode.prediction}</p>
-              </div>
-              <div className={styles['clue-meter']} aria-label="线索进度">
-                <span>已发现 {hintLevel} / 3 条线索</span>
-                <div aria-hidden="true">
-                  {[1, 2, 3].map((step) => (
-                    <i key={step} className={hintLevel >= step ? styles.found : undefined}></i>
-                  ))}
-                </div>
+                <span aria-label="线索进度">已发现 {hintLevel} / 3 条线索</span>
+                <button
+                  className="button secondary"
+                  disabled={hintLevel >= 3}
+                  onClick={() => setHintLevel((value) => Math.min(3, value + 1))}
+                >
+                  {hintLevel < 3 ? '再给一点线索' : '没有更多了'}
+                </button>
+                <button className="text-button" onClick={() => setHintVisible(false)}>
+                  收起
+                </button>
               </div>
               {episode.hints.slice(0, hintLevel).map((hint, index) => (
-                <p key={index} className={styles['adventure-hint']}>
+                <p key={index} className={styles.hint}>
                   线索 {index + 1}：{hint}
                 </p>
               ))}
-              <button
-                className="button secondary"
-                disabled={hintLevel >= 3}
-                onClick={() => setHintLevel((value) => value + 1)}
-              >
-                {hintLevel ? '再给一点线索' : '给我一点线索'}
-              </button>
               <details
-                className={styles['adventure-reference']}
+                className={styles.more}
                 onToggle={(event) => setReferenceOpen((event.target as HTMLDetailsElement).open)}
               >
-                <summary>看一个独立示范</summary>
-                <p>这是参考作品；看完在自己的代码里尝试，不会替换你的草稿。</p>
+                <summary>看参考实现</summary>
+                <p>先自己试，再看参考；不会替换你的草稿。</p>
                 {referenceOpen && <pre>{episode.referenceCode}</pre>}
               </details>
-              <p className="muted">{episode.concept}</p>
-              <LessonCompanion
-                episodeId={episode.id}
-                title={episode.title}
-                code={code}
-                executedCode={executedCode}
-                result={result ?? undefined}
-                onDemonstration={(projectId) => navigate('/studio/' + projectId)}
-              />
-            </section>
-            <section
-              className={`panel ${styles.panel} ${styles['remix-lab']}`}
-              aria-labelledby="remix-title"
-            >
-              <div className={styles['lab-heading']}>
-                <span className={styles['lab-icon']}>
-                  <FlaskConical size={25} aria-hidden="true" />
-                </span>
-                <div>
-                  <span className="eyebrow">02 / 你来当店主</span>
-                  <h2 id="remix-title">把现场变成你的版本</h2>
-                </div>
-                <span className={styles['lab-tag']}>创作挑战</span>
-              </div>
-              <p className={styles['remix-intro']}>选一个挑战，或者发明你的第三种玩法。</p>
-              {episode.remixes.map((remix, index) => (
-                <article key={remix.title} className={styles['adventure-remix']}>
-                  <span className={styles['remix-number']}>
-                    {String(index + 1).padStart(2, '0')}
-                  </span>
-                  <div>
-                    <h3>{remix.title}</h3>
-                    <p>{remix.description}</p>
-                  </div>
-                </article>
-              ))}
-              <p className={styles['remix-rule']}>
-                也可以提出第三种玩法。自由改造可能改变原任务的检查条件，保留你的点子，再解释新规则。
-              </p>
-              <div className={styles['remix-launch']}>
-                <Sparkles size={23} aria-hidden="true" />
-                <p>想让小奇看代码、做候选和试运行，就带着这个版本去创作室。</p>
-                <button
-                  className="button primary"
-                  disabled={copying || busy}
-                  onClick={() => void openStudio()}
-                >
-                  {copying ? '正在保留作品…' : '带进小奇创作室 →'}
-                </button>
-              </div>
-            </section>
-          </div>
-          <section
-            data-testid="adventure-reflection"
-            className={styles['adventure-reflection']}
-            aria-labelledby="reflection-title"
-          >
-            <div className={styles['reflection-main']}>
-              <div className={styles['lab-heading']}>
-                <span className={styles['lab-icon']}>
-                  <NotebookPen size={25} aria-hidden="true" />
-                </span>
-                <div>
-                  <span className="eyebrow">03 / 记录你的发现</span>
-                  <h2 id="reflection-title">换个场景，你还会吗？</h2>
-                </div>
-              </div>
-              <p>{episode.transfer}</p>
-              <label>
-                说说你发现了什么
-                <textarea
-                  value={observations}
-                  onChange={(event) => setObservations(event.target.value)}
-                  aria-label="我的发现"
-                  placeholder="我改了……所以……；下次我还想试……"
-                  rows={3}
+              <details className={styles.more}>
+                <summary>问问小奇</summary>
+                <LessonCompanion
+                  episodeId={episode.id}
+                  title={episode.title}
+                  code={code}
+                  executedCode={executedCode}
+                  result={result ?? undefined}
+                  onDemonstration={(projectId) => navigate('/studio/' + projectId)}
                 />
-              </label>
-              <small>这段发现是自由表达，不按字数或关键词给分。</small>
-            </div>
-            <div className={styles['reflection-next']}>
-              <span className="eyebrow">探索继续</span>
-              <h3>{nextEpisode ? '下一件怪事，等你调查' : '接下来，由你出题'}</h3>
-              <p>带上刚刚发现的新规则，再试一次。</p>
-              {nextEpisode ? (
-                <Link to={'/adventure/' + nextEpisode.id}>下一集：{nextEpisode.subtitle} →</Link>
-              ) : (
-                <Link to="/studio">继续自由创作 →</Link>
-              )}
-            </div>
-          </section>
+              </details>
+            </section>
+          )}
+          {allPassed && (
+            <section className={styles.success} aria-label="本集完成">
+              <Xiaoqi mood="cheer" size={56} />
+              <div>
+                <strong>场景通过！</strong>
+                <p>{episode.transfer}</p>
+              </div>
+              <div className={styles.actions}>
+                {nextEpisode ? (
+                  <Link className="button primary" to={'/adventure/' + nextEpisode.id}>
+                    下一集 →
+                  </Link>
+                ) : (
+                  <Link className="button primary" to="/studio">
+                    继续创作 →
+                  </Link>
+                )}
+              </div>
+            </section>
+          )}
           {frameUrl && (
             <iframe
               ref={frameRef}

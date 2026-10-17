@@ -51,7 +51,7 @@
       "title": "故事海报：顺序有秘密",
       "subtitle": "print、引号与换行 · 执行顺序和注释",
       "mission": "云朵邮局需要文字海报，让标题、作者和开场白按顺序出现。",
-      "starterCode": "# 故事发布台\nprint(\"月光森林\")\nprint(\"创作者：小画家\")\n",
+      "starterCode":"# 故事发布台\n# 在屏幕上输出“月光森林”\nprint(\"月光森林\")\n# 在屏幕上输出“创作者：小画家”\nprint(\"创作者：小画家\")\n",
       "goals": [
         "print、引号与换行",
         "执行顺序和注释"
@@ -86,7 +86,7 @@
           "id": "practice",
           "title": "动手改造",
           "instruction": "增加第三行“第一章：云朵来信”，保留标题、作者、开场白的顺序。",
-          "referenceCode": "print(\"月光森林\")\nprint(\"创作者：小画家\")\nprint(\"第一章：云朵来信\")\n",
+          "referenceCode":"# 在屏幕上输出“月光森林”\nprint(\"月光森林\")\n# 在屏幕上输出“创作者：小画家”\nprint(\"创作者：小画家\")\n# 在屏幕上输出“第一章：云朵来信”\nprint(\"第一章：云朵来信\")\n",
           "tests": [
             {
               "name": "检查1",
@@ -115,7 +115,7 @@
       "title": "角色档案：名字只改一次",
       "subtitle": "变量与赋值 · 变量和字符串的区别",
       "mission": "主角名字出现多次，只改一个地方就更新整份档案。",
-      "starterCode": "name = \"阿芽\"\nwish = \"找到会唱歌的树\"\nprint(\"主角：\", name)\nprint(\"愿望：\", wish)\n",
+      "starterCode":"# 把文字“阿芽”存进 name\nname = \"阿芽\"\n# 把文字“找到会唱歌的树”存进 wish\nwish = \"找到会唱歌的树\"\n# 输出“主角：”和 name 的值\nprint(\"主角：\", name)\n# 输出“愿望：”和 wish 的值\nprint(\"愿望：\", wish)\n",
       "goals": [
         "变量与赋值",
         "变量和字符串的区别"
@@ -152,7 +152,7 @@
           "id": "practice",
           "title": "动手改造",
           "instruction": "增加 age = 12，输出“年龄：12”；最后再次输出 name，不重复写名字字符串。",
-          "referenceCode": "name = \"阿芽\"\nwish = \"找到会唱歌的树\"\nage = 12\nprint(\"主角：\", name)\nprint(\"愿望：\", wish)\nprint(\"年龄：\", age)\nprint(\"再次见面：\", name)\n",
+          "referenceCode":"# 把文字“阿芽”存进 name\nname = \"阿芽\"\n# 把文字“找到会唱歌的树”存进 wish\nwish = \"找到会唱歌的树\"\n# 把数字 12 存进 age\nage = 12\n# 输出“主角：”和 name 的值\nprint(\"主角：\", name)\n# 输出“愿望：”和 wish 的值\nprint(\"愿望：\", wish)\n# 输出“年龄：”和 age 的值\nprint(\"年龄：\", age)\n# 输出“再次见面：”和 name 的值\nprint(\"再次见面：\", name)\n",
           "tests": [
             {
               "name": "检查1",
@@ -181,7 +181,7 @@
       "title": "旅行预算：钱怎么分配",
       "subtitle": "数字和四则运算 · 整除和余数",
       "mission": "买完车票，剩余预算能买多少礼物？",
-      "starterCode": "budget = 50\nticket = 12\ngift_price = 9\nremaining = budget - ticket\nprint(\"剩余预算：\", remaining)\n",
+      "starterCode":"# 把数字 50 存进 budget\nbudget = 50\n# 把数字 12 存进 ticket\nticket = 12\n# 把数字 9 存进 gift_price\ngift_price = 9\n# 把 budget 和 ticket 相减，结果存进 remaining\nremaining = budget - ticket\n# 输出“剩余预算：”和 remaining 的值\nprint(\"剩余预算：\", remaining)\n",
       "goals": [
         "数字和四则运算",
         "整除和余数"
@@ -218,7 +218,7 @@
           "id": "practice",
           "title": "动手改造",
           "instruction": "输出最多可买的礼物数量和余额，分别是 4 和 2。",
-          "referenceCode": "budget = 50\nticket = 12\ngift_price = 9\nremaining = budget - ticket\nprint(\"剩余预算：\", remaining)\nprint(\"礼物：\", remaining // gift_price)\nprint(\"余额：\", remaining % gift_price)\n",
+          "referenceCode":"# 把数字 50 存进 budget\nbudget = 50\n# 把数字 12 存进 ticket\nticket = 12\n# 把数字 9 存进 gift_price\ngift_price = 9\n# 把 budget 和 ticket 相减，结果存进 remaining\nremaining = budget - ticket\n# 输出“剩余预算：”和 remaining 的值\nprint(\"剩余预算：\", remaining)\n# 输出“礼物：”和 remaining // gift_price 的值\nprint(\"礼物：\", remaining // gift_price)\n# 输出“余额：”和 remaining % gift_price 的值\nprint(\"余额：\", remaining % gift_price)\n",
           "tests": [
             {
               "name": "检查1",
@@ -246,7 +246,7 @@
       "title": "邀请函：文字和数字合作",
       "subtitle": "f-string · int 和 str 转换",
       "mission": "把两组来宾人数写进邀请函。",
-      "starterCode": "first = \"3\"\nsecond = \"2\"\nplace = \"云朵邮局\"\nprint(f\"欢迎来到{place}\")\n",
+      "starterCode":"# 把文字“3”存进 first\nfirst = \"3\"\n# 把文字“2”存进 second\nsecond = \"2\"\n# 把文字“云朵邮局”存进 place\nplace = \"云朵邮局\"\n# 把变量填进句子，输出到屏幕\nprint(f\"欢迎来到{place}\")\n",
       "goals": [
         "f-string",
         "int 和 str 转换"
@@ -283,7 +283,7 @@
           "id": "practice",
           "title": "动手改造",
           "instruction": "把两组人数转换后相加，输出“来宾共5人”。",
-          "referenceCode": "first = \"3\"\nsecond = \"2\"\nplace = \"云朵邮局\"\ntotal = int(first) + int(second)\nprint(f\"欢迎来到{place}\")\nprint(f\"来宾共{total}人\")\n",
+          "referenceCode":"# 把文字“3”存进 first\nfirst = \"3\"\n# 把文字“2”存进 second\nsecond = \"2\"\n# 把文字“云朵邮局”存进 place\nplace = \"云朵邮局\"\n# 把 first) + int(second 转成整数，存进 total\ntotal = int(first) + int(second)\n# 把变量填进句子，输出到屏幕\nprint(f\"欢迎来到{place}\")\n# 把变量填进句子，输出到屏幕\nprint(f\"来宾共{total}人\")\n",
           "tests": [
             {
               "name": "检查1",
@@ -310,7 +310,7 @@
       "title": "程序采访作者",
       "subtitle": "input 返回字符串 · 输入、处理和输出",
       "mission": "运行后回答笔名和章节数，让程序生成计划。",
-      "starterCode": "name = input(\"你的笔名：\")\nchapters = int(input(\"准备写几章：\"))\nprint(f\"{name}的计划：{chapters}章\")\n",
+      "starterCode":"# 问玩家“你的笔名：”，把回答存进 name\nname = input(\"你的笔名：\")\n# 问玩家“准备写几章：”，把回答转成整数存进 chapters\nchapters = int(input(\"准备写几章：\"))\n# 把变量填进句子，输出到屏幕\nprint(f\"{name}的计划：{chapters}章\")\n",
       "goals": [
         "input 返回字符串",
         "输入、处理和输出"
@@ -347,7 +347,7 @@
           "id": "practice",
           "title": "动手改造",
           "instruction": "输出下一次目标，章节数增加 1；不能固定写答案。",
-          "referenceCode": "name = input(\"你的笔名：\")\nchapters = int(input(\"准备写几章：\"))\nprint(f\"{name}的计划：{chapters}章\")\nprint(f\"下一次目标：{chapters + 1}章\")\n",
+          "referenceCode":"# 问玩家“你的笔名：”，把回答存进 name\nname = input(\"你的笔名：\")\n# 问玩家“准备写几章：”，把回答转成整数存进 chapters\nchapters = int(input(\"准备写几章：\"))\n# 把变量填进句子，输出到屏幕\nprint(f\"{name}的计划：{chapters}章\")\n# 把变量填进句子，输出到屏幕\nprint(f\"下一次目标：{chapters + 1}章\")\n",
           "tests": [
             {
               "name": "检查1",
@@ -393,7 +393,7 @@
       "title": "角色徽章：坐标画笔",
       "subtitle": "坐标和参数 · 圆、矩形和文字",
       "mission": "为主角设计徽章，自己安排位置和大小。",
-      "starterCode": "from xuya import draw\ndraw.circle(160, 130, 60, \"#c7bbff\")\ndraw.text(100, 230, \"故事徽章\", \"#493964\")\nprint(\"徽章准备好了\")\n",
+      "starterCode":"# 取来画笔工具 draw，后面用它画画\nfrom xuya import draw\n# 画一个半径 60 的圆，位置和颜色由参数决定\ndraw.circle(160, 130, 60, \"#c7bbff\")\n# 在画布上写下“故事徽章”\ndraw.text(100, 230, \"故事徽章\", \"#493964\")\n# 在屏幕上输出“徽章准备好了”\nprint(\"徽章准备好了\")\n",
       "goals": [
         "坐标和参数",
         "圆、矩形和文字"
@@ -430,7 +430,7 @@
           "id": "practice",
           "title": "动手改造",
           "instruction": "增加两只眼睛，使图案至少有 3 个圆和 1 段文字。",
-          "referenceCode": "from xuya import draw\ndraw.circle(160, 130, 60, \"#c7bbff\")\ndraw.circle(140, 120, 7, \"#493964\")\ndraw.circle(180, 120, 7, \"#493964\")\ndraw.text(100, 230, \"故事徽章\", \"#493964\")\nprint(\"徽章准备好了\")\n",
+          "referenceCode":"# 取来画笔工具 draw，后面用它画画\nfrom xuya import draw\n# 画一个半径 60 的圆，位置和颜色由参数决定\ndraw.circle(160, 130, 60, \"#c7bbff\")\n# 画一个半径 7 的圆，位置和颜色由参数决定\ndraw.circle(140, 120, 7, \"#493964\")\n# 画一个半径 7 的圆，位置和颜色由参数决定\ndraw.circle(180, 120, 7, \"#493964\")\n# 在画布上写下“故事徽章”\ndraw.text(100, 230, \"故事徽章\", \"#493964\")\n# 在屏幕上输出“徽章准备好了”\nprint(\"徽章准备好了\")\n",
           "tests": [
             {
               "name": "检查1",
@@ -457,7 +457,7 @@
       "title": "修复邀请函：错误是线索",
       "subtitle": "语法、运行和逻辑错误 · 期待结果与定位",
       "mission": "程序说还要 32 天，原本只想等 5 天，为什么没报错？",
-      "starterCode": "first = \"3\"\nsecond = \"2\"\nprint(\"等待天数：\", first + second)\n",
+      "starterCode":"# 把文字“3”存进 first\nfirst = \"3\"\n# 把文字“2”存进 second\nsecond = \"2\"\n# 输出“等待天数：”和 first + second 的值\nprint(\"等待天数：\", first + second)\n",
       "goals": [
         "语法、运行和逻辑错误",
         "期待结果与定位"
@@ -494,7 +494,7 @@
           "id": "practice",
           "title": "动手改造",
           "instruction": "修复成“等待天数：5”，解释原来的 32 从哪来。",
-          "referenceCode": "first = \"3\"\nsecond = \"2\"\nprint(\"等待天数：\", int(first) + int(second))\n",
+          "referenceCode":"# 把文字“3”存进 first\nfirst = \"3\"\n# 把文字“2”存进 second\nsecond = \"2\"\n# 输出“等待天数：”和 int(first) + int(second) 的值\nprint(\"等待天数：\", int(first) + int(second))\n",
           "tests": [
             {
               "name": "检查1",
@@ -521,7 +521,7 @@
       "title": "项目一：故事发布助手",
       "subtitle": "整合输入和计算 · 设计输出结构",
       "mission": "发布台接收不同作者和故事，生成海报及章节计划。",
-      "starterCode": "title = input(\"标题：\")\nauthor = input(\"笔名：\")\nchapters = int(input(\"已有几章：\"))\nprint(f\"《{title}》 / {author}\")\n# 加入章节计划\n",
+      "starterCode":"# 问玩家“标题：”，把回答存进 title\ntitle = input(\"标题：\")\n# 问玩家“笔名：”，把回答存进 author\nauthor = input(\"笔名：\")\n# 问玩家“已有几章：”，把回答转成整数存进 chapters\nchapters = int(input(\"已有几章：\"))\n# 把变量填进句子，输出到屏幕\nprint(f\"《{title}》 / {author}\")\n# 加入章节计划\n",
       "goals": [
         "整合输入和计算",
         "设计输出结构"
@@ -558,7 +558,7 @@
           "id": "practice",
           "title": "动手改造",
           "instruction": "输出已有章节和增加 1 后的目标。",
-          "referenceCode": "title = input(\"标题：\")\nauthor = input(\"笔名：\")\nchapters = int(input(\"已有几章：\"))\nprint(f\"《{title}》 / {author}\")\nprint(f\"已有{chapters}章\")\nprint(f\"下一次目标：{chapters + 1}章\")\n",
+          "referenceCode":"# 问玩家“标题：”，把回答存进 title\ntitle = input(\"标题：\")\n# 问玩家“笔名：”，把回答存进 author\nauthor = input(\"笔名：\")\n# 问玩家“已有几章：”，把回答转成整数存进 chapters\nchapters = int(input(\"已有几章：\"))\n# 把变量填进句子，输出到屏幕\nprint(f\"《{title}》 / {author}\")\n# 把变量填进句子，输出到屏幕\nprint(f\"已有{chapters}章\")\n# 把变量填进句子，输出到屏幕\nprint(f\"下一次目标：{chapters + 1}章\")\n",
           "tests": [
             {
               "name": "检查1",
@@ -609,7 +609,7 @@
       "title": "秘密花园：满足条件",
       "subtitle": "if 与布尔值 · 比较和缩进",
       "mission": "花园接待年龄达到 12 岁的访客，检查等于门槛的情况。",
-      "starterCode": "age = int(input(\"年龄：\"))\nif age > 12:\n    print(\"欢迎进入\")\nprint(\"检查结束\")\n",
+      "starterCode":"# 问玩家“年龄：”，把回答转成整数存进 age\nage = int(input(\"年龄：\"))\n# 如果 age 大于 12，就执行下面的缩进代码\nif age > 12:\n    # 在屏幕上输出“欢迎进入”\n    print(\"欢迎进入\")\n# 在屏幕上输出“检查结束”\nprint(\"检查结束\")\n",
       "goals": [
         "if 与布尔值",
         "比较和缩进"
@@ -646,7 +646,7 @@
           "id": "practice",
           "title": "动手改造",
           "instruction": "修正条件，让 12 岁也能进入。",
-          "referenceCode": "age = int(input(\"年龄：\"))\nif age >= 12:\n    print(\"欢迎进入\")\nprint(\"检查结束\")\n",
+          "referenceCode":"# 问玩家“年龄：”，把回答转成整数存进 age\nage = int(input(\"年龄：\"))\n# 如果 age 大于等于 12，就执行下面的缩进代码\nif age >= 12:\n    # 在屏幕上输出“欢迎进入”\n    print(\"欢迎进入\")\n# 在屏幕上输出“检查结束”\nprint(\"检查结束\")\n",
           "tests": [
             {
               "name": "检查1",
@@ -689,7 +689,7 @@
       "title": "两种结局：另一条路",
       "subtitle": "if/else · 互斥分支",
       "mission": "选择左边去花园，右边去海边。",
-      "starterCode": "choice = input(\"left/right：\")\nif choice == \"left\":\n    print(\"花园结局\")\n",
+      "starterCode":"# 问玩家“left/right：”，把回答存进 choice\nchoice = input(\"left/right：\")\n# 如果 choice 等于 “left”，就执行下面的缩进代码\nif choice == \"left\":\n    # 在屏幕上输出“花园结局”\n    print(\"花园结局\")\n",
       "goals": [
         "if/else",
         "互斥分支"
@@ -726,7 +726,7 @@
           "id": "practice",
           "title": "动手改造",
           "instruction": "补全其他选择的“海边结局”。",
-          "referenceCode": "choice = input(\"left/right：\")\nif choice == \"left\":\n    print(\"花园结局\")\nelse:\n    print(\"海边结局\")\n",
+          "referenceCode":"# 问玩家“left/right：”，把回答存进 choice\nchoice = input(\"left/right：\")\n# 如果 choice 等于 “left”，就执行下面的缩进代码\nif choice == \"left\":\n    # 在屏幕上输出“花园结局”\n    print(\"花园结局\")\n# 上面的条件都不成立时，执行这里\nelse:\n    # 在屏幕上输出“海边结局”\n    print(\"海边结局\")\n",
           "tests": [
             {
               "name": "检查1",
@@ -768,7 +768,7 @@
       "title": "路线推荐：多个区间",
       "subtitle": "elif · 判断顺序和边界",
       "mission": "按可用时间推荐短、中、长路线。",
-      "starterCode": "time = int(input(\"分钟：\"))\nif time < 30:\n    print(\"短线\")\nelse:\n    print(\"长线\")\n",
+      "starterCode":"# 问玩家“分钟：”，把回答转成整数存进 time\ntime = int(input(\"分钟：\"))\n# 如果 time 小于 30，就执行下面的缩进代码\nif time < 30:\n    # 在屏幕上输出“短线”\n    print(\"短线\")\n# 上面的条件都不成立时，执行这里\nelse:\n    # 在屏幕上输出“长线”\n    print(\"长线\")\n",
       "goals": [
         "elif",
         "判断顺序和边界"
@@ -805,7 +805,7 @@
           "id": "practice",
           "title": "动手改造",
           "instruction": "加入 30–59 分钟的中线。",
-          "referenceCode": "time = int(input(\"分钟：\"))\nif time < 30:\n    print(\"短线\")\nelif time < 60:\n    print(\"中线\")\nelse:\n    print(\"长线\")\n",
+          "referenceCode":"# 问玩家“分钟：”，把回答转成整数存进 time\ntime = int(input(\"分钟：\"))\n# 如果 time 小于 30，就执行下面的缩进代码\nif time < 30:\n    # 在屏幕上输出“短线”\n    print(\"短线\")\n# 否则如果 time 小于 60，就执行这里\nelif time < 60:\n    # 在屏幕上输出“中线”\n    print(\"中线\")\n# 上面的条件都不成立时，执行这里\nelse:\n    # 在屏幕上输出“长线”\n    print(\"长线\")\n",
           "tests": [
             {
               "name": "检查1",
@@ -858,7 +858,7 @@
       "title": "多条件机关：钥匙与能量",
       "subtitle": "and/or/not · 组合条件",
       "mission": "同时有钥匙和至少 5 点能量才能开门。",
-      "starterCode": "key = input(\"钥匙 yes/no：\") == \"yes\"\nenergy = int(input(\"能量：\"))\nif key:\n    print(\"开门\")\nelse:\n    print(\"门未打开\")\n",
+      "starterCode":"# 问玩家“钥匙 yes/no：”，回答是 yes 时 key 为 True\nkey = input(\"钥匙 yes/no：\") == \"yes\"\n# 问玩家“能量：”，把回答转成整数存进 energy\nenergy = int(input(\"能量：\"))\n# 如果 key 成立，就执行下面的缩进代码\nif key:\n    # 在屏幕上输出“开门”\n    print(\"开门\")\n# 上面的条件都不成立时，执行这里\nelse:\n    # 在屏幕上输出“门未打开”\n    print(\"门未打开\")\n",
       "goals": [
         "and/or/not",
         "组合条件"
@@ -895,7 +895,7 @@
           "id": "practice",
           "title": "动手改造",
           "instruction": "让开门同时要求 energy >= 5。",
-          "referenceCode": "key = input(\"钥匙 yes/no：\") == \"yes\"\nenergy = int(input(\"能量：\"))\nif key and energy >= 5:\n    print(\"开门\")\nelse:\n    print(\"门未打开\")\n",
+          "referenceCode":"# 问玩家“钥匙 yes/no：”，回答是 yes 时 key 为 True\nkey = input(\"钥匙 yes/no：\") == \"yes\"\n# 问玩家“能量：”，把回答转成整数存进 energy\nenergy = int(input(\"能量：\"))\n# 如果 key 成立 并且 energy 大于等于 5，就执行下面的缩进代码\nif key and energy >= 5:\n    # 在屏幕上输出“开门”\n    print(\"开门\")\n# 上面的条件都不成立时，执行这里\nelse:\n    # 在屏幕上输出“门未打开”\n    print(\"门未打开\")\n",
           "tests": [
             {
               "name": "检查1",
@@ -952,7 +952,7 @@
       "title": "随机事件：探险变化",
       "subtitle": "import 与 random · 事件分支",
       "mission": "掷事件骰子，让故事每次有不同机会。",
-      "starterCode": "import random\nrandom.seed(7)\nevent = random.randint(1, 3)\nprint(\"事件：\", event)\nif event == 1:\n    print(\"发现地图\")\n",
+      "starterCode":"# 导入 random，后面才能使用它的功能\nimport random\n# 固定随机种子 7，保证每次运行结果一样\nrandom.seed(7)\n# 随机取 1 到 3 之间的整数，存进 event\nevent = random.randint(1, 3)\n# 输出“事件：”和 event 的值\nprint(\"事件：\", event)\n# 如果 event 等于 1，就执行下面的缩进代码\nif event == 1:\n    # 在屏幕上输出“发现地图”\n    print(\"发现地图\")\n",
       "goals": [
         "import 与 random",
         "事件分支"
@@ -989,7 +989,7 @@
           "id": "practice",
           "title": "动手改造",
           "instruction": "补上事件 2“遇见伙伴”和事件 3“下起小雨”。",
-          "referenceCode": "import random\nrandom.seed(7)\nevent = random.randint(1, 3)\nprint(\"事件：\", event)\nif event == 1:\n    print(\"发现地图\")\nelif event == 2:\n    print(\"遇见伙伴\")\nelse:\n    print(\"下起小雨\")\n",
+          "referenceCode":"# 导入 random，后面才能使用它的功能\nimport random\n# 固定随机种子 7，保证每次运行结果一样\nrandom.seed(7)\n# 随机取 1 到 3 之间的整数，存进 event\nevent = random.randint(1, 3)\n# 输出“事件：”和 event 的值\nprint(\"事件：\", event)\n# 如果 event 等于 1，就执行下面的缩进代码\nif event == 1:\n    # 在屏幕上输出“发现地图”\n    print(\"发现地图\")\n# 否则如果 event 等于 2，就执行这里\nelif event == 2:\n    # 在屏幕上输出“遇见伙伴”\n    print(\"遇见伙伴\")\n# 上面的条件都不成立时，执行这里\nelse:\n    # 在屏幕上输出“下起小雨”\n    print(\"下起小雨\")\n",
           "tests": [
             {
               "name": "检查1",
@@ -1017,7 +1017,7 @@
       "title": "猜数字：继续等你",
       "subtitle": "while · 循环结束与计数",
       "mission": "实时猜一个数字，猜中才结束。",
-      "starterCode": "secret = 7\nguess = int(input(\"猜 1–10：\"))\nwhile guess != secret:\n    print(\"再试一次\")\n    guess = int(input(\"再猜：\"))\nprint(\"猜中了\")\n",
+      "starterCode":"# 把数字 7 存进 secret\nsecret = 7\n# 问玩家“猜 1–10：”，把回答转成整数存进 guess\nguess = int(input(\"猜 1–10：\"))\n# 只要 guess 不等于 secret，就一直重复下面的代码\nwhile guess != secret:\n    # 在屏幕上输出“再试一次”\n    print(\"再试一次\")\n    # 问玩家“再猜：”，把回答转成整数存进 guess\n    guess = int(input(\"再猜：\"))\n# 在屏幕上输出“猜中了”\nprint(\"猜中了\")\n",
       "goals": [
         "while",
         "循环结束与计数"
@@ -1054,7 +1054,7 @@
           "id": "practice",
           "title": "动手改造",
           "instruction": "统计次数，输入 3、7 时应为 2 次。",
-          "referenceCode": "secret = 7\ncount = 1\nguess = int(input(\"猜 1–10：\"))\nwhile guess != secret:\n    print(\"再试一次\")\n    guess = int(input(\"再猜：\"))\n    count += 1\nprint(\"猜中了\")\nprint(\"次数：\", count)\n",
+          "referenceCode":"# 把数字 7 存进 secret\nsecret = 7\n# 把数字 1 存进 count\ncount = 1\n# 问玩家“猜 1–10：”，把回答转成整数存进 guess\nguess = int(input(\"猜 1–10：\"))\n# 只要 guess 不等于 secret，就一直重复下面的代码\nwhile guess != secret:\n    # 在屏幕上输出“再试一次”\n    print(\"再试一次\")\n    # 问玩家“再猜：”，把回答转成整数存进 guess\n    guess = int(input(\"再猜：\"))\n    # 让 count 增加 1\n    count += 1\n# 在屏幕上输出“猜中了”\nprint(\"猜中了\")\n# 输出“次数：”和 count 的值\nprint(\"次数：\", count)\n",
           "tests": [
             {
               "name": "检查1",
@@ -1100,7 +1100,7 @@
       "title": "找漏洞：退出与跳过",
       "subtitle": "break/continue · 边界和流程",
       "mission": "空消息跳过，stop 结束，其他消息正常接收。",
-      "starterCode": "while True:\n    message = input(\"消息（stop结束）：\")\n    if message == \"stop\":\n        break\n    print(\"收到：\", message)\nprint(\"结束收信\")\n",
+      "starterCode":"# 一直重复，直到遇到 break\nwhile True:\n    # 问玩家“消息（stop结束）：”，把回答存进 message\n    message = input(\"消息（stop结束）：\")\n    # 如果 message 等于 “stop”，就执行下面的缩进代码\n    if message == \"stop\":\n        # 立刻结束这个循环\n        break\n    # 输出“收到：”和 message 的值\n    print(\"收到：\", message)\n# 在屏幕上输出“结束收信”\nprint(\"结束收信\")\n",
       "goals": [
         "break/continue",
         "边界和流程"
@@ -1137,7 +1137,7 @@
           "id": "practice",
           "title": "动手改造",
           "instruction": "用 continue 跳过空字符串。",
-          "referenceCode": "while True:\n    message = input(\"消息（stop结束）：\")\n    if message == \"stop\":\n        break\n    if message == \"\":\n        continue\n    print(\"收到：\", message)\nprint(\"结束收信\")\n",
+          "referenceCode":"# 一直重复，直到遇到 break\nwhile True:\n    # 问玩家“消息（stop结束）：”，把回答存进 message\n    message = input(\"消息（stop结束）：\")\n    # 如果 message 等于 “stop”，就执行下面的缩进代码\n    if message == \"stop\":\n        # 立刻结束这个循环\n        break\n    # 如果 message 等于 空字符串，就执行下面的缩进代码\n    if message == \"\":\n        # 跳过这一轮，直接开始下一轮\n        continue\n    # 输出“收到：”和 message 的值\n    print(\"收到：\", message)\n# 在屏幕上输出“结束收信”\nprint(\"结束收信\")\n",
           "tests": [
             {
               "name": "检查1",
@@ -1184,7 +1184,7 @@
       "title": "项目二：三条路线的故事",
       "subtitle": "分支、状态和循环整合 · 未知输入处理",
       "mission": "探索花园、海边、山洞，exit 离开，记录有效探索数。",
-      "starterCode": "visits = 0\nwhile True:\n    route = input(\"garden/sea/cave，exit退出：\")\n    if route == \"exit\":\n        break\n    if route == \"garden\":\n        visits += 1\n        print(\"花园的来信\")\n    else:\n        print(\"请重新选择\")\nprint(\"探索次数：\", visits)\n",
+      "starterCode":"# 把数字 0 存进 visits\nvisits = 0\n# 一直重复，直到遇到 break\nwhile True:\n    # 问玩家“garden/sea/cave，exit退出：”，把回答存进 route\n    route = input(\"garden/sea/cave，exit退出：\")\n    # 如果 route 等于 “exit”，就执行下面的缩进代码\n    if route == \"exit\":\n        # 立刻结束这个循环\n        break\n    # 如果 route 等于 “garden”，就执行下面的缩进代码\n    if route == \"garden\":\n        # 让 visits 增加 1\n        visits += 1\n        # 在屏幕上输出“花园的来信”\n        print(\"花园的来信\")\n    # 上面的条件都不成立时，执行这里\n    else:\n        # 在屏幕上输出“请重新选择”\n        print(\"请重新选择\")\n# 输出“探索次数：”和 visits 的值\nprint(\"探索次数：\", visits)\n",
       "goals": [
         "分支、状态和循环整合",
         "未知输入处理"
@@ -1221,7 +1221,7 @@
           "id": "practice",
           "title": "动手改造",
           "instruction": "补全 sea 和 cave，分别输出海边的贝壳和山洞的星光，只计有效探索。",
-          "referenceCode": "visits = 0\nwhile True:\n    route = input(\"garden/sea/cave，exit退出：\")\n    if route == \"exit\":\n        break\n    if route == \"garden\":\n        print(\"花园的来信\")\n    elif route == \"sea\":\n        print(\"海边的贝壳\")\n    elif route == \"cave\":\n        print(\"山洞的星光\")\n    else:\n        print(\"请重新选择\")\n        continue\n    visits += 1\nprint(\"探索次数：\", visits)\n",
+          "referenceCode":"# 把数字 0 存进 visits\nvisits = 0\n# 一直重复，直到遇到 break\nwhile True:\n    # 问玩家“garden/sea/cave，exit退出：”，把回答存进 route\n    route = input(\"garden/sea/cave，exit退出：\")\n    # 如果 route 等于 “exit”，就执行下面的缩进代码\n    if route == \"exit\":\n        # 立刻结束这个循环\n        break\n    # 如果 route 等于 “garden”，就执行下面的缩进代码\n    if route == \"garden\":\n        # 在屏幕上输出“花园的来信”\n        print(\"花园的来信\")\n    # 否则如果 route 等于 “sea”，就执行这里\n    elif route == \"sea\":\n        # 在屏幕上输出“海边的贝壳”\n        print(\"海边的贝壳\")\n    # 否则如果 route 等于 “cave”，就执行这里\n    elif route == \"cave\":\n        # 在屏幕上输出“山洞的星光”\n        print(\"山洞的星光\")\n    # 上面的条件都不成立时，执行这里\n    else:\n        # 在屏幕上输出“请重新选择”\n        print(\"请重新选择\")\n        # 跳过这一轮，直接开始下一轮\n        continue\n    # 让 visits 增加 1\n    visits += 1\n# 输出“探索次数：”和 visits 的值\nprint(\"探索次数：\", visits)\n",
           "tests": [
             {
               "name": "检查1",
@@ -1274,7 +1274,7 @@
       "title": "星球排列：循环画一排",
       "subtitle": "for/range · 循环变量",
       "mission": "只写一条画圆命令，却画出整排星球。",
-      "starterCode": "from xuya import draw\nfor i in range(3):\n    draw.circle(40 + i * 50, 100, 15, \"#c7bbff\")\nprint(\"星球：\", 3)\n",
+      "starterCode":"# 取来画笔工具 draw，后面用它画画\nfrom xuya import draw\n# 让 i 从 0 数到 2，重复 3 轮\nfor i in range(3):\n    # 画一个半径 15 的圆，位置和颜色由参数决定\n    draw.circle(40 + i * 50, 100, 15, \"#c7bbff\")\n# 输出“星球：”和 3 的值\nprint(\"星球：\", 3)\n",
       "goals": [
         "for/range",
         "循环变量"
@@ -1311,7 +1311,7 @@
           "id": "practice",
           "title": "动手改造",
           "instruction": "改成 5 颗星球，保持间隔一致并输出数量。",
-          "referenceCode": "from xuya import draw\ncount = 5\nfor i in range(count):\n    draw.circle(40 + i * 50, 100, 15, \"#c7bbff\")\nprint(\"星球：\", count)\n",
+          "referenceCode":"# 取来画笔工具 draw，后面用它画画\nfrom xuya import draw\n# 把数字 5 存进 count\ncount = 5\n# 让 i 从 0 开始，重复 count 次\nfor i in range(count):\n    # 画一个半径 15 的圆，位置和颜色由参数决定\n    draw.circle(40 + i * 50, 100, 15, \"#c7bbff\")\n# 输出“星球：”和 count 的值\nprint(\"星球：\", count)\n",
           "tests": [
             {
               "name": "检查1",
@@ -1338,7 +1338,7 @@
       "title": "收集能量：累加和计数",
       "subtitle": "累加器 · 循环跟踪",
       "mission": "收集编号 1 到 5 的能量卡，每张能量等于编号。",
-      "starterCode": "total = 0\nfor value in range(1, 4):\n    total += value\nprint(\"总能量：\", total)\n",
+      "starterCode":"# 把数字 0 存进 total\ntotal = 0\n# 让 value 依次取 1 到 3 的整数\nfor value in range(1, 4):\n    # 让 total 增加 value\n    total += value\n# 输出“总能量：”和 total 的值\nprint(\"总能量：\", total)\n",
       "goals": [
         "累加器",
         "循环跟踪"
@@ -1375,7 +1375,7 @@
           "id": "practice",
           "title": "动手改造",
           "instruction": "计算 1 到 5 的总能量。",
-          "referenceCode": "total = 0\nfor value in range(1, 6):\n    total += value\nprint(\"总能量：\", total)\n",
+          "referenceCode":"# 把数字 0 存进 total\ntotal = 0\n# 让 value 依次取 1 到 5 的整数\nfor value in range(1, 6):\n    # 让 total 增加 value\n    total += value\n# 输出“总能量：”和 total 的值\nprint(\"总能量：\", total)\n",
           "tests": [
             {
               "name": "检查1",
@@ -1402,7 +1402,7 @@
       "title": "像素图案：行与列",
       "subtitle": "嵌套循环 · 二维坐标",
       "mission": "用两层循环拼出像素棋盘。",
-      "starterCode": "from xuya import draw\nfor row in range(2):\n    for col in range(3):\n        draw.rectangle(40 + col * 35, 40 + row * 35, 30, 30, \"#9ad9bb\")\nprint(\"格子：\", 6)\n",
+      "starterCode":"# 取来画笔工具 draw，后面用它画画\nfrom xuya import draw\n# 让 row 从 0 数到 1，重复 2 轮\nfor row in range(2):\n    # 让 col 从 0 数到 2，重复 3 轮\n    for col in range(3):\n        # 画一个宽 30、高 30 的长方形，位置由参数决定\n        draw.rectangle(40 + col * 35, 40 + row * 35, 30, 30, \"#9ad9bb\")\n# 输出“格子：”和 6 的值\nprint(\"格子：\", 6)\n",
       "goals": [
         "嵌套循环",
         "二维坐标"
@@ -1439,7 +1439,7 @@
           "id": "practice",
           "title": "动手改造",
           "instruction": "改成 3 行 4 列，输出 12 格。",
-          "referenceCode": "from xuya import draw\nrows, cols = 3, 4\nfor row in range(rows):\n    for col in range(cols):\n        draw.rectangle(40 + col * 35, 40 + row * 35, 30, 30, \"#9ad9bb\")\nprint(\"格子：\", rows * cols)\n",
+          "referenceCode":"# 取来画笔工具 draw，后面用它画画\nfrom xuya import draw\n# 分别给 rows 和 cols 赋值 3 和 4\nrows, cols = 3, 4\n# 让 row 从 0 开始，重复 rows 次\nfor row in range(rows):\n    # 让 col 从 0 开始，重复 cols 次\n    for col in range(cols):\n        # 画一个宽 30、高 30 的长方形，位置由参数决定\n        draw.rectangle(40 + col * 35, 40 + row * 35, 30, 30, \"#9ad9bb\")\n# 输出“格子：”和 rows * cols 的值\nprint(\"格子：\", rows * cols)\n",
           "tests": [
             {
               "name": "检查1",
@@ -1466,7 +1466,7 @@
       "title": "配色盘：列表存放选择",
       "subtitle": "列表、索引 · 修改与 append",
       "mission": "用一个列表管理海报颜色。",
-      "starterCode": "colors = [\"#c7bbff\", \"#9ad9bb\"]\nprint(\"颜色数：\", len(colors))\nprint(\"首色：\", colors[0])\n",
+      "starterCode":"# 把 2 个值放进列表 colors\ncolors = [\"#c7bbff\", \"#9ad9bb\"]\n# 输出“颜色数：”和 len(colors) 的值\nprint(\"颜色数：\", len(colors))\n# 输出“首色：”和 colors[0] 的值\nprint(\"首色：\", colors[0])\n",
       "goals": [
         "列表、索引",
         "修改与 append"
@@ -1503,7 +1503,7 @@
           "id": "practice",
           "title": "动手改造",
           "instruction": "添加 #f0c987，输出颜色数 3 和尾色。",
-          "referenceCode": "colors = [\"#c7bbff\", \"#9ad9bb\"]\ncolors.append(\"#f0c987\")\nprint(\"颜色数：\", len(colors))\nprint(\"尾色：\", colors[-1])\n",
+          "referenceCode":"# 把 2 个值放进列表 colors\ncolors = [\"#c7bbff\", \"#9ad9bb\"]\n# 往 colors 列表末尾再加一个 #f0c987\ncolors.append(\"#f0c987\")\n# 输出“颜色数：”和 len(colors) 的值\nprint(\"颜色数：\", len(colors))\n# 输出“尾色：”和 colors[-1] 的值\nprint(\"尾色：\", colors[-1])\n",
           "tests": [
             {
               "name": "检查1",
@@ -1531,7 +1531,7 @@
       "title": "文字线索：索引与切片",
       "subtitle": "len、索引、切片 · 切片右端点",
       "mission": "从口令中提取前半段线索。",
-      "starterCode": "clue = \"星光邮局\"\nprint(\"字数：\", len(clue))\nprint(\"首字：\", clue[0])\n",
+      "starterCode":"# 把文字“星光邮局”存进 clue\nclue = \"星光邮局\"\n# 输出“字数：”和 len(clue) 的值\nprint(\"字数：\", len(clue))\n# 输出“首字：”和 clue[0] 的值\nprint(\"首字：\", clue[0])\n",
       "goals": [
         "len、索引、切片",
         "切片右端点"
@@ -1568,7 +1568,7 @@
           "id": "practice",
           "title": "动手改造",
           "instruction": "输出“前缀：星光”和“尾字：局”。",
-          "referenceCode": "clue = \"星光邮局\"\nprint(\"字数：\", len(clue))\nprint(\"前缀：\", clue[:2])\nprint(\"尾字：\", clue[-1])\n",
+          "referenceCode":"# 把文字“星光邮局”存进 clue\nclue = \"星光邮局\"\n# 输出“字数：”和 len(clue) 的值\nprint(\"字数：\", len(clue))\n# 输出“前缀：”和 clue[:2] 的值\nprint(\"前缀：\", clue[:2])\n# 输出“尾字：”和 clue[-1] 的值\nprint(\"尾字：\", clue[-1])\n",
           "tests": [
             {
               "name": "检查1",
@@ -1596,7 +1596,7 @@
       "title": "小队成绩：寻找最高值",
       "subtitle": "遍历列表 · 最大、最小值",
       "mission": "不用手工排序，从小队成绩里找到最高分。",
-      "starterCode": "scores = [7, 12, 9, 4]\nbest = scores[0]\nfor score in scores:\n    if score > best:\n        best = score\nprint(\"最高：\", best)\n",
+      "starterCode":"# 把 4 个值放进列表 scores\nscores = [7, 12, 9, 4]\n# 从 scores 取出第 0 项，存进 best\nbest = scores[0]\n# 依次从 scores 取出每一项，存进 score\nfor score in scores:\n    # 如果 score 大于 best，就执行下面的缩进代码\n    if score > best:\n        # 把 score 的值存进 best\n        best = score\n# 输出“最高：”和 best 的值\nprint(\"最高：\", best)\n",
       "goals": [
         "遍历列表",
         "最大、最小值"
@@ -1633,7 +1633,7 @@
           "id": "practice",
           "title": "动手改造",
           "instruction": "同时找出最低分，输出“最低：4”。",
-          "referenceCode": "scores = [7, 12, 9, 4]\nbest = scores[0]\nlowest = scores[0]\nfor score in scores:\n    if score > best:\n        best = score\n    if score < lowest:\n        lowest = score\nprint(\"最高：\", best)\nprint(\"最低：\", lowest)\n",
+          "referenceCode":"# 把 4 个值放进列表 scores\nscores = [7, 12, 9, 4]\n# 从 scores 取出第 0 项，存进 best\nbest = scores[0]\n# 从 scores 取出第 0 项，存进 lowest\nlowest = scores[0]\n# 依次从 scores 取出每一项，存进 score\nfor score in scores:\n    # 如果 score 大于 best，就执行下面的缩进代码\n    if score > best:\n        # 把 score 的值存进 best\n        best = score\n    # 如果 score 小于 lowest，就执行下面的缩进代码\n    if score < lowest:\n        # 把 score 的值存进 lowest\n        lowest = score\n# 输出“最高：”和 best 的值\nprint(\"最高：\", best)\n# 输出“最低：”和 lowest 的值\nprint(\"最低：\", lowest)\n",
           "tests": [
             {
               "name": "检查1",
@@ -1661,7 +1661,7 @@
       "title": "图案改造：列表和随机选择",
       "subtitle": "random.choice · 列表方法与调试",
       "mission": "从配色盘随机选颜色，修复没有保存结果的图案。",
-      "starterCode": "from xuya import draw\nimport random\nrandom.seed(3)\ncolors = [\"#c7bbff\", \"#9ad9bb\"]\nfor i in range(3):\n    draw.circle(60 + i * 60, 120, 20, random.choice(colors))\nprint(\"图案数：\", 3)\n",
+      "starterCode":"# 取来画笔工具 draw，后面用它画画\nfrom xuya import draw\n# 导入 random，后面才能使用它的功能\nimport random\n# 固定随机种子 3，保证每次运行结果一样\nrandom.seed(3)\n# 把 2 个值放进列表 colors\ncolors = [\"#c7bbff\", \"#9ad9bb\"]\n# 让 i 从 0 数到 2，重复 3 轮\nfor i in range(3):\n    # 画一个半径 20 的圆，位置和颜色由参数决定\n    draw.circle(60 + i * 60, 120, 20, random.choice(colors))\n# 输出“图案数：”和 3 的值\nprint(\"图案数：\", 3)\n",
       "goals": [
         "random.choice",
         "列表方法与调试"
@@ -1698,7 +1698,7 @@
           "id": "practice",
           "title": "动手改造",
           "instruction": "增加一个颜色，并画出 4 个随机配色的圆。",
-          "referenceCode": "from xuya import draw\nimport random\nrandom.seed(3)\ncolors = [\"#c7bbff\", \"#9ad9bb\"]\ncolors.append(\"#f0c987\")\nfor i in range(4):\n    draw.circle(60 + i * 60, 120, 20, random.choice(colors))\nprint(\"图案数：\", 4)\n",
+          "referenceCode":"# 取来画笔工具 draw，后面用它画画\nfrom xuya import draw\n# 导入 random，后面才能使用它的功能\nimport random\n# 固定随机种子 3，保证每次运行结果一样\nrandom.seed(3)\n# 把 2 个值放进列表 colors\ncolors = [\"#c7bbff\", \"#9ad9bb\"]\n# 往 colors 列表末尾再加一个 #f0c987\ncolors.append(\"#f0c987\")\n# 让 i 从 0 数到 3，重复 4 轮\nfor i in range(4):\n    # 画一个半径 20 的圆，位置和颜色由参数决定\n    draw.circle(60 + i * 60, 120, 20, random.choice(colors))\n# 输出“图案数：”和 4 的值\nprint(\"图案数：\", 4)\n",
           "tests": [
             {
               "name": "检查1",
@@ -1725,7 +1725,7 @@
       "title": "项目三：生成艺术海报",
       "subtitle": "列表、循环与条件整合 · 参数化创作",
       "mission": "给海报设计可调整的行列和配色。",
-      "starterCode": "from xuya import draw\ncolors = [\"#c7bbff\", \"#9ad9bb\"]\nrows, cols = 2, 3\nfor row in range(rows):\n    for col in range(cols):\n        draw.circle(50 + col * 60, 50 + row * 60, 18, colors[0])\nprint(\"海报图形：\", rows * cols)\n",
+      "starterCode":"# 取来画笔工具 draw，后面用它画画\nfrom xuya import draw\n# 把 2 个值放进列表 colors\ncolors = [\"#c7bbff\", \"#9ad9bb\"]\n# 分别给 rows 和 cols 赋值 2 和 3\nrows, cols = 2, 3\n# 让 row 从 0 开始，重复 rows 次\nfor row in range(rows):\n    # 让 col 从 0 开始，重复 cols 次\n    for col in range(cols):\n        # 画一个半径 18 的圆，位置和颜色由参数决定\n        draw.circle(50 + col * 60, 50 + row * 60, 18, colors[0])\n# 输出“海报图形：”和 rows * cols 的值\nprint(\"海报图形：\", rows * cols)\n",
       "goals": [
         "列表、循环与条件整合",
         "参数化创作"
@@ -1762,7 +1762,7 @@
           "id": "practice",
           "title": "动手改造",
           "instruction": "生成 3 行 4 列，用 (row+col)%len(colors) 交替颜色。",
-          "referenceCode": "from xuya import draw\ncolors = [\"#c7bbff\", \"#9ad9bb\"]\nrows, cols = 3, 4\nfor row in range(rows):\n    for col in range(cols):\n        color = colors[(row + col) % len(colors)]\n        draw.circle(50 + col * 60, 50 + row * 60, 18, color)\ndraw.text(60, 250, \"我的生成艺术\", \"#493964\")\nprint(\"海报图形：\", rows * cols)\n",
+          "referenceCode":"# 取来画笔工具 draw，后面用它画画\nfrom xuya import draw\n# 把 2 个值放进列表 colors\ncolors = [\"#c7bbff\", \"#9ad9bb\"]\n# 分别给 rows 和 cols 赋值 3 和 4\nrows, cols = 3, 4\n# 让 row 从 0 开始，重复 rows 次\nfor row in range(rows):\n    # 让 col 从 0 开始，重复 cols 次\n    for col in range(cols):\n        # 从 colors 取出第 (row + col) % len(colors) 项，存进 color\n        color = colors[(row + col) % len(colors)]\n        # 画一个半径 18 的圆，位置和颜色由参数决定\n        draw.circle(50 + col * 60, 50 + row * 60, 18, color)\n# 在画布上写下“我的生成艺术”\ndraw.text(60, 250, \"我的生成艺术\", \"#493964\")\n# 输出“海报图形：”和 rows * cols 的值\nprint(\"海报图形：\", rows * cols)\n",
           "tests": [
             {
               "name": "检查1",
@@ -1789,7 +1789,7 @@
       "title": "可重复画笔：函数和参数",
       "subtitle": "def、调用和参数",
       "mission": "把画徽章的动作变成工具，在不同位置重复使用。",
-      "starterCode": "from xuya import draw\ndef badge(x, y):\n    draw.circle(x, y, 20, \"#c7bbff\")\nbadge(60, 100)\nprint(\"徽章：\", 1)\n",
+      "starterCode":"# 取来画笔工具 draw，后面用它画画\nfrom xuya import draw\n# 定义动作 badge，需要传入 x,y\ndef badge(x, y):\n    # 画一个半径 20 的圆，位置和颜色由参数决定\n    draw.circle(x, y, 20, \"#c7bbff\")\n# 调用 badge 动作，传入 60、100\nbadge(60, 100)\n# 输出“徽章：”和 1 的值\nprint(\"徽章：\", 1)\n",
       "goals": [
         "def、调用和参数"
       ],
@@ -1825,7 +1825,7 @@
           "id": "practice",
           "title": "动手改造",
           "instruction": "调用 badge 三次，在不同 x 位置画三枚徽章。",
-          "referenceCode": "from xuya import draw\ndef badge(x, y):\n    draw.circle(x, y, 20, \"#c7bbff\")\nfor x in [60, 140, 220]:\n    badge(x, 100)\nprint(\"徽章：\", 3)\n",
+          "referenceCode":"# 取来画笔工具 draw，后面用它画画\nfrom xuya import draw\n# 定义动作 badge，需要传入 x,y\ndef badge(x, y):\n    # 画一个半径 20 的圆，位置和颜色由参数决定\n    draw.circle(x, y, 20, \"#c7bbff\")\n# 让 x 依次取列表里的每一项\nfor x in [60, 140, 220]:\n    # 调用 badge 动作，传入 x、100\n    badge(x, 100)\n# 输出“徽章：”和 3 的值\nprint(\"徽章：\", 3)\n",
           "tests": [
             {
               "name": "检查1",
@@ -1852,7 +1852,7 @@
       "title": "函数返回：结果交给下一步",
       "subtitle": "return 与组合",
       "mission": "计算任务奖励，再交给打印函数展示。",
-      "starterCode": "def reward(tasks):\n    return tasks * 3\ntasks = int(input(\"完成任务数：\"))\nprint(\"奖励：\", reward(tasks))\n",
+      "starterCode":"# 定义动作 reward，需要传入 tasks\ndef reward(tasks):\n    # 把 tasks * 3 的结果交回给调用处\n    return tasks * 3\n# 问玩家“完成任务数：”，把回答转成整数存进 tasks\ntasks = int(input(\"完成任务数：\"))\n# 输出“奖励：”和 reward(tasks) 的值\nprint(\"奖励：\", reward(tasks))\n",
       "goals": [
         "return 与组合"
       ],
@@ -1888,7 +1888,7 @@
           "id": "practice",
           "title": "动手改造",
           "instruction": "奖励在每项 3 点基础上再加 2 点，修改函数而不是写死输出。",
-          "referenceCode": "def reward(tasks):\n    return tasks * 3 + 2\ntasks = int(input(\"完成任务数：\"))\nprint(\"奖励：\", reward(tasks))\n",
+          "referenceCode":"# 定义动作 reward，需要传入 tasks\ndef reward(tasks):\n    # 把 tasks * 3 + 2 的结果交回给调用处\n    return tasks * 3 + 2\n# 问玩家“完成任务数：”，把回答转成整数存进 tasks\ntasks = int(input(\"完成任务数：\"))\n# 输出“奖励：”和 reward(tasks) 的值\nprint(\"奖励：\", reward(tasks))\n",
           "tests": [
             {
               "name": "检查1",
@@ -1930,7 +1930,7 @@
       "title": "拆分任务：变量住在哪里",
       "subtitle": "局部变量、作用域 · 参数传递",
       "mission": "不同角色各自计算能量，不要互相改坏数据。",
-      "starterCode": "energy = 10\ndef collect(current, amount):\n    current = current + amount\n    return current\nprint(\"新能量：\", collect(energy, 3))\nprint(\"原能量：\", energy)\n",
+      "starterCode":"# 把数字 10 存进 energy\nenergy = 10\n# 定义动作 collect，需要传入 current,amount\ndef collect(current, amount):\n    # 把 current 和 amount 相加，结果存进 current\n    current = current + amount\n    # 把 current 交回给调用处\n    return current\n# 输出“新能量：”和 collect(energy, 3) 的值\nprint(\"新能量：\", collect(energy, 3))\n# 输出“原能量：”和 energy 的值\nprint(\"原能量：\", energy)\n",
       "goals": [
         "局部变量、作用域",
         "参数传递"
@@ -1967,7 +1967,7 @@
           "id": "practice",
           "title": "动手改造",
           "instruction": "把返回结果保存回 energy，最后输出“原能量：13”。",
-          "referenceCode": "energy = 10\ndef collect(current, amount):\n    current = current + amount\n    return current\nenergy = collect(energy, 3)\nprint(\"新能量：\", energy)\nprint(\"原能量：\", energy)\n",
+          "referenceCode":"# 把数字 10 存进 energy\nenergy = 10\n# 定义动作 collect，需要传入 current,amount\ndef collect(current, amount):\n    # 把 current 和 amount 相加，结果存进 current\n    current = current + amount\n    # 把 current 交回给调用处\n    return current\n# 调用 collect，把结果存进 energy\nenergy = collect(energy, 3)\n# 输出“新能量：”和 energy 的值\nprint(\"新能量：\", energy)\n# 输出“原能量：”和 energy 的值\nprint(\"原能量：\", energy)\n",
           "tests": [
             {
               "name": "检查1",
@@ -1995,7 +1995,7 @@
       "title": "角色道具库：字典",
       "subtitle": "字典键值 · 查询和更新",
       "mission": "用道具名找到数量，而不记它在列表第几项。",
-      "starterCode": "bag = {\"key\": 1, \"map\": 2}\nprint(\"钥匙：\", bag[\"key\"])\nprint(\"药水：\", bag.get(\"potion\", 0))\n",
+      "starterCode":"# 创建字典 bag，用来按键存值\nbag = {\"key\": 1, \"map\": 2}\n# 输出“钥匙：”和 bag[\"key\"] 的值\nprint(\"钥匙：\", bag[\"key\"])\n# 输出“药水：”和 bag.get(\"potion\", 0) 的值\nprint(\"药水：\", bag.get(\"potion\", 0))\n",
       "goals": [
         "字典键值",
         "查询和更新"
@@ -2032,7 +2032,7 @@
           "id": "practice",
           "title": "动手改造",
           "instruction": "增加 2 把钥匙，并输出钥匙 3 和药水 0。",
-          "referenceCode": "bag = {\"key\": 1, \"map\": 2}\nbag[\"key\"] += 2\nprint(\"钥匙：\", bag[\"key\"])\nprint(\"药水：\", bag.get(\"potion\", 0))\n",
+          "referenceCode":"# 创建字典 bag，用来按键存值\nbag = {\"key\": 1, \"map\": 2}\n# 让字典里“key”的值增加 2\nbag[\"key\"] += 2\n# 输出“钥匙：”和 bag[\"key\"] 的值\nprint(\"钥匙：\", bag[\"key\"])\n# 输出“药水：”和 bag.get(\"potion\", 0) 的值\nprint(\"药水：\", bag.get(\"potion\", 0))\n",
           "tests": [
             {
               "name": "检查1",
@@ -2060,7 +2060,7 @@
       "title": "去重线索与固定坐标",
       "subtitle": "集合、元组 · 选择数据容器",
       "mission": "相同线索只计一次，地点坐标保持不变。",
-      "starterCode": "clues = [\"羽毛\", \"地图\", \"羽毛\"]\nposition = (120, 80)\nprint(\"原线索：\", len(clues))\nprint(\"坐标：\", position)\n",
+      "starterCode":"# 把 3 个值放进列表 clues\nclues = [\"羽毛\", \"地图\", \"羽毛\"]\n# 把 (120, 80) 这组坐标存进 position\nposition = (120, 80)\n# 输出“原线索：”和 len(clues) 的值\nprint(\"原线索：\", len(clues))\n# 输出“坐标：”和 position 的值\nprint(\"坐标：\", position)\n",
       "goals": [
         "集合、元组",
         "选择数据容器"
@@ -2097,7 +2097,7 @@
           "id": "practice",
           "title": "动手改造",
           "instruction": "用 set 去重，输出“独特线索：2”。",
-          "referenceCode": "clues = [\"羽毛\", \"地图\", \"羽毛\"]\nposition = (120, 80)\nunique = set(clues)\nprint(\"独特线索：\", len(unique))\nprint(\"坐标：\", position)\n",
+          "referenceCode":"# 把 3 个值放进列表 clues\nclues = [\"羽毛\", \"地图\", \"羽毛\"]\n# 把 (120, 80) 这组坐标存进 position\nposition = (120, 80)\n# 去掉 clues 里重复的项，存进 unique\nunique = set(clues)\n# 输出“独特线索：”和 len(unique) 的值\nprint(\"独特线索：\", len(unique))\n# 输出“坐标：”和 position 的值\nprint(\"坐标：\", position)\n",
           "tests": [
             {
               "name": "检查1",
@@ -2125,7 +2125,7 @@
       "title": "Python 工具箱",
       "subtitle": "math、random 和内置函数",
       "mission": "使用现成工具计算圆形徽章面积。",
-      "starterCode": "import math\nradius = 3\narea = math.pi * radius ** 2\nprint(\"面积：\", round(area, 2))\n",
+      "starterCode":"# 导入 math，后面才能使用它的功能\nimport math\n# 把数字 3 存进 radius\nradius = 3\n# 用 π × radius² 算圆面积，存进 area\narea = math.pi * radius ** 2\n# 输出“面积：”和 round(area, 2) 的值\nprint(\"面积：\", round(area, 2))\n",
       "goals": [
         "math、random 和内置函数"
       ],
@@ -2161,7 +2161,7 @@
           "id": "practice",
           "title": "动手改造",
           "instruction": "计算半径 5 的面积，保留两位小数，输出 78.54。",
-          "referenceCode": "import math\nradius = 5\narea = math.pi * radius ** 2\nprint(\"面积：\", round(area, 2))\n",
+          "referenceCode":"# 导入 math，后面才能使用它的功能\nimport math\n# 把数字 5 存进 radius\nradius = 5\n# 用 π × radius² 算圆面积，存进 area\narea = math.pi * radius ** 2\n# 输出“面积：”和 round(area, 2) 的值\nprint(\"面积：\", round(area, 2))\n",
           "tests": [
             {
               "name": "检查1",
@@ -2188,7 +2188,7 @@
       "title": "应对错误输入",
       "subtitle": "try/except · 有效范围与反馈",
       "mission": "访客可能输入文字或负数，程序要友好回应。",
-      "starterCode": "raw = input(\"能量数量：\")\ntry:\n    energy = int(raw)\n    print(\"能量：\", energy)\nexcept ValueError:\n    print(\"请输入整数\")\n",
+      "starterCode":"# 问玩家“能量数量：”，把回答存进 raw\nraw = input(\"能量数量：\")\n# 先试着执行下面的代码\ntry:\n    # 把 raw 转成整数，存进 energy\n    energy = int(raw)\n    # 输出“能量：”和 energy 的值\n    print(\"能量：\", energy)\n# 如果出现 ValueError，就执行这里\nexcept ValueError:\n    # 在屏幕上输出“请输入整数”\n    print(\"请输入整数\")\n",
       "goals": [
         "try/except",
         "有效范围与反馈"
@@ -2225,7 +2225,7 @@
           "id": "practice",
           "title": "动手改造",
           "instruction": "负数提示“不能是负数”，合法整数正常显示。",
-          "referenceCode": "raw = input(\"能量数量：\")\ntry:\n    energy = int(raw)\n    if energy < 0:\n        print(\"不能是负数\")\n    else:\n        print(\"能量：\", energy)\nexcept ValueError:\n    print(\"请输入整数\")\n",
+          "referenceCode":"# 问玩家“能量数量：”，把回答存进 raw\nraw = input(\"能量数量：\")\n# 先试着执行下面的代码\ntry:\n    # 把 raw 转成整数，存进 energy\n    energy = int(raw)\n    # 如果 energy 小于 0，就执行下面的缩进代码\n    if energy < 0:\n        # 在屏幕上输出“不能是负数”\n        print(\"不能是负数\")\n    # 上面的条件都不成立时，执行这里\n    else:\n        # 输出“能量：”和 energy 的值\n        print(\"能量：\", energy)\n# 如果出现 ValueError，就执行这里\nexcept ValueError:\n    # 在屏幕上输出“请输入整数”\n    print(\"请输入整数\")\n",
           "tests": [
             {
               "name": "检查1",
@@ -2278,7 +2278,7 @@
       "title": "项目四：背包冒险",
       "subtitle": "函数、字典与状态 · 交互和容错",
       "mission": "拾取道具、查看背包、应对未知命令，退出时保留解释。",
-      "starterCode": "bag = {\"key\": 0}\ndef show():\n    print(\"钥匙：\", bag[\"key\"])\nwhile True:\n    command = input(\"pick/show/exit：\")\n    if command == \"exit\":\n        break\n    if command == \"show\":\n        show()\n    else:\n        print(\"未知命令\")\n",
+      "starterCode":"# 创建字典 bag，用来按键存值\nbag = {\"key\": 0}\n# 定义动作 show，使用时直接写 show()\ndef show():\n    # 输出“钥匙：”和 bag[\"key\"] 的值\n    print(\"钥匙：\", bag[\"key\"])\n# 一直重复，直到遇到 break\nwhile True:\n    # 问玩家“pick/show/exit：”，把回答存进 command\n    command = input(\"pick/show/exit：\")\n    # 如果 command 等于 “exit”，就执行下面的缩进代码\n    if command == \"exit\":\n        # 立刻结束这个循环\n        break\n    # 如果 command 等于 “show”，就执行下面的缩进代码\n    if command == \"show\":\n        # 调用 show 动作，显示背包\n        show()\n    # 上面的条件都不成立时，执行这里\n    else:\n        # 在屏幕上输出“未知命令”\n        print(\"未知命令\")\n",
       "goals": [
         "函数、字典与状态",
         "交互和容错"
@@ -2315,7 +2315,7 @@
           "id": "practice",
           "title": "动手改造",
           "instruction": "增加 pick 功能，每次增加一把钥匙；未知命令不能改变背包。",
-          "referenceCode": "bag = {\"key\": 0}\ndef show():\n    print(\"钥匙：\", bag[\"key\"])\ndef collect():\n    bag[\"key\"] += 1\n    print(\"拾取成功\")\nwhile True:\n    command = input(\"pick/show/exit：\")\n    if command == \"exit\":\n        break\n    if command == \"show\":\n        show()\n    elif command == \"pick\":\n        collect()\n    else:\n        print(\"未知命令\")\n",
+          "referenceCode":"# 创建字典 bag，用来按键存值\nbag = {\"key\": 0}\n# 定义动作 show，使用时直接写 show()\ndef show():\n    # 输出“钥匙：”和 bag[\"key\"] 的值\n    print(\"钥匙：\", bag[\"key\"])\n# 定义动作 collect，使用时直接写 collect()\ndef collect():\n    # 让字典里“key”的值增加 1\n    bag[\"key\"] += 1\n    # 在屏幕上输出“拾取成功”\n    print(\"拾取成功\")\n# 一直重复，直到遇到 break\nwhile True:\n    # 问玩家“pick/show/exit：”，把回答存进 command\n    command = input(\"pick/show/exit：\")\n    # 如果 command 等于 “exit”，就执行下面的缩进代码\n    if command == \"exit\":\n        # 立刻结束这个循环\n        break\n    # 如果 command 等于 “show”，就执行下面的缩进代码\n    if command == \"show\":\n        # 调用 show 动作，显示背包\n        show()\n    # 否则如果 command 等于 “pick”，就执行这里\n    elif command == \"pick\":\n        # 调用 collect 动作\n        collect()\n    # 上面的条件都不成立时，执行这里\n    else:\n        # 在屏幕上输出“未知命令”\n        print(\"未知命令\")\n",
           "tests": [
             {
               "name": "检查1",
@@ -2367,7 +2367,7 @@
       "title": "隐藏号码：枚举与筛选",
       "subtitle": "枚举 · 把线索写成条件",
       "mission": "找出 10–30 中能被 7 整除的号码。",
-      "starterCode": "for number in range(10, 31):\n    if number % 7 == 0:\n        print(\"候选：\", number)\n",
+      "starterCode":"# 让 number 依次取 10 到 30 的整数\nfor number in range(10, 31):\n    # 如果 number % 7 等于 0，就执行下面的缩进代码\n    if number % 7 == 0:\n        # 输出“候选：”和 number 的值\n        print(\"候选：\", number)\n",
       "goals": [
         "枚举",
         "把线索写成条件"
@@ -2404,7 +2404,7 @@
           "id": "practice",
           "title": "动手改造",
           "instruction": "再加条件，号码至少为 20，只输出 21 和 28。",
-          "referenceCode": "for number in range(10, 31):\n    if number % 7 == 0 and number >= 20:\n        print(\"候选：\", number)\n",
+          "referenceCode":"# 让 number 依次取 10 到 30 的整数\nfor number in range(10, 31):\n    # 如果 number % 7 等于 0 并且 number 大于等于 20，就执行下面的缩进代码\n    if number % 7 == 0 and number >= 20:\n        # 输出“候选：”和 number 的值\n        print(\"候选：\", number)\n",
           "tests": [
             {
               "name": "检查1",
@@ -2432,7 +2432,7 @@
       "title": "故事用词：字典统计",
       "subtitle": "频次统计 · get 默认值",
       "mission": "数清故事里不同道具出现几次。",
-      "starterCode": "words = [\"星\", \"月\", \"星\", \"云\", \"星\"]\ncounts = {}\nfor word in words:\n    counts[word] = counts.get(word, 0) + 1\nprint(\"星：\", counts[\"星\"])\n",
+      "starterCode":"# 把 5 个值放进列表 words\nwords = [\"星\", \"月\", \"星\", \"云\", \"星\"]\n# 创建字典 counts，用来按键存值\ncounts = {}\n# 依次从 words 取出每一项，存进 word\nfor word in words:\n    # 把 word 的计数加 1，存回字典 counts\n    counts[word] = counts.get(word, 0) + 1\n# 输出“星：”和 counts[\"星\"] 的值\nprint(\"星：\", counts[\"星\"])\n",
       "goals": [
         "频次统计",
         "get 默认值"
@@ -2469,7 +2469,7 @@
           "id": "practice",
           "title": "动手改造",
           "instruction": "按排序后的键输出所有词的次数。",
-          "referenceCode": "words = [\"星\", \"月\", \"星\", \"云\", \"星\"]\ncounts = {}\nfor word in words:\n    counts[word] = counts.get(word, 0) + 1\nfor word in sorted(counts):\n    print(f\"{word}：{counts[word]}\")\n",
+          "referenceCode":"# 把 5 个值放进列表 words\nwords = [\"星\", \"月\", \"星\", \"云\", \"星\"]\n# 创建字典 counts，用来按键存值\ncounts = {}\n# 依次从 words 取出每一项，存进 word\nfor word in words:\n    # 把 word 的计数加 1，存回字典 counts\n    counts[word] = counts.get(word, 0) + 1\n# 按排好序的顺序依次取出每一项，存进 word\nfor word in sorted(counts):\n    # 把变量填进句子，输出到屏幕\n    print(f\"{word}：{counts[word]}\")\n",
           "tests": [
             {
               "name": "检查1",
@@ -2498,7 +2498,7 @@
       "title": "文字密码：编码与回文",
       "subtitle": "ord/chr · 字符串变换",
       "mission": "用字符编码制作一个简单密码。",
-      "starterCode": "text = \"ABC\"\nencoded = \"\"\nfor letter in text:\n    encoded += chr(ord(letter) + 1)\nprint(\"密文：\", encoded)\n",
+      "starterCode":"# 把文字“ABC”存进 text\ntext = \"ABC\"\n# 把文字“”存进 encoded\nencoded = \"\"\n# 依次从 text 取出每一项，存进 letter\nfor letter in text:\n    # 在 encoded 后面接上新字母\n    encoded += chr(ord(letter) + 1)\n# 输出“密文：”和 encoded 的值\nprint(\"密文：\", encoded)\n",
       "goals": [
         "ord/chr",
         "字符串变换"
@@ -2535,7 +2535,7 @@
           "id": "practice",
           "title": "动手改造",
           "instruction": "再把密文每个字符减 1，恢复 ABC。",
-          "referenceCode": "text = \"ABC\"\nencoded = \"\"\nfor letter in text:\n    encoded += chr(ord(letter) + 1)\nprint(\"密文：\", encoded)\ndecoded = \"\"\nfor letter in encoded:\n    decoded += chr(ord(letter) - 1)\nprint(\"原文：\", decoded)\n",
+          "referenceCode":"# 把文字“ABC”存进 text\ntext = \"ABC\"\n# 把文字“”存进 encoded\nencoded = \"\"\n# 依次从 text 取出每一项，存进 letter\nfor letter in text:\n    # 在 encoded 后面接上新字母\n    encoded += chr(ord(letter) + 1)\n# 输出“密文：”和 encoded 的值\nprint(\"密文：\", encoded)\n# 把文字“”存进 decoded\ndecoded = \"\"\n# 依次从 encoded 取出每一项，存进 letter\nfor letter in encoded:\n    # 在 decoded 后面接上新字母\n    decoded += chr(ord(letter) - 1)\n# 输出“原文：”和 decoded 的值\nprint(\"原文：\", decoded)\n",
           "tests": [
             {
               "name": "检查1",
@@ -2563,7 +2563,7 @@
       "title": "给线索排序",
       "subtitle": "sorted · key 与排序规则",
       "mission": "按地点名称长度整理探险清单。",
-      "starterCode": "places = [\"云朵邮局\", \"海\", \"森林\"]\nordered = sorted(places)\nprint(ordered)\n",
+      "starterCode":"# 把 3 个值放进列表 places\nplaces = [\"云朵邮局\", \"海\", \"森林\"]\n# 把 places 排好序，存进 ordered\nordered = sorted(places)\n# 把 ordered 的值输出到屏幕\nprint(ordered)\n",
       "goals": [
         "sorted",
         "key 与排序规则"
@@ -2600,7 +2600,7 @@
           "id": "practice",
           "title": "动手改造",
           "instruction": "按长度从短到长排序并逐项输出。",
-          "referenceCode": "places = [\"云朵邮局\", \"海\", \"森林\"]\nordered = sorted(places, key=len)\nfor place in ordered:\n    print(place)\n",
+          "referenceCode":"# 把 3 个值放进列表 places\nplaces = [\"云朵邮局\", \"海\", \"森林\"]\n# 按名字长短给 places 排序，存进 ordered\nordered = sorted(places, key=len)\n# 依次从 ordered 取出每一项，存进 place\nfor place in ordered:\n    # 把 place 的值输出到屏幕\n    print(place)\n",
           "tests": [
             {
               "name": "检查1",
@@ -2629,7 +2629,7 @@
       "title": "查找档案：不断缩小范围",
       "subtitle": "顺序查找与二分体验",
       "mission": "在已排序编号中寻找档案。",
-      "starterCode": "numbers = [2, 4, 6, 8, 10]\ntarget = int(input(\"档案编号：\"))\nfound = target in numbers\nprint(\"找到：\", found)\n",
+      "starterCode":"# 把 5 个值放进列表 numbers\nnumbers = [2, 4, 6, 8, 10]\n# 问玩家“档案编号：”，把回答转成整数存进 target\ntarget = int(input(\"档案编号：\"))\n# 判断 target 是否在 numbers 里，存进 found\nfound = target in numbers\n# 输出“找到：”和 found 的值\nprint(\"找到：\", found)\n",
       "goals": [
         "顺序查找与二分体验"
       ],
@@ -2665,7 +2665,7 @@
           "id": "practice",
           "title": "动手改造",
           "instruction": "用二分循环替代 in，保持找到/未找到的结果。",
-          "referenceCode": "numbers = [2, 4, 6, 8, 10]\ntarget = int(input(\"档案编号：\"))\nleft, right = 0, len(numbers) - 1\nfound = False\nwhile left <= right:\n    middle = (left + right) // 2\n    if numbers[middle] == target:\n        found = True\n        break\n    if numbers[middle] < target:\n        left = middle + 1\n    else:\n        right = middle - 1\nprint(\"找到：\", found)\n",
+          "referenceCode":"# 把 5 个值放进列表 numbers\nnumbers = [2, 4, 6, 8, 10]\n# 问玩家“档案编号：”，把回答转成整数存进 target\ntarget = int(input(\"档案编号：\"))\n# 分别给 left 和 right 赋值 0 和 len(numbers) - 1\nleft, right = 0, len(numbers) - 1\n# 把 found 设成 False\nfound = False\n# 只要 left 小于等于 right，就一直重复下面的代码\nwhile left <= right:\n    # 取中间位置，存进 middle\n    middle = (left + right) // 2\n    # 如果 numbers[middle] 等于 target，就执行下面的缩进代码\n    if numbers[middle] == target:\n        # 把 found 设成 True\n        found = True\n        # 立刻结束这个循环\n        break\n    # 如果 numbers[middle] 小于 target，就执行下面的缩进代码\n    if numbers[middle] < target:\n        # 把 middle 和 1 相加，结果存进 left\n        left = middle + 1\n    # 上面的条件都不成立时，执行这里\n    else:\n        # 把 middle 和 1 相减，结果存进 right\n        right = middle - 1\n# 输出“找到：”和 found 的值\nprint(\"找到：\", found)\n",
           "tests": [
             {
               "name": "检查1",
@@ -2718,7 +2718,7 @@
       "title": "保存记录：虚拟文件与 JSON",
       "subtitle": "with/open · JSON 保存与读取",
       "mission": "把角色资料保存成文件，再读回来。",
-      "starterCode": "import json\nrecord = {\"name\": \"阿芽\", \"energy\": 5}\nwith open(\"record.json\", \"w\", encoding=\"utf-8\") as file:\n    json.dump(record, file, ensure_ascii=False)\nprint(\"记录已保存\")\n",
+      "starterCode":"# 导入 json，后面才能使用它的功能\nimport json\n# 创建字典 record，用来按键存值\nrecord = {\"name\": \"阿芽\", \"energy\": 5}\n# 打开 record.json 写入，结束后自动关闭\nwith open(\"record.json\", \"w\", encoding=\"utf-8\") as file:\n    # 把数据写成 JSON 存进文件，保留中文\n    json.dump(record, file, ensure_ascii=False)\n# 在屏幕上输出“记录已保存”\nprint(\"记录已保存\")\n",
       "goals": [
         "with/open",
         "JSON 保存与读取"
@@ -2755,7 +2755,7 @@
           "id": "practice",
           "title": "动手改造",
           "instruction": "读回 record.json，输出“恢复能量：5”。",
-          "referenceCode": "import json\nrecord = {\"name\": \"阿芽\", \"energy\": 5}\nwith open(\"record.json\", \"w\", encoding=\"utf-8\") as file:\n    json.dump(record, file, ensure_ascii=False)\nwith open(\"record.json\", encoding=\"utf-8\") as file:\n    restored = json.load(file)\nprint(\"恢复能量：\", restored[\"energy\"])\n",
+          "referenceCode":"# 导入 json，后面才能使用它的功能\nimport json\n# 创建字典 record，用来按键存值\nrecord = {\"name\": \"阿芽\", \"energy\": 5}\n# 打开 record.json 写入，结束后自动关闭\nwith open(\"record.json\", \"w\", encoding=\"utf-8\") as file:\n    # 把数据写成 JSON 存进文件，保留中文\n    json.dump(record, file, ensure_ascii=False)\n# 打开 record.json 读取，结束后自动关闭\nwith open(\"record.json\", encoding=\"utf-8\") as file:\n    # 从文件读出 JSON 数据，存进 restored\n    restored = json.load(file)\n# 输出“恢复能量：”和 restored[\"energy\"] 的值\nprint(\"恢复能量：\", restored[\"energy\"])\n",
           "tests": [
             {
               "name": "检查1",
@@ -2784,7 +2784,7 @@
       "title": "画调查结果：数据变图形",
       "subtitle": "数值映射 · 柱状图",
       "mission": "把三种道具数量变成图形，比较差异。",
-      "starterCode": "from xuya import draw\ncounts = [2, 5, 3]\nfor index, count in enumerate(counts):\n    height = count * 20\n    draw.rectangle(40 + index * 80, 220 - height, 40, height, \"#9ad9bb\")\nprint(\"柱数：\", len(counts))\n",
+      "starterCode":"# 取来画笔工具 draw，后面用它画画\nfrom xuya import draw\n# 把 3 个值放进列表 counts\ncounts = [2, 5, 3]\n# 一边数位置 index，一边取出 count，逐个处理\nfor index, count in enumerate(counts):\n    # 用数量乘 20 算出高度，存进 height\n    height = count * 20\n    # 画一个宽 40、高 height 的长方形，位置由参数决定\n    draw.rectangle(40 + index * 80, 220 - height, 40, height, \"#9ad9bb\")\n# 输出“柱数：”和 len(counts) 的值\nprint(\"柱数：\", len(counts))\n",
       "goals": [
         "数值映射",
         "柱状图"
@@ -2821,7 +2821,7 @@
           "id": "practice",
           "title": "动手改造",
           "instruction": "每根柱增加数值标签，至少 6 条画笔指令。",
-          "referenceCode": "from xuya import draw\ncounts = [2, 5, 3]\nfor index, count in enumerate(counts):\n    height = count * 20\n    x = 40 + index * 80\n    draw.rectangle(x, 220 - height, 40, height, \"#9ad9bb\")\n    draw.text(x, 240, count, \"#493964\")\nprint(\"柱数：\", len(counts))\n",
+          "referenceCode":"# 取来画笔工具 draw，后面用它画画\nfrom xuya import draw\n# 把 3 个值放进列表 counts\ncounts = [2, 5, 3]\n# 一边数位置 index，一边取出 count，逐个处理\nfor index, count in enumerate(counts):\n    # 用数量乘 20 算出高度，存进 height\n    height = count * 20\n    # 算出第 index 个图形的横坐标，存进 x\n    x = 40 + index * 80\n    # 画一个宽 40、高 height 的长方形，位置由参数决定\n    draw.rectangle(x, 220 - height, 40, height, \"#9ad9bb\")\n    # 在画布上写下“count”\n    draw.text(x, 240, count, \"#493964\")\n# 输出“柱数：”和 len(counts) 的值\nprint(\"柱数：\", len(counts))\n",
           "tests": [
             {
               "name": "检查1",
@@ -2848,7 +2848,7 @@
       "title": "项目五：数据线索图册",
       "subtitle": "统计、文件和绘图整合",
       "mission": "整理线索次数，保存资料并画调查图。",
-      "starterCode": "clues = [\"星\", \"月\", \"星\", \"云\"]\ncounts = {}\nfor clue in clues:\n    counts[clue] = counts.get(clue, 0) + 1\nprint(counts)\n# 添加保存与展示\n",
+      "starterCode":"# 把 4 个值放进列表 clues\nclues = [\"星\", \"月\", \"星\", \"云\"]\n# 创建字典 counts，用来按键存值\ncounts = {}\n# 依次从 clues 取出每一项，存进 clue\nfor clue in clues:\n    # 把 clue 的计数加 1，存回字典 counts\n    counts[clue] = counts.get(clue, 0) + 1\n# 把整个字典打印出来看看\nprint(counts)\n# 添加保存与展示\n",
       "goals": [
         "统计、文件和绘图整合"
       ],
@@ -2884,7 +2884,7 @@
           "id": "practice",
           "title": "动手改造",
           "instruction": "保存 atlas.json，输出星的次数，并为三种线索各画柱和标签。",
-          "referenceCode": "import json\nfrom xuya import draw\nclues = [\"星\", \"月\", \"星\", \"云\"]\ncounts = {}\nfor clue in clues:\n    counts[clue] = counts.get(clue, 0) + 1\nwith open(\"atlas.json\", \"w\", encoding=\"utf-8\") as file:\n    json.dump(counts, file, ensure_ascii=False)\nfor index, clue in enumerate(sorted(counts)):\n    height = counts[clue] * 40\n    x = 40 + index * 80\n    draw.rectangle(x, 220 - height, 40, height, \"#c7bbff\")\n    draw.text(x, 245, clue, \"#493964\")\nprint(\"星的次数：\", counts[\"星\"])\n",
+          "referenceCode":"# 导入 json，后面才能使用它的功能\nimport json\n# 取来画笔工具 draw，后面用它画画\nfrom xuya import draw\n# 把 4 个值放进列表 clues\nclues = [\"星\", \"月\", \"星\", \"云\"]\n# 创建字典 counts，用来按键存值\ncounts = {}\n# 依次从 clues 取出每一项，存进 clue\nfor clue in clues:\n    # 把 clue 的计数加 1，存回字典 counts\n    counts[clue] = counts.get(clue, 0) + 1\n# 打开 atlas.json 写入，结束后自动关闭\nwith open(\"atlas.json\", \"w\", encoding=\"utf-8\") as file:\n    # 把数据写成 JSON 存进文件，保留中文\n    json.dump(counts, file, ensure_ascii=False)\n# 一边数位置 index，一边取出 clue，逐个处理\nfor index, clue in enumerate(sorted(counts)):\n    # 把 counts[clue] 和 40 相乘，结果存进 height\n    height = counts[clue] * 40\n    # 算出第 index 个图形的横坐标，存进 x\n    x = 40 + index * 80\n    # 画一个宽 40、高 height 的长方形，位置由参数决定\n    draw.rectangle(x, 220 - height, 40, height, \"#c7bbff\")\n    # 在画布上写下“clue”\n    draw.text(x, 245, clue, \"#493964\")\n# 输出“星的次数：”和 counts[\"星\"] 的值\nprint(\"星的次数：\", counts[\"星\"])\n",
           "tests": [
             {
               "name": "检查1",
@@ -2913,7 +2913,7 @@
       "title": "把谜题变成规则",
       "subtitle": "输入输出约定 · 条件翻译",
       "mission": "把“至少三封信才能领取徽章”写成别人能检验的程序。",
-      "starterCode": "letters = int(input(\"信件数：\"))\nprint(\"信件：\", letters)\n# 判断是否达标\n",
+      "starterCode":"# 问玩家“信件数：”，把回答转成整数存进 letters\nletters = int(input(\"信件数：\"))\n# 输出“信件：”和 letters 的值\nprint(\"信件：\", letters)\n# 判断是否达标\n",
       "goals": [
         "输入输出约定",
         "条件翻译"
@@ -2950,7 +2950,7 @@
           "id": "practice",
           "title": "动手改造",
           "instruction": "至少 3 封输出“领取徽章”，否则“继续收集”。",
-          "referenceCode": "letters = int(input(\"信件数：\"))\nif letters >= 3:\n    print(\"领取徽章\")\nelse:\n    print(\"继续收集\")\n",
+          "referenceCode":"# 问玩家“信件数：”，把回答转成整数存进 letters\nletters = int(input(\"信件数：\"))\n# 如果 letters 大于等于 3，就执行下面的缩进代码\nif letters >= 3:\n    # 在屏幕上输出“领取徽章”\n    print(\"领取徽章\")\n# 上面的条件都不成立时，执行这里\nelse:\n    # 在屏幕上输出“继续收集”\n    print(\"继续收集\")\n",
           "tests": [
             {
               "name": "检查1",
@@ -3003,7 +3003,7 @@
       "title": "小镇事件模拟",
       "subtitle": "事件序列 · 状态变化",
       "mission": "一天中的收入和支出按顺序改变小镇能量。",
-      "starterCode": "events = [5, -3, 2]\ntown = {\"energy\": 10}\nfor change in events:\n    town[\"energy\"] += change\nprint(\"最终能量：\", town[\"energy\"])\n",
+      "starterCode":"# 把 3 个值放进列表 events\nevents = [5, -3, 2]\n# 创建字典 town，用来按键存值\ntown = {\"energy\": 10}\n# 依次从 events 取出每一项，存进 change\nfor change in events:\n    # 让字典里“energy”的值增加 change\n    town[\"energy\"] += change\n# 输出“最终能量：”和 town[\"energy\"] 的值\nprint(\"最终能量：\", town[\"energy\"])\n",
       "goals": [
         "事件序列",
         "状态变化"
@@ -3040,7 +3040,7 @@
           "id": "practice",
           "title": "动手改造",
           "instruction": "每轮输出当前能量，过程是 15、12、14。",
-          "referenceCode": "events = [5, -3, 2]\ntown = {\"energy\": 10}\nfor change in events:\n    town[\"energy\"] += change\n    print(\"步骤能量：\", town[\"energy\"])\nprint(\"最终能量：\", town[\"energy\"])\n",
+          "referenceCode":"# 把 3 个值放进列表 events\nevents = [5, -3, 2]\n# 创建字典 town，用来按键存值\ntown = {\"energy\": 10}\n# 依次从 events 取出每一项，存进 change\nfor change in events:\n    # 让字典里“energy”的值增加 change\n    town[\"energy\"] += change\n    # 输出“步骤能量：”和 town[\"energy\"] 的值\n    print(\"步骤能量：\", town[\"energy\"])\n# 输出“最终能量：”和 town[\"energy\"] 的值\nprint(\"最终能量：\", town[\"energy\"])\n",
           "tests": [
             {
               "name": "检查1",
@@ -3070,7 +3070,7 @@
       "title": "比较两种解法",
       "subtitle": "操作计数 · 改进但保持结果",
       "mission": "比较逐项查找和遇到目标就停的查找。",
-      "starterCode": "numbers = [2, 4, 6, 8, 10]\ntarget = 2\nchecks = 0\nfor number in numbers:\n    checks += 1\n    if number == target:\n        print(\"找到目标\")\nprint(\"检查次数：\", checks)\n",
+      "starterCode":"# 把 5 个值放进列表 numbers\nnumbers = [2, 4, 6, 8, 10]\n# 把数字 2 存进 target\ntarget = 2\n# 把数字 0 存进 checks\nchecks = 0\n# 依次从 numbers 取出每一项，存进 number\nfor number in numbers:\n    # 让 checks 增加 1\n    checks += 1\n    # 如果 number 等于 target，就执行下面的缩进代码\n    if number == target:\n        # 在屏幕上输出“找到目标”\n        print(\"找到目标\")\n# 输出“检查次数：”和 checks 的值\nprint(\"检查次数：\", checks)\n",
       "goals": [
         "操作计数",
         "改进但保持结果"
@@ -3107,7 +3107,7 @@
           "id": "practice",
           "title": "动手改造",
           "instruction": "找到后提前退出，目标在第一项时检查 1 次。",
-          "referenceCode": "numbers = [2, 4, 6, 8, 10]\ntarget = 2\nchecks = 0\nfor number in numbers:\n    checks += 1\n    if number == target:\n        print(\"找到目标\")\n        break\nprint(\"检查次数：\", checks)\n",
+          "referenceCode":"# 把 5 个值放进列表 numbers\nnumbers = [2, 4, 6, 8, 10]\n# 把数字 2 存进 target\ntarget = 2\n# 把数字 0 存进 checks\nchecks = 0\n# 依次从 numbers 取出每一项，存进 number\nfor number in numbers:\n    # 让 checks 增加 1\n    checks += 1\n    # 如果 number 等于 target，就执行下面的缩进代码\n    if number == target:\n        # 在屏幕上输出“找到目标”\n        print(\"找到目标\")\n        # 立刻结束这个循环\n        break\n# 输出“检查次数：”和 checks 的值\nprint(\"检查次数：\", checks)\n",
           "tests": [
             {
               "name": "检查1",
@@ -3135,7 +3135,7 @@
       "title": "给程序做检查",
       "subtitle": "测试用例 · assert 和边界",
       "mission": "在修改函数前留下检查，发现后续改动是否破坏旧功能。",
-      "starterCode": "def reward(tasks):\n    return tasks * 3 + 2\nassert reward(2) == 8\nprint(\"一项检查通过\")\n",
+      "starterCode":"# 定义动作 reward，需要传入 tasks\ndef reward(tasks):\n    # 把 tasks * 3 + 2 的结果交回给调用处\n    return tasks * 3 + 2\n# 检查 reward(2) == 8 是否成立，不成立就报错\nassert reward(2) == 8\n# 在屏幕上输出“一项检查通过”\nprint(\"一项检查通过\")\n",
       "goals": [
         "测试用例",
         "assert 和边界"
@@ -3172,7 +3172,7 @@
           "id": "practice",
           "title": "动手改造",
           "instruction": "增加 reward(0)==2 和 reward(1)==5 两项检查，输出“三项检查通过”。",
-          "referenceCode": "def reward(tasks):\n    return tasks * 3 + 2\nassert reward(2) == 8\nassert reward(0) == 2\nassert reward(1) == 5\nprint(\"三项检查通过\")\n",
+          "referenceCode":"# 定义动作 reward，需要传入 tasks\ndef reward(tasks):\n    # 把 tasks * 3 + 2 的结果交回给调用处\n    return tasks * 3 + 2\n# 检查 reward(2) == 8 是否成立，不成立就报错\nassert reward(2) == 8\n# 检查 reward(0) == 2 是否成立，不成立就报错\nassert reward(0) == 2\n# 检查 reward(1) == 5 是否成立，不成立就报错\nassert reward(1) == 5\n# 在屏幕上输出“三项检查通过”\nprint(\"三项检查通过\")\n",
           "tests": [
             {
               "name": "检查1",
@@ -3199,7 +3199,7 @@
       "title": "修复作品：找到第一处偏差",
       "subtitle": "综合调试 · 回归检查",
       "mission": "背包总数不正确，用逐步跟踪修复。",
-      "starterCode": "items = [1, 2, 3]\ntotal = 0\nfor item in items:\n    total = 0\n    total += item\nprint(\"总数：\", total)\n",
+      "starterCode":"# 把 3 个值放进列表 items\nitems = [1, 2, 3]\n# 把数字 0 存进 total\ntotal = 0\n# 依次从 items 取出每一项，存进 item\nfor item in items:\n    # 把数字 0 存进 total\n    total = 0\n    # 让 total 增加 item\n    total += item\n# 输出“总数：”和 total 的值\nprint(\"总数：\", total)\n",
       "goals": [
         "综合调试",
         "回归检查"
@@ -3236,7 +3236,7 @@
           "id": "practice",
           "title": "动手改造",
           "instruction": "修复循环初始化问题，输出 6，解释改动位置。",
-          "referenceCode": "items = [1, 2, 3]\ntotal = 0\nfor item in items:\n    total += item\nprint(\"总数：\", total)\n",
+          "referenceCode":"# 把 3 个值放进列表 items\nitems = [1, 2, 3]\n# 把数字 0 存进 total\ntotal = 0\n# 依次从 items 取出每一项，存进 item\nfor item in items:\n    # 让 total 增加 item\n    total += item\n# 输出“总数：”和 total 的值\nprint(\"总数：\", total)\n",
           "tests": [
             {
               "name": "检查1",
@@ -3263,7 +3263,7 @@
       "title": "自选解谜：按自己的节奏",
       "subtitle": "综合条件与函数 · 自主尝试和复盘",
       "mission": "选择一个能量门谜题，先尝试，再决定需要多少提示。没有倒计时。",
-      "starterCode": "def door(energy):\n    return \"待判断\"\nenergy = int(input(\"能量：\"))\nprint(door(energy))\n",
+      "starterCode":"# 定义动作 door，需要传入 energy\ndef door(energy):\n    # 把“待判断”交回给调用处\n    return \"待判断\"\n# 问玩家“能量：”，把回答转成整数存进 energy\nenergy = int(input(\"能量：\"))\n# 把 door(energy) 的值输出到屏幕\nprint(door(energy))\n",
       "goals": [
         "综合条件与函数",
         "自主尝试和复盘"
@@ -3300,7 +3300,7 @@
           "id": "practice",
           "title": "动手改造",
           "instruction": "小于5返回“暂未开启”，5–9返回“花园门”，至少10返回“星空门”。",
-          "referenceCode": "def door(energy):\n    if energy < 5:\n        return \"暂未开启\"\n    if energy < 10:\n        return \"花园门\"\n    return \"星空门\"\nenergy = int(input(\"能量：\"))\nprint(door(energy))\n",
+          "referenceCode":"# 定义动作 door，需要传入 energy\ndef door(energy):\n    # 如果 energy 小于 5，就执行下面的缩进代码\n    if energy < 5:\n        # 把“暂未开启”交回给调用处\n        return \"暂未开启\"\n    # 如果 energy 小于 10，就执行下面的缩进代码\n    if energy < 10:\n        # 把“花园门”交回给调用处\n        return \"花园门\"\n    # 把“星空门”交回给调用处\n    return \"星空门\"\n# 问玩家“能量：”，把回答转成整数存进 energy\nenergy = int(input(\"能量：\"))\n# 把 door(energy) 的值输出到屏幕\nprint(door(energy))\n",
           "tests": [
             {
               "name": "检查1",
@@ -3353,7 +3353,7 @@
       "title": "设计个人项目：先做最小版本",
       "subtitle": "需求和流程 · 函数拆分与测试计划",
       "mission": "计划一个故事冒险，把愿望拆成可完成的小任务。",
-      "starterCode": "def ending(route):\n    return \"路线待设计\"\nroute = input(\"garden/sea：\")\nprint(ending(route))\n",
+      "starterCode":"# 定义动作 ending，需要传入 route\ndef ending(route):\n    # 把“路线待设计”交回给调用处\n    return \"路线待设计\"\n# 问玩家“garden/sea：”，把回答存进 route\nroute = input(\"garden/sea：\")\n# 把 ending(route) 的值输出到屏幕\nprint(ending(route))\n",
       "goals": [
         "需求和流程",
         "函数拆分与测试计划"
@@ -3390,7 +3390,7 @@
           "id": "practice",
           "title": "动手改造",
           "instruction": "完成 garden、sea 两个结局，未知路线返回“请重新选择”。",
-          "referenceCode": "def ending(route):\n    if route == \"garden\":\n        return \"花园结局\"\n    if route == \"sea\":\n        return \"海边结局\"\n    return \"请重新选择\"\nroute = input(\"garden/sea：\")\nprint(ending(route))\n",
+          "referenceCode":"# 定义动作 ending，需要传入 route\ndef ending(route):\n    # 如果 route 等于 “garden”，就执行下面的缩进代码\n    if route == \"garden\":\n        # 把“花园结局”交回给调用处\n        return \"花园结局\"\n    # 如果 route 等于 “sea”，就执行下面的缩进代码\n    if route == \"sea\":\n        # 把“海边结局”交回给调用处\n        return \"海边结局\"\n    # 把“请重新选择”交回给调用处\n    return \"请重新选择\"\n# 问玩家“garden/sea：”，把回答存进 route\nroute = input(\"garden/sea：\")\n# 把 ending(route) 的值输出到屏幕\nprint(ending(route))\n",
           "tests": [
             {
               "name": "检查1",
@@ -3443,7 +3443,7 @@
       "title": "项目六：完成、存档与展示",
       "subtitle": "独立项目整合 · 状态、文件与测试",
       "mission": "做一个可以连续探索、保存和恢复的故事冒险，再向家人介绍。",
-      "starterCode": "import json, os\nstate = {\"visits\": 0}\nif os.path.exists(\"story-save.json\"):\n    with open(\"story-save.json\", encoding=\"utf-8\") as file:\n        state = json.load(file)\nprint(\"恢复次数：\", state[\"visits\"])\n# 完成探索与存档\n",
+      "starterCode":"# 导入 json、os，后面才能使用它的功能\nimport json, os\n# 创建字典 state，用来按键存值\nstate = {\"visits\": 0}\n# 如果 story-save.json 存在，就执行下面的缩进代码\nif os.path.exists(\"story-save.json\"):\n    # 打开 story-save.json 读取，结束后自动关闭\n    with open(\"story-save.json\", encoding=\"utf-8\") as file:\n        # 从文件读出 JSON 数据，存进 state\n        state = json.load(file)\n# 输出“恢复次数：”和 state[\"visits\"] 的值\nprint(\"恢复次数：\", state[\"visits\"])\n# 完成探索与存档\n",
       "goals": [
         "独立项目整合",
         "状态、文件与测试"
@@ -3480,7 +3480,7 @@
           "id": "practice",
           "title": "动手改造",
           "instruction": "支持 garden/sea 探索，每次有效探索加 1；exit 后保存 story-save.json，输出总次数。",
-          "referenceCode": "import json, os\nstate = {\"visits\": 0}\nif os.path.exists(\"story-save.json\"):\n    try:\n        with open(\"story-save.json\", encoding=\"utf-8\") as file:\n            loaded = json.load(file)\n        visits = loaded.get(\"visits\")\n        if isinstance(visits, int) and 0 <= visits <= 100000:\n            state[\"visits\"] = visits\n        else:\n            print(\"存档内容不合规则，开始新故事\")\n    except (ValueError, AttributeError):\n        print(\"存档无法读取，开始新故事\")\nprint(\"恢复次数：\", state[\"visits\"])\ndef explore(route):\n    if route == \"garden\":\n        return \"花园结局\"\n    if route == \"sea\":\n        return \"海边结局\"\n    return None\nwhile True:\n    route = input(\"garden/sea，exit退出：\")\n    if route == \"exit\":\n        break\n    result = explore(route)\n    if result is None:\n        print(\"请重新选择\")\n        continue\n    state[\"visits\"] += 1\n    print(result)\nwith open(\"story-save.json\", \"w\", encoding=\"utf-8\") as file:\n    json.dump(state, file, ensure_ascii=False)\nprint(\"总次数：\", state[\"visits\"])\nprint(\"请导出存档，下次可以导入恢复\")\n",
+          "referenceCode":"# 导入 json、os，后面才能使用它的功能\nimport json, os\n# 创建字典 state，用来按键存值\nstate = {\"visits\": 0}\n# 如果 story-save.json 存在，就执行下面的缩进代码\nif os.path.exists(\"story-save.json\"):\n    # 先试着执行下面的代码\n    try:\n        # 打开 story-save.json 读取，结束后自动关闭\n        with open(\"story-save.json\", encoding=\"utf-8\") as file:\n            # 从文件读出 JSON 数据，存进 loaded\n            loaded = json.load(file)\n        # 从字典 loaded 取出 \"visits\" 的值，存进 visits\n        visits = loaded.get(\"visits\")\n        # 如果 visits 是整数 并且 0 小于等于 visits 且 visits 小于等于 100000，就执行下面的缩进代码\n        if isinstance(visits, int) and 0 <= visits <= 100000:\n            # 把 visits 存进字典 state 的“visits”\n            state[\"visits\"] = visits\n        # 上面的条件都不成立时，执行这里\n        else:\n            # 在屏幕上输出“存档内容不合规则，开始新故事”\n            print(\"存档内容不合规则，开始新故事\")\n    # 如果出现 (ValueError, AttributeError)，就执行这里\n    except (ValueError, AttributeError):\n        # 在屏幕上输出“存档无法读取，开始新故事”\n        print(\"存档无法读取，开始新故事\")\n# 输出“恢复次数：”和 state[\"visits\"] 的值\nprint(\"恢复次数：\", state[\"visits\"])\n# 定义动作 explore，需要传入 route\ndef explore(route):\n    # 如果 route 等于 “garden”，就执行下面的缩进代码\n    if route == \"garden\":\n        # 把“花园结局”交回给调用处\n        return \"花园结局\"\n    # 如果 route 等于 “sea”，就执行下面的缩进代码\n    if route == \"sea\":\n        # 把“海边结局”交回给调用处\n        return \"海边结局\"\n    # 把 None 交回给调用处\n    return None\n# 一直重复，直到遇到 break\nwhile True:\n    # 问玩家“garden/sea，exit退出：”，把回答存进 route\n    route = input(\"garden/sea，exit退出：\")\n    # 如果 route 等于 “exit”，就执行下面的缩进代码\n    if route == \"exit\":\n        # 立刻结束这个循环\n        break\n    # 调用 explore，把结果存进 result\n    result = explore(route)\n    # 如果 result 还没有结果，就执行下面的缩进代码\n    if result is None:\n        # 在屏幕上输出“请重新选择”\n        print(\"请重新选择\")\n        # 跳过这一轮，直接开始下一轮\n        continue\n    # 让字典里“visits”的值增加 1\n    state[\"visits\"] += 1\n    # 把 result 的值输出到屏幕\n    print(result)\n# 打开 story-save.json 写入，结束后自动关闭\nwith open(\"story-save.json\", \"w\", encoding=\"utf-8\") as file:\n    # 把数据写成 JSON 存进文件，保留中文\n    json.dump(state, file, ensure_ascii=False)\n# 输出“总次数：”和 state[\"visits\"] 的值\nprint(\"总次数：\", state[\"visits\"])\n# 在屏幕上输出“请导出存档，下次可以导入恢复”\nprint(\"请导出存档，下次可以导入恢复\")\n",
           "tests": [
             {
               "name": "检查1",
@@ -3536,7 +3536,7 @@
       "title": "画笔试验场",
       "subtitle": "自由探索",
       "mission": "为主角设计徽章，自己安排位置和大小。",
-      "starterCode": "from xuya import draw\ndraw.circle(160,130,65,\"#c7bbff\")\ndraw.text(95,235,\"你好，叙芽岛\",\"#493964\")\nprint(\"我的第一枚岛屿徽章\")\n",
+      "starterCode":"# 取来画笔工具 draw，后面用它画画\nfrom xuya import draw\n# 画一个半径 65 的圆，位置和颜色由参数决定\ndraw.circle(160,130,65,\"#c7bbff\")\n# 在画布上写下“你好，叙芽岛”\ndraw.text(95,235,\"你好，叙芽岛\",\"#493964\")\n# 在屏幕上输出“我的第一枚岛屿徽章”\nprint(\"我的第一枚岛屿徽章\")\n",
       "goals": [
         "坐标和参数",
         "圆、矩形和文字"
@@ -3571,7 +3571,7 @@
           "id": "practice",
           "title": "动手改造",
           "instruction": "增加两只眼睛，使图案至少有 3 个圆和 1 段文字。",
-          "referenceCode": "from xuya import draw\ndraw.circle(160, 130, 60, \"#c7bbff\")\ndraw.circle(140, 120, 7, \"#493964\")\ndraw.circle(180, 120, 7, \"#493964\")\ndraw.text(100, 230, \"故事徽章\", \"#493964\")\nprint(\"徽章准备好了\")\n",
+          "referenceCode":"# 取来画笔工具 draw，后面用它画画\nfrom xuya import draw\n# 画一个半径 60 的圆，位置和颜色由参数决定\ndraw.circle(160, 130, 60, \"#c7bbff\")\n# 画一个半径 7 的圆，位置和颜色由参数决定\ndraw.circle(140, 120, 7, \"#493964\")\n# 画一个半径 7 的圆，位置和颜色由参数决定\ndraw.circle(180, 120, 7, \"#493964\")\n# 在画布上写下“故事徽章”\ndraw.text(100, 230, \"故事徽章\", \"#493964\")\n# 在屏幕上输出“徽章准备好了”\nprint(\"徽章准备好了\")\n",
           "tests": [
             {
               "name": "检查1",

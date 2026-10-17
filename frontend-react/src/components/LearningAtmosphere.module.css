@@ -1,9 +1,54 @@
+.atmosphere {
+  position: relative;
+  flex-shrink: 0;
+}
+.atmosphere > summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 8px 14px;
+  list-style: none;
+  cursor: pointer;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  color: var(--ink-soft);
+  font-size: var(--fs-sm);
+}
+.atmosphere > summary::-webkit-details-marker {
+  display: none;
+}
+.atmosphere > summary:hover {
+  border-color: var(--brand-soft-strong);
+  background: var(--brand-soft);
+}
+.atmosphere[open] > summary,
+.atmosphere > summary:focus-visible {
+  border-color: var(--brand-soft-strong);
+  background: var(--brand-soft);
+  color: var(--brand-ink);
+}
+/* 当前主题的色点：不展开也能看到现在是什么氛围。 */
+.dot {
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 24%, transparent);
+}
+/* 展开后才占画面：一块带主题色压边的浮层，不参与页面流。 */
 .panel {
-  padding: 14px 16px;
-  border: 1px solid var(--learning-line, var(--line));
+  position: absolute;
+  z-index: 30;
+  top: calc(100% + 10px);
+  right: 0;
+  width: min(560px, calc(100vw - 72px));
+  padding: var(--sp-4) var(--sp-5) var(--sp-5);
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--line));
   border-radius: var(--radius-lg);
-  background: var(--learning-soft, var(--surface-soft));
-  margin-bottom: 16px;
+  background: var(--surface);
+  box-shadow: var(--shadow-3);
 }
 .heading,
 .options,
@@ -16,7 +61,7 @@
 }
 .heading {
   margin-bottom: 14px;
-  color: var(--learning-ink, var(--accent-ink));
+  color: var(--accent-ink);
 }
 .heading span {
   font-size: var(--fs-sm);
@@ -29,8 +74,7 @@
   gap: 8px;
 }
 .controls {
-  padding-left: 14px;
-  border-left: 1px solid var(--learning-line, var(--line));
+  gap: 8px;
 }
 .themes .button,
 .controls .button {
@@ -41,32 +85,4 @@
   display: block;
   margin-top: 12px;
   color: var(--muted);
-}
-@media (max-width: 600px) {
-  .panel {
-    padding: 16px;
-  }
-  .heading span {
-    width: 100%;
-  }
-  .options {
-    align-items: flex-start;
-    gap: 14px;
-  }
-  .themes {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    width: 100%;
-    gap: 6px;
-  }
-  .themes .button {
-    flex-direction: column;
-    padding: 9px 5px;
-    font-size: var(--fs-sm);
-    gap: 5px;
-  }
-  .controls {
-    border: 0;
-    padding: 0;
-  }
 }

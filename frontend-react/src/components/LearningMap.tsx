@@ -95,11 +95,18 @@ export default function LearningMap() {
             record.levelVersion === level.version,
         ),
       )
-      const next = game.levels.find((level) => !matched.includes(level)) ?? game.levels[0]
-      const draft = drafts.find(
-        (item) =>
-          item.gameId === gameId && item.levelId === next.id && item.levelVersion === next.version,
-      )
+      // 只有还没练完的级别才谈“续学位置”。这一站全部练完后，next 会回退到第一级，
+      // 若此时仍用它去找草稿，就会把已经练完级别的旧续学记录显示成“可继续”。
+      const unfinished = game.levels.find((level) => !matched.includes(level))
+      const next = unfinished ?? game.levels[0]
+      const draft = unfinished
+        ? drafts.find(
+            (item) =>
+              item.gameId === gameId &&
+              item.levelId === next.id &&
+              item.levelVersion === next.version,
+          )
+        : undefined
       return {
         ...step,
         optional: false,

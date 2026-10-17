@@ -14,7 +14,7 @@ public class OpenApiConfiguration {
     @Bean
     OpenAPI productOpenApi() {
         return new OpenAPI()
-                .info(new Info().title("叙芽岛与 Codex 工作台 API").version("0.3.0"))
+                .info(new Info().title("叙芽岛与码穹 API").version("0.3.0"))
                 .components(
                         new Components()
                                 .addSecuritySchemes(
@@ -22,7 +22,7 @@ public class OpenApiConfiguration {
                                         new SecurityScheme()
                                                 .type(SecurityScheme.Type.HTTP)
                                                 .scheme("bearer")
-                                                .description("仅使用本机 Codex 短效访问凭据，切勿输入模型 API Key")));
+                                                .description("仅使用本机码穹短效访问凭据，切勿输入模型 API Key")));
     }
 
     @Bean

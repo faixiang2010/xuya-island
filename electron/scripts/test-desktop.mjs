@@ -86,7 +86,7 @@ try {
   await page.getByLabel('密码', { exact: true }).fill('desktop-password')
   await page.getByRole('button', { name: '准备好我的小岛', exact: true }).click()
   await expect(page.locator('.sidebar-bottom')).toContainText('桌面家庭管理员')
-  const evidence = path.join(root, '.codex/evidence/previews')
+  const evidence = path.join(root, '.agent/evidence/previews')
   await mkdir(evidence, { recursive: true })
   await capture(path.join(evidence, 'family-desktop-home.png'))
   const origin = new URL(page.url()).origin
@@ -252,7 +252,7 @@ try {
     .toBe(false)
   report.explicitExitReclaimsWaitingPython = true
   await writeFile(
-    path.join(root, '.codex/evidence/family-desktop-smoke.json'),
+    path.join(root, '.agent/evidence/family-desktop-smoke.json'),
     JSON.stringify(report, null, 2),
   )
   console.log(JSON.stringify(report, null, 2))

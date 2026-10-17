@@ -97,6 +97,8 @@ public final class ScopedAgentTool extends ToolBase {
         if (isMcp()
                 || name.startsWith("github_")
                 || name.startsWith("chrome_")
+                || name.startsWith("web_")
+                || name.equals("weather_query")
                 || name.startsWith("design_")
                 || name.startsWith("documents_")
                 || name.equals("pdf_export")) required.add("codex:plugin");

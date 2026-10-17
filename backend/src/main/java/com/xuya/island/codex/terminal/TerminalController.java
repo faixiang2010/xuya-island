@@ -26,7 +26,7 @@ public class TerminalController {
     }
 
     @Schema(name = "CodexTerminalCreate")
-    public record Create(String shell, int cols, int rows) {}
+    public record Create(String shell, int cols, int rows, String directory) {}
 
     private <T> Mono<T> blocking(Callable<T> operation) {
         return Mono.fromCallable(operation).subscribeOn(Schedulers.boundedElastic());
@@ -41,7 +41,13 @@ public class TerminalController {
     public Mono<TerminalService.TerminalInfo> create(
             @PathVariable String id, @RequestBody Create request) {
         return blocking(
-                () -> terminals.create(id, request.shell(), request.cols(), request.rows()));
+                () ->
+                        terminals.create(
+                                id,
+                                request.shell(),
+                                request.cols(),
+                                request.rows(),
+                                request.directory()));
     }
 
     @io.swagger.v3.oas.annotations.Operation(

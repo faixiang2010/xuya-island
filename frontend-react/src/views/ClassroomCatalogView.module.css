@@ -70,6 +70,7 @@
   align-items: center;
   gap: 10px;
   flex-shrink: 0;
+  white-space: nowrap;
   color: var(--muted);
   font-size: var(--fs-sm);
 }

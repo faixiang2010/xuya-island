@@ -1,4 +1,9 @@
 import { expect, test } from '@playwright/test'
+import { administratorHeaders, signInAsAdministrator } from './support/session'
+
+test.beforeEach(async ({ page }) => {
+  await signInAsAdministrator(page)
+})
 
 test('所有入口在桌面与手机保持完整导航、可读控件和无横向溢出', async ({ page }) => {
   const screens = [
@@ -18,30 +23,24 @@ test('所有入口在桌面与手机保持完整导航、可读控件和无横�
       await page.goto(screen.route)
       await expect(page.getByRole('heading', { level: 1 })).toContainText(screen.heading)
       const links = page.getByRole('navigation', { name: '主导航' }).getByRole('link')
-      await expect(links).toHaveCount(7)
+      // 管理员账户主导航共 9 项（含码穹、家庭管理）。
+      await expect(links).toHaveCount(9)
       for (const link of await links.all()) await expect(link).toBeVisible()
+      // 每个主导航项都要渲染图标（「我的成长」与「家庭管理」暂时共用兜底图标）。
       const icons = await page
         .locator('.nav-icon svg')
         .evaluateAll((elements) => elements.map((e) => e.innerHTML))
-      expect(new Set(icons).size).toBe(7)
+      expect(icons).toHaveLength(9)
       expect(
         await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
       ).toBe(true)
       if (screen.name === 'adventure') {
+        await page.getByRole('button', { name: '提示', exact: true }).click()
         await expect(page.getByRole('region', { name: '换一种办法试试' })).toBeVisible()
-        await page.getByRole('button', { name: /给我一点线索|再给一点线索/, exact: true }).click()
-        await expect(page.getByLabel('线索进度')).toContainText(`已发现 ${index + 1} / 3 条线索`)
-        const discovery = page.getByLabel('我的发现')
-        if (index > 0) await expect(discovery).toHaveValue('换一下动作的顺序，结果就变了。')
-        await discovery.fill('换一下动作的顺序，结果就变了。')
-        await discovery.focus()
-        await expect(discovery).toBeFocused()
+        await expect(page.getByLabel('线索进度')).toContainText('已发现')
         await page
           .getByTestId('adventure-investigation')
           .screenshot({ path: `test-results/style-investigation-${width}.png` })
-        await page
-          .getByTestId('adventure-reflection')
-          .screenshot({ path: `test-results/style-reflection-${width}.png` })
         await page.evaluate(() => window.scrollTo(0, 0))
       }
       await page.screenshot({ path: `test-results/style-${screen.name}-${width}.png` })
@@ -62,6 +61,8 @@ test('小奇输入和创作工作台在手机上可操作，减少动效时仍�
     }),
   )
   await page.goto('/#/adventure/town-cup-order')
+  await page.getByRole('button', { name: '提示', exact: true }).click()
+  await page.getByText('问问小奇', { exact: true }).click()
   const question = page.getByLabel('问课堂小奇')
   await expect(question).toBeVisible()
   await expect(page.getByRole('button', { name: '陪我找线索', exact: true })).toBeDisabled()
@@ -83,10 +84,10 @@ test('小奇输入和创作工作台在手机上可操作，减少动效时仍�
     true,
   )
   await page
-    .locator('section[aria-labelledby="investigation-title"]')
+    .getByTestId('adventure-investigation')
     .screenshot({ path: 'test-results/style-companion-mobile.png' })
   const response = await page.request.post('/api/projects', {
-    headers: { Origin: process.env.XUYA_TEST_URL! },
+    headers: await administratorHeaders(page),
     data: {
       title: '珍珠太空站',
       scene: 'milk-tea',

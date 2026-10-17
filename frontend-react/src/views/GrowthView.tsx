@@ -9,8 +9,6 @@ import FamilyPanel from '../components/FamilyPanel'
 import LegacyLearningImport from '../account/LegacyLearningImport'
 import BadgeGallery from '../motivation/BadgeGallery'
 import { useBadges } from '../motivation/useBadges'
-import { exportLearningReport } from '../growth/export'
-import { knowledgeTitle } from '../growth/labels'
 import {
   activityPath,
   activityStatuses as statuses,
@@ -196,7 +194,7 @@ export default function GrowthView() {
     <main className="family-page growth-page">
       <header className="family-heading">
         <div>
-          <h1>我的成长手册</h1>
+          <h1>我的成长</h1>
           <p>
             {data
               ? `${data.learner.nickname}，每一次尝试都值得留下来。`
@@ -242,8 +240,8 @@ export default function GrowthView() {
                   <h2>最近学了什么</h2>
                   <p>
                     {data.report.learningCount
-                      ? `本周留下了 ${data.report.learningCount} 次探索${data.report.completed ? `，其中 ${data.report.completed} 次已经完成` : '，可以按自己的节奏继续'}。`
-                      : '之前的尝试仍然在这里，今天也可以慢慢来。'}
+                      ? `本周 ${data.report.learningCount} 次探索${data.report.completed ? `，已完成 ${data.report.completed} 次` : ''}。`
+                      : '之前的尝试都还在这里。'}
                   </p>
                 </div>
                 <Link className="button primary" to={resumable ? activityPath(resumable)! : '/'}>
@@ -263,55 +261,6 @@ export default function GrowthView() {
               <Link className="button primary" to="/">
                 去学习地图 →
               </Link>
-            </section>
-          )}
-          {!!(data.sessions.length || data.savedRuns.length) && (
-            <section className="family-paper growth-more">
-              <details>
-                <summary>本周手册</summary>
-                <p>{data.report.conclusion}</p>
-                <p>{data.report.timingNotice}</p>
-                <p>
-                  {data.report.helpSources.length
-                    ? `本周得到的帮助：${data.report.helpSources.join('、')}`
-                    : '本周记录中没有标记提示或外部帮助。'}
-                </p>
-                <Button onClick={() => exportLearningReport(data.report)}>
-                  保存带依据的本周手册
-                </Button>
-              </details>
-              <details>
-                <summary>看看练习中的发现</summary>
-                {data.skills.length ? (
-                  data.skills.map((skill) => (
-                    <div key={skill.knowledgeId}>
-                      <h3>
-                        {knowledgeTitle(skill.knowledgeId)} · {skill.state}
-                      </h3>
-                      <p>
-                        近28天留下了{skill.evidenceCount}条活动记录。{skill.notice}
-                      </p>
-                    </div>
-                  ))
-                ) : (
-                  <p>再积累一些真实尝试后，我们一起看看变化。不凭一次运行判断掌握。</p>
-                )}
-                {data.reviews
-                  .filter((review) => Date.parse(review.next_at) <= Date.now())
-                  .slice(0, 1)
-                  .map((review) => (
-                    <p key={review.knowledge_id}>
-                      可以回顾：{knowledgeTitle(review.knowledge_id)}。
-                      {activityPath(review) && (
-                        <Link
-                          to={`${activityPath(review)}${activityPath(review)!.includes('?') ? '&' : '?'}review=1`}
-                        >
-                          打开练习
-                        </Link>
-                      )}
-                    </p>
-                  ))}
-              </details>
             </section>
           )}
         </>

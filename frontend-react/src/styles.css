@@ -322,7 +322,8 @@ h1 {
 .lesson-grid,
 .works-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  /* 封面卡保持接近方形比例：宽屏下多排几列，而不是把卡拉成扁长条。 */
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
   gap: 20px;
 }
 .lesson-card {
@@ -427,6 +428,13 @@ h1 {
   align-items: center;
   margin-bottom: 19px;
 }
+/* 标题行右侧的次要控件（活动标签、氛围入口）：同一行对齐，不各自漂移。 */
+.heading-tools {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  flex-shrink: 0;
+}
 .classroom-heading h1 {
   font-size: 24px;
   margin-top: 12px;
@@ -434,30 +442,27 @@ h1 {
 .classroom-heading p {
   font-size: var(--fs-sm);
 }
-.mission-card {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  padding: 15px 21px;
-  margin-bottom: 22px;
-}
-.mission-card > span {
-  font-size: 28px;
-  color: var(--sun);
-}
-.mission-card strong {
-  font-size: var(--fs-sm);
-  font-weight: 700;
-}
-.mission-card p {
-  font-size: var(--fs-sm);
-  margin-top: 4px;
-}
 .classroom-grid {
   display: grid;
-  grid-template-columns: minmax(320px, 1.25fr) minmax(280px, 0.9fr) 245px;
+  grid-template-columns: minmax(320px, 1.35fr) minmax(280px, 0.9fr);
   gap: 18px;
-  align-items: start;
+  /* 两列等高：代码与创作面板的上下边界连成一条线。 */
+  align-items: stretch;
+}
+.classroom-grid > .editor-panel,
+.classroom-grid > .creation-panel {
+  display: flex;
+  flex-direction: column;
+}
+/* 编辑区吃掉多余高度，左右两列底边对齐，不在底部留空白。 */
+.classroom-grid > .editor-panel > .code-editor {
+  flex: 1 1 auto;
+  min-height: 310px;
+}
+/* 多出来的高度留在操作区上方，两列底部的按钮落在同一水平线上。 */
+.classroom-grid > .editor-panel > .console,
+.classroom-grid > .creation-panel > .save-form {
+  margin-top: auto;
 }
 .panel {
   border-radius: var(--radius);
@@ -561,6 +566,7 @@ h1 {
   overflow-wrap: anywhere;
 }
 .preview-wrap {
+  position: relative;
   padding: 25px 22px 14px;
   display: grid;
   place-items: center;
@@ -706,54 +712,10 @@ h1 {
 .save-state.warning {
   color: var(--sun-ink);
 }
-.guide-panel {
-  padding: 20px 17px;
-}
-.guide-header {
-  display: flex;
-  align-items: center;
-  gap: 11px;
-  margin-bottom: 17px;
-}
-.qi-avatar {
-  border-radius: var(--radius);
-  width: 40px;
-  height: 40px;
-  background: var(--sky);
-  display: grid;
-  place-items: center;
-  color: #fff;
-  font-size: 25px;
-}
-.guide-header h2 {
-  font-size: var(--fs-sm);
-  font-weight: 700;
-  color: var(--sky-ink);
-}
-.guide-header small {
-  font-size: var(--fs-sm);
-  color: var(--sky-ink);
-  display: block;
-  margin-top: 5px;
-}
-.guide-message {
-  background: var(--surface);
-  border-radius: var(--radius) var(--radius) var(--radius) 4px;
-  padding: 13px;
-  line-height: 1.9;
-  font-size: var(--fs-sm);
-  color: var(--ink-soft);
-}
-.guide-panel h3 {
-  font-size: var(--fs-sm);
-  color: var(--sky-ink);
-  margin-top: 23px;
-  font-weight: 600;
-}
 .goals {
   list-style: none;
   padding: 0;
-  margin: 12px 0 22px;
+  margin: 10px 0 16px;
 }
 .goals li {
   font-size: var(--fs-sm);
@@ -769,52 +731,6 @@ h1 {
   font-weight: bold;
   color: var(--sky);
 }
-.hint-button {
-  background: var(--sky-soft);
-  border-color: #cfe2f4;
-  color: var(--sky-ink);
-  font-size: var(--fs-sm);
-}
-.hint-card {
-  border-top: 1px dashed var(--line-strong);
-  margin-top: 16px;
-  padding-top: 13px;
-}
-.hint-card span {
-  font-size: var(--fs-sm);
-  color: var(--sky-ink);
-}
-.hint-card p {
-  font-size: var(--fs-sm);
-  color: var(--ink-soft);
-  margin-top: 6px;
-}
-.ai-section {
-  border-top: 1px solid var(--line-strong);
-  padding-top: 20px;
-  margin-top: 23px;
-}
-.ai-section p {
-  font-size: var(--fs-sm);
-  margin: 12px 0;
-}
-.ai-section label {
-  display: block;
-  color: var(--sky-ink);
-  font-size: var(--fs-sm);
-  margin: 12px 0 8px;
-}
-.ai-section textarea {
-  width: 100%;
-  margin-bottom: 8px;
-}
-.ai-section small {
-  font-size: var(--fs-sm);
-  color: var(--muted);
-  display: block;
-  margin-top: 10px;
-  line-height: 1.8;
-}
 .ai-answer {
   white-space: pre-wrap;
   overflow-wrap: anywhere;
@@ -829,17 +745,93 @@ h1 {
 }
 .inline-notice {
   background: var(--sun-soft);
+  border: 1px solid color-mix(in srgb, var(--sun) 34%, var(--line));
   border-radius: var(--radius-sm);
   color: var(--sun-ink);
   font-size: var(--fs-sm);
-  padding: 13px;
-  margin: 5px 15px 13px;
+  padding: 12px var(--sp-4);
+  margin: var(--sp-4) 0;
   line-height: 1.8;
 }
+/* 只给屏幕阅读器的标题：补全 h1→h3 之间的层级，不占画面。 */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+/* 主机 Python 还没准备好：先给孩子一张“请大人帮忙”的卡，而不是运维提示。 */
+.runtime-setup {
+  display: grid;
+  gap: var(--sp-2);
+  margin: var(--sp-4) 0;
+  padding: var(--sp-5);
+  background: var(--sky-soft);
+  border: 1px solid color-mix(in srgb, var(--sky) 32%, var(--line));
+  border-radius: var(--radius);
+}
+.runtime-setup strong {
+  color: var(--sky-ink);
+  font-size: var(--fs-lg);
+}
+.runtime-setup p {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: var(--fs-sm);
+  line-height: 1.8;
+}
+.runtime-setup-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-3);
+  margin-top: var(--sp-2);
+}
 .loading-card {
-  text-align: center;
-  padding: 45px;
+  display: grid;
+  gap: var(--sp-2);
+  justify-items: center;
+  padding: 56px var(--sp-6);
   color: var(--muted);
+  font-size: var(--fs-body);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-1);
+}
+/* 页面渲染失败时的兜底：内容区换成一张说明卡，侧边栏与顶栏保持可用。 */
+.page-crash {
+  display: grid;
+  gap: var(--sp-4);
+  justify-items: center;
+  max-width: 560px;
+  margin: 10vh auto 0;
+  padding: 44px var(--sp-8);
+  text-align: center;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-2);
+}
+.page-crash h1 {
+  font-size: var(--fs-2xl);
+}
+.page-crash p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.9;
+}
+.page-crash-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--sp-3);
+  margin-top: var(--sp-2);
 }
 .startup-screen {
   text-align: center;
@@ -911,24 +903,6 @@ h1 {
   }
   .classroom-grid {
     grid-template-columns: minmax(320px, 1.2fr) minmax(285px, 0.9fr);
-  }
-  .guide-panel {
-    grid-column: 1 / -1;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    column-gap: 25px;
-  }
-  .guide-panel > .guide-header,
-  .guide-panel > .guide-message {
-    grid-column: 1;
-  }
-  .guide-panel > .ai-section {
-    grid-column: 2;
-    grid-row: 1 / 9;
-    margin: 0;
-    border-top: 0;
-    border-left: 1px solid var(--line-strong);
-    padding: 0 0 0 25px;
   }
   .hero-card {
     padding: 30px;
@@ -1118,18 +1092,8 @@ h1 {
     display: flex;
     flex-direction: column;
   }
-  .panel,
-  .guide-panel {
+  .panel {
     width: 100%;
-  }
-  .guide-panel {
-    display: block;
-  }
-  .guide-panel > .ai-section {
-    border-left: 0;
-    border-top: 1px solid var(--line-strong);
-    padding: 20px 0 0;
-    margin-top: 20px;
   }
   .code-editor {
     height: 280px;

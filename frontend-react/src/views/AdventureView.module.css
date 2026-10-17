@@ -1,60 +1,66 @@
-.adventure-intro {
-  display: grid;
-  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
-  align-items: stretch;
-  gap: 18px;
+.hook {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px 14px;
   margin-bottom: 18px;
-}
-.adventure-intro > section {
-  margin: 0;
-  min-width: 0;
-}
-.adventure-story {
-  background: var(--sun-soft);
+  padding: 12px 16px;
   border: 1px solid var(--line);
-  border-radius: var(--radius-xl);
-  padding: 18px var(--sp-5);
-  margin-bottom: 18px;
+  border-radius: var(--radius-lg);
+  background: var(--sun-soft);
 }
-@media (max-width: 1100px) {
-  .adventure-intro {
-    grid-template-columns: 1fr;
-  }
-}
-.adventure-story h2 {
-  font-size: 20px;
-  max-width: 900px;
-  line-height: 1.6;
-}
-.adventure-dialogue {
-  display: grid;
-  gap: var(--sp-2);
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-}
-.adventure-dialogue p {
-  background: var(--surface);
-  padding: var(--sp-3);
-  border-radius: var(--radius);
+.hook > p {
+  flex: 1;
+  min-width: 260px;
   margin: 0;
+  color: var(--sun-ink);
+  font-size: var(--fs-body);
   line-height: 1.8;
 }
-.adventure-dialogue strong {
+.hook details {
+  width: 100%;
+}
+.hook summary {
+  cursor: pointer;
+  color: var(--sun-ink);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+}
+.dialogue {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 10px;
+}
+.dialogue p {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  font-size: var(--fs-sm);
+  line-height: 1.7;
+}
+.dialogue strong {
   display: block;
   color: var(--sun-ink);
   font-size: var(--fs-sm);
 }
-.adventure-workbench {
+.workbench {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: 22px;
-  align-items: start;
+  gap: 18px;
+  align-items: stretch;
 }
 .panel {
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: var(--radius-lg);
-  padding: 22px;
+  padding: 20px;
   min-width: 0;
+}
+.code {
+  display: flex;
+  flex-direction: column;
 }
 .panel-heading {
   display: flex;
@@ -63,375 +69,278 @@
   gap: var(--sp-3);
 }
 .panel-heading h2 {
-  font-size: 20px;
   margin: 0;
+  font-size: 19px;
 }
 .panel-heading span {
-  font-size: var(--fs-sm);
   color: var(--muted);
+  font-size: var(--fs-sm);
 }
-.adventure-mission {
+/* 舞台状态：用一个小圆点和底色说明现在能不能看，不再是一行灰字。 */
+.panel-heading .state {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 11px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  background: var(--surface-soft);
+  color: var(--ink-soft);
+  font-size: var(--fs-caption);
+  font-weight: 600;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+.panel-heading .state::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--muted-soft);
+}
+.panel-heading .state[data-tone='live'] {
+  border-color: var(--brand-soft-strong);
+  background: var(--brand-soft);
+  color: var(--brand-ink);
+}
+.panel-heading .state[data-tone='live']::before {
+  background: var(--brand);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand) 22%, transparent);
+}
+.panel-heading .state[data-tone='dirty'] {
+  border-color: color-mix(in srgb, var(--sun) 55%, var(--line));
+  background: var(--sun-soft);
+  color: var(--sun-ink);
+}
+.panel-heading .state[data-tone='dirty']::before {
+  background: var(--sun);
+}
+.panel-heading .state[data-tone='failed'] {
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--line));
+  background: var(--accent-soft);
+  color: var(--accent-ink);
+}
+.panel-heading .state[data-tone='failed']::before {
+  background: var(--accent);
+}
+.stage {
+  position: relative;
+}
+.mission {
+  margin: 10px 0 0;
   line-height: 1.8;
 }
-.adventure-actions {
+.actions {
   display: flex;
-  gap: var(--sp-2);
   flex-wrap: wrap;
-  margin: var(--sp-4) 0;
+  gap: 8px;
+  margin: 14px 0;
 }
-.adventure-code :global(.code-editor) {
-  height: 360px;
+.code :global(.code-editor) {
+  height: 340px;
+  flex: 1 1 auto;
+  min-height: 340px;
 }
-.adventure-draft {
+.draft {
   display: block;
-  margin: var(--sp-3) 0;
+  margin: 10px 0 0;
   color: var(--muted);
+  font-size: var(--fs-sm);
 }
-.adventure-debug,
-.adventure-console,
-.adventure-reference {
-  margin-top: var(--sp-4);
+/* 下一步入口放在编辑区底部，和运行按钮分开，避免挤在一行。 */
+.next-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--line);
+}
+.link-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 6px 13px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--brand-ink);
+  font: inherit;
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  transition:
+    background var(--dur-1) var(--ease-out),
+    border-color var(--dur-1) var(--ease-out);
+}
+.link-action:hover:not(:disabled) {
+  border-color: var(--brand-soft-strong);
+  background: var(--brand-soft);
+}
+.link-action:disabled {
+  color: var(--muted-soft);
+  cursor: default;
+}
+.debug,
+.console,
+.more {
+  margin-top: 12px;
   border-top: 1px solid var(--line);
-  padding-top: 14px;
+  padding-top: 12px;
 }
-summary {
+.debug summary,
+.console summary,
+.more summary {
   cursor: pointer;
+  font-size: var(--fs-sm);
   font-weight: 600;
 }
-label {
+.debug label {
   display: block;
   margin: 10px 0;
   font-size: var(--fs-sm);
 }
-textarea,
-input,
-select {
+.debug textarea,
+.debug select,
+.input input {
   display: block;
   width: 100%;
-  margin-top: var(--sp-2);
+  margin-top: 6px;
 }
 pre {
   white-space: pre-wrap;
   overflow-wrap: anywhere;
   font-size: var(--fs-sm);
   line-height: 1.7;
-  max-height: 260px;
+  max-height: 240px;
   overflow: auto;
 }
-.adventure-input {
-  padding: var(--sp-4);
+.input {
+  padding: 12px;
   background: var(--accent-soft);
   border-radius: var(--radius);
 }
-.adventure-input button {
-  margin-right: var(--sp-2);
+.input button {
+  margin-right: 8px;
 }
-.adventure-checks {
+.checks {
   list-style: none;
   padding: 0;
+  margin: 10px 0 0;
 }
-.adventure-checks li {
-  padding: 10px;
-  background: var(--sun-soft);
-  border-radius: var(--radius-sm);
-  margin-top: var(--sp-2);
-  font-size: var(--fs-sm);
-}
-.adventure-checks .passed {
-  background: var(--brand-soft);
-}
-.adventure-clue {
-  padding: var(--sp-4);
-  background: var(--sun-soft);
-  border-radius: var(--radius-sm);
-  line-height: 1.8;
-}
-.adventure-investigation {
-  display: grid;
-  grid-template-columns: minmax(0, 1.08fr) minmax(0, 1fr);
-  align-items: start;
-  gap: 22px;
-  margin-top: 22px;
-}
-.adventure-investigation h2 {
-  font-size: 20px;
+.checks li {
+  padding: 8px 10px;
   margin-top: 6px;
-  line-height: 1.4;
+  border-radius: var(--radius-sm);
+  background: var(--sun-soft);
+  font-size: var(--fs-sm);
 }
-.investigation-lab,
-.remix-lab {
-  padding: 26px;
-  border-top: 3px solid var(--accent);
-}
-.remix-lab {
-  border-top-color: var(--brand);
-}
-.lab-heading {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-3);
-  margin-bottom: 22px;
-}
-.lab-heading > div {
-  min-width: 0;
-}
-.lab-icon {
-  display: grid;
-  place-items: center;
-  flex-shrink: 0;
-  width: 48px;
-  height: 48px;
-  background: var(--accent-soft);
-  color: var(--accent-ink);
-  border: 1px solid var(--accent-soft);
-  border-radius: var(--radius);
-}
-.remix-lab .lab-icon {
-  color: var(--brand-ink);
+.checks .passed {
   background: var(--brand-soft);
-  border-color: var(--brand-soft-strong);
 }
-.lab-tag {
-  margin-left: auto;
-  flex-shrink: 0;
-  font-size: var(--fs-sm);
-  color: var(--muted);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-lg);
-  padding: 5px 9px;
-}
-.prediction-note {
-  display: flex;
-  align-items: start;
-  gap: var(--sp-3);
-  padding: var(--sp-4);
-  border: 1px solid var(--accent-soft);
-  border-radius: var(--radius);
-  background: var(--accent-soft);
-}
-.prediction-note svg {
-  flex-shrink: 0;
-  color: var(--accent-ink);
-  margin-top: var(--sp-1);
-}
-.prediction-note p {
-  line-height: 1.8;
-  font-size: var(--fs-sm);
-}
-.clue-meter {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 18px;
-  margin: var(--sp-5) 0 var(--sp-4);
-  font-size: var(--fs-sm);
-  color: var(--muted);
-}
-.clue-meter div {
-  display: flex;
-  gap: 5px;
-}
-.clue-meter i {
-  width: 24px;
-  height: 5px;
-  border-radius: 3px;
-  background: var(--line);
-}
-.clue-meter .found {
-  background: var(--accent);
-}
-.adventure-hint {
-  padding: 14px var(--sp-4);
-  margin: var(--sp-3) 0;
-  border-left: 3px solid var(--accent);
-  background: var(--accent-soft);
+.clue {
+  padding: 12px;
+  background: var(--sun-soft);
   border-radius: var(--radius-sm);
   line-height: 1.8;
 }
-.adventure-reference {
-  margin-bottom: var(--sp-3);
-}
-.adventure-reference p {
-  margin: var(--sp-3) 0;
-  color: var(--muted);
-  font-size: var(--fs-sm);
-}
-.adventure-reference pre {
-  background: var(--sky-soft);
-  border: 1px solid var(--line);
-  padding: var(--sp-4);
-  border-radius: var(--radius-sm);
-}
-.remix-intro {
-  color: var(--muted);
-  margin-bottom: var(--sp-4);
-  font-size: var(--fs-sm);
-}
-.adventure-remix {
-  display: flex;
-  align-items: start;
-  gap: var(--sp-3);
-  padding: 18px;
-  margin-bottom: var(--sp-3);
-  background: var(--brand-soft);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-}
-.remix-number {
-  font-family: ui-monospace, monospace;
-  font-weight: 700;
-  font-size: var(--fs-sm);
-  background: var(--brand-soft);
-  color: var(--brand-ink);
-  padding: var(--sp-2);
-  border-radius: var(--radius-sm);
-}
-.adventure-remix > div {
-  flex: 1;
-  min-width: 0;
-}
-.adventure-remix h3 {
-  font-size: var(--fs-body);
-  margin-bottom: 7px;
-}
-.adventure-remix p {
-  line-height: 1.8;
-  font-size: var(--fs-sm);
-  color: var(--muted);
-}
-.remix-rule {
-  font-size: var(--fs-sm);
-  color: var(--muted);
-  padding: var(--sp-1) 2px var(--sp-5);
-}
-.remix-launch {
-  border-top: 1px solid var(--line);
-  padding-top: var(--sp-5);
+.help {
   display: grid;
-  grid-template-columns: 24px 1fr;
-  gap: var(--sp-3);
-}
-.remix-launch > svg {
-  color: var(--accent);
-}
-.remix-launch p {
-  font-size: var(--fs-sm);
-  color: var(--muted);
-}
-.remix-launch button {
-  grid-column: 1 / -1;
-  justify-self: start;
-}
-.adventure-reflection {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 270px;
-  margin-top: var(--sp-6);
-  overflow: hidden;
+  gap: 10px;
+  margin-top: 18px;
+  padding: 14px 16px;
   border: 1px solid var(--line);
   border-radius: var(--radius-lg);
   background: var(--surface);
-  box-shadow: var(--shadow);
 }
-.reflection-main {
-  padding: 26px;
-}
-.reflection-main .lab-icon {
-  color: var(--sky-ink);
-  background: var(--sky-soft);
-  border-color: var(--sky-soft);
-}
-.reflection-main h2 {
-  font-size: 20px;
-  margin-top: 6px;
-}
-.reflection-main > p {
-  color: var(--muted);
-  font-size: var(--fs-sm);
-}
-.reflection-main label {
-  margin: 18px 0 var(--sp-3);
-  font-weight: 600;
-}
-.reflection-main textarea {
-  font-weight: 400;
-  min-height: 106px;
-}
-.reflection-main small {
-  color: var(--muted);
-  font-size: var(--fs-sm);
-}
-.reflection-next {
-  padding: 30px var(--sp-6);
-  background: var(--sky-soft);
-  border-left: 1px solid var(--line);
+.hint-row {
   display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: start;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 14px;
 }
-.reflection-next h3 {
-  font-size: 17px;
-  margin: var(--sp-3) 0;
-  line-height: 1.6;
+.hint-row > svg {
+  flex-shrink: 0;
+  color: var(--sun-ink);
 }
-.reflection-next p {
+.hint-row p {
+  flex: 1;
+  min-width: 240px;
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: var(--fs-sm);
+  line-height: 1.7;
+}
+.hint-row span {
   color: var(--muted);
   font-size: var(--fs-sm);
-  margin-bottom: 18px;
 }
-.reflection-next a {
-  color: var(--accent-ink);
+.hint {
+  margin: 0;
+  padding: 10px 12px;
+  border: 1px solid color-mix(in srgb, var(--accent) 34%, var(--line));
+  border-radius: var(--radius-sm);
+  background: var(--accent-soft);
   font-size: var(--fs-sm);
-  font-weight: 600;
-  line-height: 1.8;
+  line-height: 1.7;
 }
-@media (max-width: 1250px) {
-  .lab-tag {
-    display: none;
-  }
+.more {
+  margin-top: 0;
 }
-.adventure-message {
-  margin-bottom: var(--sp-5);
+.more > p {
+  margin: 8px 0;
+  color: var(--muted);
+  font-size: var(--fs-sm);
+  line-height: 1.7;
+}
+.more > pre {
+  background: var(--sky-soft);
+  border: 1px solid var(--line);
+  padding: 12px;
+  border-radius: var(--radius-sm);
+}
+.success {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-top: 18px;
+  padding: 16px;
+  border: 1px solid var(--brand-soft-strong);
+  border-radius: var(--radius-lg);
+  background: var(--brand-soft);
+}
+.success strong {
+  color: var(--brand-ink);
+}
+.success p {
+  margin: 4px 0 0;
+  color: var(--ink-soft);
+  font-size: var(--fs-sm);
+  line-height: 1.7;
+}
+.success .actions {
+  margin: 0;
 }
 @media (max-width: 1100px) {
-  .adventure-workbench,
-  .adventure-investigation {
+  .workbench {
     grid-template-columns: 1fr;
   }
-  .adventure-dialogue {
+  .dialogue {
     grid-template-columns: 1fr;
-  }
-  .adventure-reflection {
-    grid-template-columns: 1fr;
-  }
-  .reflection-next {
-    border-left: 0;
-    border-top: 1px solid var(--line);
   }
 }
 @media (max-width: 600px) {
-  .adventure-story {
-    padding: var(--sp-5);
+  .panel {
+    padding: 16px;
   }
-  .panel,
-  .reflection-main {
-    padding: var(--sp-5);
-  }
-  .lab-heading {
-    gap: 10px;
-  }
-  .lab-icon {
-    width: 42px;
-    height: 42px;
-  }
-  .lab-heading .eyebrow {
-    font-size: var(--fs-sm);
-    letter-spacing: 0.5px;
-  }
-  .lab-heading h2 {
+  .panel-heading h2 {
     font-size: var(--fs-lg);
   }
-  .adventure-remix {
-    padding: 14px;
+  .code :global(.code-editor) {
+    height: 300px;
+    min-height: 300px;
   }
 }

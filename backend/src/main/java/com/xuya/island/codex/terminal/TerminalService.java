@@ -73,6 +73,7 @@ public class TerminalService {
             String workspaceId,
             String environment,
             String shell,
+            String directory,
             String createdAt,
             long lastActivity,
             boolean running) {}
@@ -110,6 +111,17 @@ public class TerminalService {
 
     public synchronized TerminalInfo create(
             String workspaceId, String requestedShell, int columns, int rows) throws IOException {
+        return create(workspaceId, requestedShell, columns, rows, null);
+    }
+
+    /** directory 允许用户在任意本机目录启动终端；留空时仍固定在工作区，保持默认隔离。 */
+    public synchronized TerminalInfo create(
+            String workspaceId,
+            String requestedShell,
+            int columns,
+            int rows,
+            String requestedDirectory)
+            throws IOException {
         if (closed)
             throw new BusinessException(
                     "TERMINAL_SERVICE_CLOSED", "终端服务已关闭", HttpStatus.SERVICE_UNAVAILABLE);
@@ -122,6 +134,7 @@ public class TerminalService {
         TerminalPlan plan =
                 providers.resolve(environment.kind()).terminal(environment, requestedShell);
         String shell = plan.shell();
+        Path directory = workingDirectory(environment, requestedDirectory);
         String id = UUID.randomUUID().toString();
         Path logs = store.root().resolve("terminal-logs");
         Files.createDirectories(logs);
@@ -129,7 +142,7 @@ public class TerminalService {
         try {
             process =
                     new PtyProcessBuilder(plan.command().toArray(String[]::new))
-                            .setDirectory(environment.hostPath().toString())
+                            .setDirectory(directory.toString())
                             .setEnvironment(safeEnvironment())
                             .setInitialColumns(clamp(columns, 80, 20, 400))
                             .setInitialRows(clamp(rows, 24, 5, 200))
@@ -153,6 +166,7 @@ public class TerminalService {
                         workspaceId,
                         environment.kind(),
                         shell,
+                        directory.toString(),
                         process,
                         logs.resolve(id + ".log"));
         terminals.put(id, terminal);
@@ -404,6 +418,39 @@ public class TerminalService {
                 "TERMINAL_TICKET_INVALID", "终端票据无效或已消费", HttpStatus.UNAUTHORIZED);
     }
 
+    /** 解析终端启动目录：留空使用工作区；宿主模式允许任意本机目录，Docker 容器固定 /workspace。 */
+    private static Path workingDirectory(
+            WorkspaceService.ExecutionEnvironment environment, String requested)
+            throws IOException {
+        Path base = environment.hostPath().toAbsolutePath().normalize();
+        if (requested == null || requested.isBlank()) return base;
+        if ("docker".equals(environment.kind()))
+            throw new BusinessException(
+                    "TERMINAL_DIRECTORY_UNSUPPORTED",
+                    "Docker 工作区终端固定在 /workspace，不能指定宿主目录",
+                    HttpStatus.BAD_REQUEST);
+        Path directory;
+        try {
+            directory = Path.of(requested.trim());
+        } catch (RuntimeException exception) {
+            throw new BusinessException(
+                    "TERMINAL_DIRECTORY_INVALID", "终端工作目录格式无效", HttpStatus.BAD_REQUEST);
+        }
+        if (!directory.isAbsolute()) directory = base.resolve(directory);
+        directory = directory.normalize();
+        if (!Files.isDirectory(directory))
+            throw new BusinessException(
+                    "TERMINAL_DIRECTORY_NOT_FOUND",
+                    "终端工作目录不存在：" + directory,
+                    HttpStatus.BAD_REQUEST);
+        try {
+            return directory.toRealPath();
+        } catch (IOException exception) {
+            throw new BusinessException(
+                    "TERMINAL_DIRECTORY_INVALID", "终端工作目录无法访问", HttpStatus.BAD_REQUEST);
+        }
+    }
+
     private static int clamp(int value, int fallback, int minimum, int maximum) {
         return Math.max(minimum, Math.min(maximum, value == 0 ? fallback : value));
     }
@@ -432,6 +479,7 @@ public class TerminalService {
         private final String workspaceId;
         private final String environment;
         private final String shell;
+        private final String directory;
         private final String createdAt = Instant.now().toString();
         private final PtyProcess process;
         private final Path log;
@@ -451,12 +499,14 @@ public class TerminalService {
                 String workspaceId,
                 String environment,
                 String shell,
+                String directory,
                 PtyProcess process,
                 Path log) {
             this.id = id;
             this.workspaceId = workspaceId;
             this.environment = environment;
             this.shell = shell;
+            this.directory = directory;
             this.process = process;
             this.log = log;
         }
@@ -467,6 +517,7 @@ public class TerminalService {
                     workspaceId,
                     environment,
                     shell,
+                    directory,
                     createdAt,
                     lastActivity,
                     process.isAlive());

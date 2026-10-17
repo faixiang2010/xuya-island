@@ -55,6 +55,20 @@ public class AgentRuntimeAdapter implements AutoCloseable {
             Map<String, Object> data,
             String timestamp) {}
 
+    /** 持久化游标超前当前原生日志已提交前缀：调用方应把游标拉回 floor，避免反复重试。 */
+    public static final class NativeCursorUnavailableException extends RuntimeException {
+        private final long floor;
+
+        private NativeCursorUnavailableException(long floor, String message) {
+            super(message);
+            this.floor = floor;
+        }
+
+        public long floor() {
+            return floor;
+        }
+    }
+
     public record NativeInteraction(
             String requestId,
             String kind,
@@ -297,18 +311,31 @@ public class AgentRuntimeAdapter implements AutoCloseable {
     public List<NativeEvent> events(RuntimeSpec spec, long after) {
         var log = runtime(spec).session.log();
         long watermark = log.head().seq();
-        return log.readAfter(Math.max(0, after), 256).stream()
-                .filter(event -> event.seq() <= watermark)
-                .map(
-                        event ->
-                                new NativeEvent(
-                                        event.seq(),
-                                        event.type(),
-                                        event.turnId(),
-                                        event.executionRunId(),
-                                        jsonMap(event.data()),
-                                        Instant.ofEpochMilli(event.occurredAt()).toString()))
-                .toList();
+        // 原生日志可能被重建或回滚：此时应用层投影游标会超前已提交前缀，
+        // 必须显式告诉调用方拉回游标，否则每次轮询都会重复失败。
+        if (after > watermark)
+            throw new NativeCursorUnavailableException(watermark, "Invalid committed prefix");
+        try {
+            return log.readAfter(Math.max(0, after), 256).stream()
+                    .filter(event -> event.seq() <= watermark)
+                    .map(
+                            event ->
+                                    new NativeEvent(
+                                            event.seq(),
+                                            event.type(),
+                                            event.turnId(),
+                                            event.executionRunId(),
+                                            jsonMap(event.data()),
+                                            Instant.ofEpochMilli(event.occurredAt()).toString()))
+                    .toList();
+        } catch (IllegalArgumentException exception) {
+            LOG.warn(
+                    "Native log cursor unavailable session={} after={} reason={}",
+                    spec.conversationId(),
+                    after,
+                    exception.getMessage());
+            throw new NativeCursorUnavailableException(watermark, exception.getMessage());
+        }
     }
 
     public List<NativeInteraction> pending(RuntimeSpec spec) {

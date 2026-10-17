@@ -1,5 +1,10 @@
 import { expect, test } from '@playwright/test'
 import type { Curriculum } from '../src/types'
+import { signInAsAdministrator } from './support/session'
+
+test.beforeEach(async ({ page }) => {
+  await signInAsAdministrator(page)
+})
 
 test('侧栏编程课堂展示全部六阶段和 48 个可打开的活动', async ({ page }) => {
   await page.goto('/')
@@ -35,7 +40,10 @@ test('侧栏编程课堂展示全部六阶段和 48 个可打开的活动', asyn
 
 test('阶段筛选能打开最后一课，旧画笔入口保留，手机目录没有横向溢出', async ({ page }) => {
   await page.goto('/')
-  await page.getByRole('link', { name: '打开编程课堂 →', exact: true }).click()
+  await page
+    .getByRole('navigation', { name: '主导航' })
+    .getByRole('link', { name: '编程课堂' })
+    .click()
   await page.getByLabel('学习阶段').selectOption('studio')
   await expect(page.locator('section[aria-labelledby^="phase-"]')).toHaveCount(1)
   await expect(page.locator('.lesson-card')).toHaveCount(8)

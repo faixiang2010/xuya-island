@@ -4,11 +4,6 @@
   flex-wrap: wrap;
   gap: var(--sp-3);
 }
-.levels {
-  margin-top: var(--sp-3);
-  padding-top: var(--sp-3);
-  border-top: 1px solid var(--learning-line, #edcbdc);
-}
 .configuration {
   width: 100%;
   padding: 14px var(--sp-4);
@@ -23,34 +18,8 @@
 .page.page {
   padding-top: 26px;
 }
-.desktopSettings > section {
-  padding: 0;
-  margin: 0;
-  border: 0;
-  background: transparent;
-}
-.compactSettings,
 .levelSelect {
   display: none;
-}
-.compactSettings {
-  margin-bottom: var(--sp-3);
-  border: 1px solid var(--learning-line, #edcbdc);
-  border-radius: var(--radius-sm);
-  background: var(--learning-soft, #fff2f7);
-}
-.compactSettings > summary {
-  padding: 11px 14px;
-  cursor: pointer;
-  color: var(--learning-ink, #7d3c5c);
-  font-size: var(--fs-sm);
-}
-.compactSettings > section {
-  border: 0;
-  margin: 0;
-  padding: var(--sp-3);
-}
-.levelSelect {
   margin-bottom: 14px;
   font-size: var(--fs-sm);
   color: var(--muted);
@@ -70,11 +39,24 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr);
   gap: var(--sp-6);
-  align-items: start;
+  /* 练习卡与右侧说明栏等高：两栏的上下边界对齐。 */
+  align-items: stretch;
 }
 .inputPane,
 .hints {
   min-width: 0;
+}
+.hints {
+  display: flex;
+  flex-direction: column;
+}
+/* 选择题玩法只有一张说明卡，撑满后与练习卡等高。 */
+.hints > .inputSteps:only-child {
+  flex: 1;
+}
+/* 键位、拼音玩法：最后一组说明贴住底边，两栏底边同样对齐。 */
+.hints > :last-child {
+  margin-top: auto;
 }
 .route {
   display: flex;
@@ -243,6 +225,11 @@
   overflow-wrap: anywhere;
   text-align: center;
 }
+.target .prompt {
+  font-size: clamp(18px, 3vw, 24px);
+  letter-spacing: 0;
+  line-height: 1.6;
+}
 .target b {
   letter-spacing: 2px;
 }
@@ -266,6 +253,17 @@
   border-radius: var(--radius-sm);
   padding: var(--sp-3) var(--sp-4);
   font-size: 24px;
+}
+.options {
+  display: grid;
+  gap: var(--sp-2);
+  margin-top: 14px;
+}
+.options button {
+  text-align: left;
+  justify-content: flex-start;
+  white-space: normal;
+  line-height: 1.5;
 }
 .feedback {
   min-height: 44px;
@@ -299,7 +297,7 @@
   display: grid;
 }
 .keyboard .highlight {
-  background: var(--accent);
+  background: var(--accent-ink);
   border-color: var(--learning-ink, #7d3c5c);
   color: #fff;
   outline: 2px solid var(--accent);
@@ -348,11 +346,9 @@
     border: 0;
     margin-bottom: var(--sp-3);
   }
-  .desktopSettings,
   .levels {
     display: none;
   }
-  .compactSettings,
   .levelSelect {
     display: block;
   }

@@ -9,6 +9,8 @@ export type RunnerStatus = 'loading' | 'ready' | 'running' | 'waiting' | 'failed
 export interface RunnerSnapshot {
   frameUrl: string
   state: RunnerStatus
+  /** 仅因“还没选好主机 Python”失败时为真：界面要引导找大人，而不是抛运维提示。 */
+  needsSetup: boolean
   inputRequestId: number
   failure: string
   preparation: string
@@ -33,6 +35,7 @@ export function usePythonRunner(
   const [snap, setSnap] = useState<RunnerSnapshot>({
     frameUrl: '',
     state: 'loading',
+    needsSetup: false,
     inputRequestId: 0,
     failure: '',
     preparation: '正在连接主机 Python…',
@@ -53,19 +56,31 @@ export function usePythonRunner(
   }, [])
   const initialize = useCallback(async () => {
     const ticket = ++attempt.current
-    update({ state: 'loading', failure: '', preparation: '正在连接主机 Python…' })
+    update({
+      state: 'loading',
+      needsSetup: false,
+      failure: '',
+      preparation: '正在连接主机 Python…',
+    })
     try {
       const environment = await familyApi<{ configured: boolean }>('/execution/environment')
       if (!alive.current || ticket !== attempt.current) return
-      if (!environment.configured)
-        throw new Error(
-          '请家庭管理员在“家庭管理 → Python环境”中确认 Python 环境（内置或主机已安装）。',
-        )
-      update({ state: 'ready', preparation: '主机 Python 已准备好' })
+      if (!environment.configured) {
+        // 这条提示会直接呈现给孩子：先说“找大人帮忙”，再给出大人要走的那条路径。
+        update({
+          state: 'failed',
+          needsSetup: true,
+          failure:
+            '还没有找到可以运行代码的 Python。请大人打开「家庭管理 → 运行与共享」，选中电脑上的 Python 就可以了。',
+        })
+        return
+      }
+      update({ state: 'ready', needsSetup: false, preparation: '主机 Python 已准备好' })
     } catch (error) {
       if (alive.current && ticket === attempt.current)
         update({
           state: 'failed',
+          needsSetup: false,
           failure: error instanceof Error ? error.message : 'Python没有连接好。',
         })
     }

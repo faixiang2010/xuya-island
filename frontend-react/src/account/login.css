@@ -4,7 +4,8 @@
   min-height: 100vh;
   background: var(--canvas);
   color: var(--ink);
-  padding: var(--sp-8) 6vw var(--sp-5);
+  /* 纵向留白跟随窗口高度：窗口越矮收得越紧，通行证始终一屏放完。 */
+  padding: clamp(12px, 3vh, var(--sp-8)) 6vw clamp(10px, 2vh, var(--sp-5));
   font-family: inherit;
   background-image: radial-gradient(#b5a18b25 0.7px, transparent 0.7px);
   background-size: 8px 8px;
@@ -16,7 +17,7 @@
   max-width: var(--page-max);
   margin: auto;
   font-weight: 800;
-  font-size: 23px;
+  font-size: clamp(19px, 3vh, 23px);
 }
 .passport-brand > span {
   border: 2px solid var(--ink);
@@ -44,9 +45,10 @@
 .passport-spread {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 560px);
-  gap: clamp(32px, 4vw, 96px);
+  /* 两栏之间收紧一些：斜切卡片容易显得和正文离得太远。 */
+  gap: clamp(24px, 3vw, 72px);
   max-width: 1760px;
-  margin: 60px auto 30px;
+  margin: clamp(14px, 3.5vh, 60px) auto clamp(8px, 2vh, 30px);
   align-items: start;
 }
 .passport-story {
@@ -54,18 +56,18 @@
   padding: 0 14px;
 }
 .passport-eyebrow {
-  margin-top: 30px;
+  margin-top: clamp(8px, 2.5vh, 30px);
   font-size: var(--fs-sm);
   font-weight: 700;
 }
 .passport-story h1 {
-  font-size: clamp(32px, 3.4vw, 49px);
+  font-size: clamp(26px, min(3.4vw, 5.6vh), 49px);
   line-height: 1.35;
   letter-spacing: 2px;
-  margin: 10px 0 var(--sp-4);
+  margin: clamp(6px, 1.2vh, 10px) 0 clamp(8px, 1.8vh, var(--sp-4));
 }
 .passport-story > p:not(.passport-eyebrow) {
-  font-size: 15px;
+  font-size: clamp(13px, 2.2vh, 15px);
   line-height: 1.9;
   color: var(--muted);
 }
@@ -78,11 +80,12 @@
   transform: rotate(-7deg);
   font-weight: 700;
 }
+/* 插画跟着窗口高度缩放：矮窗口自动变小，不再把页面顶出滚动条。 */
 .xiaoqi-sticker {
-  width: clamp(280px, 22vw, 440px);
+  width: clamp(150px, min(20vw, 33vh), 400px);
   height: auto;
   aspect-ratio: 1;
-  margin: -7px auto -4px;
+  margin: 0 auto;
   background: url('/art/login/xiaoqi-passport.png') left center/200% 100% no-repeat;
   animation: xiaoqi-wave 4s ease-in-out infinite;
 }
@@ -94,7 +97,7 @@
   background: var(--surface);
   border: 1.5px solid var(--ink);
   border-radius: var(--radius);
-  padding: var(--sp-3);
+  padding: clamp(6px, 1.5vh, var(--sp-3));
   text-align: center;
   font-size: var(--fs-sm);
   max-width: 350px;
@@ -105,18 +108,23 @@
   display: block;
   text-align: center;
   font-size: var(--fs-sm);
-  margin: var(--sp-5) 0;
+  margin: clamp(10px, 2.5vh, var(--sp-5)) 0 0;
   color: var(--muted);
   letter-spacing: 2px;
 }
 .passport-card {
   position: relative;
-  padding: 36px 38px 65px;
+  padding: clamp(20px, 3.5vh, 36px) clamp(22px, 3vw, 38px) clamp(24px, 5.5vh, 65px);
   background: var(--surface);
   border: 2px solid var(--ink);
   border-radius: var(--radius-sm);
   box-shadow: var(--shadow-2);
-  transform: none;
+  /* 通行证斜切：上边向右、下边向左，像一张盖章的车票。 */
+  transform: skewX(-1.6deg);
+}
+/* 卡片内文字反向抵消，保持水平可读。 */
+.passport-card > * {
+  transform: skewX(1.6deg);
 }
 .passport-card:before {
   content: '';
@@ -133,11 +141,11 @@
   letter-spacing: 2px;
   border-bottom: 1px dashed var(--line-strong);
   display: block;
-  padding-bottom: 18px;
+  padding-bottom: clamp(10px, 2vh, 18px);
 }
 .passport-card h2 {
-  font-size: 24px;
-  margin: 23px 0 var(--sp-2);
+  font-size: clamp(19px, 3.2vh, 24px);
+  margin: clamp(12px, 2.5vh, 23px) 0 var(--sp-2);
 }
 .passport-card > p {
   font-size: var(--fs-sm);
@@ -145,25 +153,25 @@
   color: var(--muted);
 }
 .passport-card form {
-  margin-top: 25px;
+  margin-top: clamp(14px, 2.8vh, 25px);
 }
 .passport-card label {
   display: block;
   font-size: var(--fs-body);
   font-weight: 700;
-  margin-bottom: 17px;
+  margin-bottom: clamp(10px, 2vh, 17px);
 }
 .passport-card input {
   display: block;
   width: 100%;
-  margin-top: var(--sp-2);
+  margin-top: clamp(5px, 1vh, var(--sp-2));
   background: var(--surface-soft);
   border: 1.5px solid var(--line-strong);
   border-radius: var(--radius-sm);
-  padding: var(--sp-3);
+  padding: clamp(8px, 1.5vh, var(--sp-3));
   font: inherit;
   font-size: var(--fs-body);
-  min-height: 48px;
+  min-height: clamp(40px, 6vh, 48px);
   color: var(--ink);
   box-sizing: border-box;
 }
@@ -181,7 +189,7 @@
   min-width: 0;
 }
 .passport-captcha button {
-  margin-bottom: 17px;
+  margin-bottom: clamp(10px, 2vh, 17px);
 }
 .passport-captcha button {
   background: transparent;
@@ -208,7 +216,7 @@
   color: var(--ink);
   font-size: var(--fs-body);
   font-weight: 800;
-  padding: 14px;
+  padding: clamp(10px, 1.8vh, 14px);
   box-shadow: var(--shadow-1);
   cursor: pointer;
 }
@@ -229,7 +237,7 @@
 }
 .passport-card .passport-help {
   font-size: var(--fs-sm);
-  margin-top: var(--sp-5);
+  margin-top: clamp(12px, 2.5vh, var(--sp-5));
   color: var(--muted);
 }
 .passport-seal {
@@ -244,11 +252,77 @@
   color: var(--brand-ink);
   transform: rotate(-13deg);
 }
-.passport-footer {
-  text-align: center;
-  font-size: var(--fs-sm);
-  color: var(--muted);
-  padding: 18px 0;
+/* 窗口偏矮时印章让位给表单，卡片底部留白也一起收紧。 */
+@media (min-width: 961px) and (max-height: 780px) {
+  .passport-seal {
+    display: none;
+  }
+}
+/* 很矮的窗口（如旧笔记本）：进入紧凑模式，装饰让位、表单收紧，仍然一屏放完。 */
+@media (min-width: 961px) and (max-height: 700px) {
+  .passport-page {
+    padding: 10px 6vw 8px;
+  }
+  .passport-brand {
+    font-size: 18px;
+  }
+  .passport-brand small {
+    display: none;
+  }
+  .passport-spread {
+    margin: 10px auto 6px;
+  }
+  .passport-story h1 {
+    font-size: clamp(20px, 4.6vh, 26px);
+  }
+  .passport-story > p:not(.passport-eyebrow) {
+    font-size: 12.5px;
+    line-height: 1.6;
+  }
+  .passport-eyebrow,
+  .passport-footnote {
+    display: none;
+  }
+  .xiaoqi-sticker {
+    width: clamp(120px, 30vh, 170px);
+  }
+  .passport-card {
+    padding: 14px 26px 18px;
+  }
+  /* 票头与印章是装饰，紧凑模式下让位给表单。 */
+  .passport-ticket,
+  .passport-seal {
+    display: none;
+  }
+  .passport-card h2 {
+    font-size: 18px;
+    margin: 4px 0;
+  }
+  .passport-card form {
+    margin-top: 8px;
+  }
+  .passport-card label {
+    margin-bottom: 8px;
+    font-size: 14px;
+  }
+  .passport-card input {
+    min-height: 38px;
+    padding: 7px 10px;
+    margin-top: 4px;
+  }
+  .passport-captcha button {
+    width: 115px;
+    margin-bottom: 8px;
+  }
+  .passport-captcha img {
+    width: 115px;
+  }
+  .passport-submit {
+    padding: 9px;
+  }
+  .passport-card .passport-help {
+    margin-top: 8px;
+  }
 }
 .passport-loading {
   padding: 18vh var(--sp-5);
@@ -286,24 +360,24 @@
 }
 @media (max-width: 960px) {
   .passport-page {
-    padding: var(--sp-5);
+    padding: var(--sp-5) var(--sp-4);
   }
   .passport-spread {
     grid-template-columns: 1fr;
     gap: 25px;
     margin: 28px auto;
+    max-width: 520px;
   }
   .passport-story {
     text-align: center;
   }
-  .passport-spread {
-    max-width: 520px;
-  }
   .passport-story h1 {
-    font-size: 29px;
+    font-size: 24px;
+    margin: 0 0 var(--sp-2);
   }
   .passport-story > p:not(.passport-eyebrow),
-  .passport-footnote {
+  .passport-footnote,
+  .passport-eyebrow {
     display: none;
   }
   .xiaoqi-sticker {
@@ -311,11 +385,11 @@
     height: 120px;
     margin: 0 auto;
   }
-  .passport-eyebrow {
-    display: none;
-  }
   .passport-card {
-    padding: 27px var(--sp-6) 65px;
+    transform: none;
+  }
+  /* 单列布局里取消斜切，内容也一并复位。 */
+  .passport-card > * {
     transform: none;
   }
   .passport-brand {
@@ -324,24 +398,12 @@
   .passport-brand small {
     display: none;
   }
-  .passport-footer {
-    line-height: 1.8;
-  }
-  .passport-stamp {
-    display: none;
-  }
+  .passport-stamp,
   .passport-seal {
     display: none;
   }
-  .passport-story h1 {
-    font-size: 24px;
-    margin: 0 0 var(--sp-2);
-  }
   .xiaoqi-speech {
     padding: var(--sp-2);
-  }
-  .passport-page {
-    padding: var(--sp-5) var(--sp-4);
   }
   .passport-captcha button {
     width: 125px;

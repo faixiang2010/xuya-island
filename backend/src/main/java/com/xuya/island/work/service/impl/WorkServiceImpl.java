@@ -100,6 +100,14 @@ public class WorkServiceImpl implements WorkService {
                 });
     }
 
+    @Override
+    public WorkVO delete(String id) {
+        // 先按账户确认归属，再在同一事务里删掉历史版本与作品本身。
+        WorkVO work = WorkVO.from(find(id));
+        transactions.executeWithoutResult(status -> repository.delete(id));
+        return work;
+    }
+
     private WorkDO find(String id) {
         return repository
                 .find(id)

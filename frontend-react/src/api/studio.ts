@@ -143,6 +143,13 @@ export const projectList = () =>
   studioRequest<StudioProject[]>('/projects', {}, (v) => Array.isArray(v) && v.every(validProject))
 export const getProject = (id: string) =>
   studioRequest<StudioProject>(`/projects/${encodeURIComponent(id)}`, {}, validProject)
+/** 删除项目：服务端连同版本与共创会话一起清理，返回被删掉的项目快照。 */
+export const deleteProject = (id: string) =>
+  studioRequest<StudioProject>(
+    `/projects/${encodeURIComponent(id)}`,
+    { method: 'DELETE' },
+    validProject,
+  )
 export const versions = (id: string) =>
   studioRequest<ProjectVersion[]>(
     `/projects/${encodeURIComponent(id)}/versions`,

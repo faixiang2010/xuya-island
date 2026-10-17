@@ -1,4 +1,9 @@
 import { expect, test, type Page } from '@playwright/test'
+import { signInAsAdministrator } from './support/session'
+
+test.beforeEach(async ({ page }) => {
+  await signInAsAdministrator(page)
+})
 
 const routes: [string, string][] = [
   ['home', ''],
@@ -13,22 +18,6 @@ const routes: [string, string][] = [
 
 /** 两侧留白合计上限：超过它说明页面又变成了窄居中块，两侧出现大块空白。 */
 const gapLimit = 100
-
-async function administrator(page: Page) {
-  await page.goto('/#/')
-  const state = await (await page.request.get('/api/v1/auth/state')).json()
-  if (!state.initialized) {
-    await page.getByLabel('账号', { exact: true }).fill('familyadmin')
-    await page.getByLabel('管理员昵称').fill('家庭管理员')
-    await page.getByLabel('密码', { exact: true }).fill('admin-password')
-    await page.getByRole('button', { name: '准备好我的小岛' }).click()
-  } else if (!state.user) {
-    await page.getByLabel('账号', { exact: true }).fill('familyadmin')
-    await page.getByLabel('密码', { exact: true }).fill('admin-password')
-    await page.getByRole('button', { name: '出发，去探险' }).click()
-  }
-  await expect(page.locator('.sidebar')).toBeVisible()
-}
 
 /** 内容块相对主内容区两侧的留白。 */
 function outerGaps(page: Page, contentSelector: string) {
@@ -47,18 +36,7 @@ function outerGaps(page: Page, contentSelector: string) {
 
 test('各页正文按可用宽度铺开，不在两侧留大块空白', async ({ page }) => {
   test.setTimeout(300000)
-  for (const width of [1480, 1920, 2560]) {
-    await page.setViewportSize({ width, height: 980 })
-    await page.goto('/#/')
-    await page.waitForTimeout(900)
-    const login = await outerGaps(page, '.passport-spread')
-    if (login) {
-      expect(login.left + login.right, `登录页 @${width} 两侧留白`).toBeLessThanOrEqual(gapLimit)
-      await page.screenshot({ path: `test-results/layout-login-${width}.png` })
-    }
-  }
-
-  await administrator(page)
+  // 账户体系下每个用例开始即已登录，登录页留白不再进入这里，只校验登录后的正式页面。
   for (const width of [1480, 1920, 2560]) {
     await page.setViewportSize({ width, height: 980 })
     for (const [name, route] of routes) {

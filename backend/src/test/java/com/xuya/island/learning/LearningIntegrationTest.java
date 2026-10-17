@@ -102,8 +102,9 @@ class LearningIntegrationTest {
                         "INSERT INTO attempts VALUES ('run', 'story-cover', 'print(7319)', '7319', '', 'success', 1, 'browser-pyodide', 'now')")
                 .update();
         var updated = JdbcClient.create(DatabaseConfiguration.openDatabase(file));
+        // 升级后应停在本次构建内置的最高迁移版本，脚本清单由文件名自动发现，这里不写死数字。
         assertEquals(
-                9,
+                DatabaseConfiguration.latestMigrationVersion(),
                 updated.sql("SELECT MAX(version) FROM schema_version")
                         .query(Integer.class)
                         .single());

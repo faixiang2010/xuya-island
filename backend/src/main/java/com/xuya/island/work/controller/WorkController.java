@@ -6,6 +6,7 @@ import com.xuya.island.work.vo.WorkVO;
 import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -54,5 +55,10 @@ public class WorkController {
             @PathVariable String id, @Valid @RequestBody SaveWorkRequest request) {
         return Mono.fromCallable(() -> service.update(id, request))
                 .subscribeOn(Schedulers.boundedElastic());
+    }
+
+    @DeleteMapping("/{id}")
+    public Mono<WorkVO> delete(@PathVariable String id) {
+        return Mono.fromCallable(() -> service.delete(id)).subscribeOn(Schedulers.boundedElastic());
     }
 }

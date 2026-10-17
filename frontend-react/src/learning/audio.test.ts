@@ -7,8 +7,8 @@ afterEach(() => {
 it('静音与不支持音频时不创建声音，也不阻止学习', async () => {
   vi.stubGlobal('window', {})
   const audio = await import('./audio')
-  expect(audio.prepareLearningAudio(false)).toBe(false)
-  expect(audio.prepareLearningAudio(true)).toBe(false)
+  expect(await audio.prepareLearningAudio(false)).toBe(false)
+  expect(await audio.prepareLearningAudio(true)).toBe(false)
   expect(audio.playLearningNote(true, 0)).toBe(false)
   expect(await audio.playLearningPhrase(true, 0, 6)).toBe(false)
 })
@@ -52,7 +52,7 @@ it('琴音由本地短音组成，关闭会立即停止已排入的声音', asyn
   }
   vi.stubGlobal('window', { AudioContext: FakeContext })
   const audio = await import('./audio')
-  expect(audio.prepareLearningAudio(true)).toBe(true)
+  expect(await audio.prepareLearningAudio(true)).toBe(true)
   audio.playLearningNote(false, 0)
   expect(oscillators).toHaveLength(0)
   audio.playLearningNote(true, 0)

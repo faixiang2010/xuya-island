@@ -167,6 +167,7 @@ export class LearningRecorder {
   private sending?: Promise<LearningReceipt | undefined>
   private uploadAgain = false
   private active = true
+  private closing = false
   private readonly owner = accountIdentity()
   private localError = ''
   private pending: LearningEvent[] = []
@@ -227,7 +228,8 @@ export class LearningRecorder {
     }
   }
   async flush() {
-    if (!this.owner || !this.active) return
+    // 卸载后不再接收新事件，但仍允许把已经记录的事实补发完成。
+    if (!this.owner || (!this.active && !this.closing)) return
     if (this.sending) {
       this.uploadAgain = true
       return this.sending
@@ -257,15 +259,23 @@ export class LearningRecorder {
         if (this.uploadAgain) {
           this.uploadAgain = false
           setTimeout(() => {
-            if (this.active) void this.flush()
+            if (this.active || this.closing) void this.flush()
           }, 0)
         }
       }
     })()
     return this.sending
   }
+  /**
+   * 卸载记录器：停止接收新事件，并把已经落盘的卡片与完成回执补发一次。
+   * 会话 ID 与事件 ID 幂等，重发不会被当成新的学习；否则这段学习的到账与报告
+   * 要拖到下次打开页面由 synchronizeLearning 补，服务端会长时间停在旧状态。
+   */
   close() {
+    if (this.closing) return
     this.active = false
+    this.closing = true
+    void this.flush()
   }
 }
 

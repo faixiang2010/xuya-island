@@ -112,6 +112,35 @@ public class StudioRepository {
                 .update();
     }
 
+    /**
+     * 删除项目及其全部关联记录。外键已开启，按依赖顺序先删子表，再删属于当前账户的项目主表。
+     *
+     * @param id 项目标识
+     * @return 实际删除的项目主记录数，0 表示不属于当前账户
+     */
+    public int deleteProject(String id) {
+        jdbc.sql(
+                        "DELETE FROM studio_executions WHERE session_id IN (SELECT id FROM studio_sessions WHERE project_id=:id)")
+                .param("id", id)
+                .update();
+        jdbc.sql(
+                        "DELETE FROM studio_budgets WHERE session_id IN (SELECT id FROM studio_sessions WHERE project_id=:id)")
+                .param("id", id)
+                .update();
+        jdbc.sql("DELETE FROM studio_runs WHERE project_id=:id").param("id", id).update();
+        jdbc.sql("DELETE FROM studio_candidates WHERE project_id=:id").param("id", id).update();
+        jdbc.sql(
+                        "DELETE FROM studio_requests WHERE session_id IN (SELECT id FROM studio_sessions WHERE project_id=:id)")
+                .param("id", id)
+                .update();
+        jdbc.sql("DELETE FROM studio_versions WHERE project_id=:id").param("id", id).update();
+        jdbc.sql("DELETE FROM studio_sessions WHERE project_id=:id").param("id", id).update();
+        return jdbc.sql("DELETE FROM studio_projects WHERE id=:id AND owner_id=:owner")
+                .param("id", id)
+                .param("owner", AccountScope.id())
+                .update();
+    }
+
     public List<StudioViews.ProjectVersion> versions(String id) {
         return jdbc.sql("SELECT * FROM studio_versions WHERE project_id=:id ORDER BY revision DESC")
                 .param("id", id)

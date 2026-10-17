@@ -29,9 +29,12 @@ export default function AccountAdminView() {
   const [loading, setLoading] = useState(false)
   const [editing, setEditing] = useState<{ type: 'users' | 'roles' | 'menus'; id?: string }>()
   const [advanced, setAdvanced] = useState(false)
-  const [tab, setTab] = useState(() =>
-    parameters.get('section') === 'growth' ? 'growth' : 'users',
-  )
+  const [tab, setTab] = useState(() => {
+    const section = parameters.get('section')
+    if (section === 'growth') return 'growth'
+    if (section === 'running') return 'running'
+    return 'users'
+  })
   const [advancedErrors, setAdvancedErrors] = useState<Record<string, string>>({})
   const [userError, setUserError] = useState('')
   const [roleError, setRoleError] = useState('')
@@ -226,42 +229,51 @@ export default function AccountAdminView() {
     )
   }
   const userColumns: ProColumns<FamilyUser>[] = [
-    { title: '账号', dataIndex: 'username' },
-    { title: '昵称', dataIndex: 'nickname' },
+    { title: '账号', dataIndex: 'username', width: 108 },
+    { title: '昵称', dataIndex: 'nickname', width: 108 },
     {
       title: '角色',
       dataIndex: 'roles',
+      width: 128,
       render: (_, value) =>
         value.roles.map((id) => roles.find((role) => role.id === id)?.name ?? id).join('、'),
     },
     {
       title: '状态',
       dataIndex: 'enabled',
+      width: 76,
       render: (_, value) => (value.enabled ? '可登录' : '已停用'),
     },
     {
       title: '密码',
       dataIndex: 'changePassword',
+      width: 116,
       render: (_, value) => (value.changePassword ? '首次登录须修改' : '已设置'),
     },
     {
       title: '管理',
       valueType: 'option',
+      width: 196,
+      // 重置密码/停用是这一页唯一的目的，窄窗口下必须始终留在视野内。
+      fixed: 'right',
       render: (_, value) => userActions(value),
     },
   ]
   const roleColumns: ProColumns<FamilyRole>[] = [
-    { title: '角色', dataIndex: 'name' },
-    { title: '说明', dataIndex: 'description' },
+    { title: '角色', dataIndex: 'name', width: 130 },
+    { title: '说明', dataIndex: 'description', width: 220 },
     {
       title: '授权菜单与操作',
+      width: 420,
       render: (_, value) =>
         value.menuIds.map((id) => menus.find((menu) => menu.id === id)?.title ?? id).join('、'),
     },
-    { title: '状态', render: (_, value) => (value.enabled ? '启用' : '停用') },
+    { title: '状态', width: 90, render: (_, value) => (value.enabled ? '启用' : '停用') },
     {
       title: '管理',
       valueType: 'option',
+      width: 120,
+      fixed: 'right',
       render: (_, value) =>
         value.id === 'super-admin' ? (
           '内置保护'
@@ -273,19 +285,21 @@ export default function AccountAdminView() {
     },
   ]
   const menuColumns: ProColumns<FamilyMenu>[] = [
-    { title: '菜单名称', dataIndex: 'title' },
+    { title: '菜单名称', dataIndex: 'title', width: 150 },
     {
       title: '类型',
       dataIndex: 'kind',
+      width: 110,
       valueEnum: { menu: '页面', directory: '目录', action: '操作权限' },
     },
-    { title: '页面', dataIndex: 'path' },
-    { title: '权限', dataIndex: 'permission' },
-    { title: '排序', dataIndex: 'sortOrder' },
-    { title: '状态', render: (_, value) => (value.enabled ? '启用' : '停用') },
+    { title: '页面', dataIndex: 'path', width: 190 },
+    { title: '权限', dataIndex: 'permission', width: 180 },
+    { title: '排序', dataIndex: 'sortOrder', width: 80 },
+    { title: '状态', width: 80, render: (_, value) => (value.enabled ? '启用' : '停用') },
     {
       title: '管理',
       valueType: 'option',
+      width: 90,
       render: (_, value) => (
         <Button type="link" onClick={() => edit('menus', value)}>
           编辑
@@ -294,11 +308,11 @@ export default function AccountAdminView() {
     },
   ]
   const auditColumns: ProColumns<Audit>[] = [
-    { title: '时间', dataIndex: 'createdAt', valueType: 'dateTime' },
-    { title: '操作人', dataIndex: 'actor' },
-    { title: '操作', dataIndex: 'action' },
-    { title: '对象', dataIndex: 'target' },
-    { title: '结果', render: (_, value) => (value.success ? '成功' : '失败') },
+    { title: '时间', dataIndex: 'createdAt', valueType: 'dateTime', width: 190 },
+    { title: '操作人', dataIndex: 'actor', width: 140 },
+    { title: '操作', dataIndex: 'action', width: 150 },
+    { title: '对象', dataIndex: 'target', width: 180 },
+    { title: '结果', width: 90, render: (_, value) => (value.success ? '成功' : '失败') },
   ]
   const pages = [
     ['/', '学习地图'],
@@ -308,7 +322,7 @@ export default function AccountAdminView() {
     ['/studio', '小奇创作室'],
     ['/works', '我的作品'],
     ['/growth', '成长手册'],
-    ['/codex', '大人开发工具'],
+    ['/codex', '码穹'],
     ['/admin', '家庭管理'],
     ['', '无页面'],
   ]
@@ -387,8 +401,8 @@ export default function AccountAdminView() {
                   添加账户
                 </Button>,
               ]}
-              pagination={{ pageSize: 10 }}
-              scroll={{ x: 680 }}
+              pagination={users.length > 10 ? { pageSize: 10 } : false}
+              scroll={{ x: 732 }}
             />
           </div>
         </>
@@ -404,6 +418,7 @@ export default function AccountAdminView() {
           dataSource={roles}
           search={false}
           options={false}
+          scroll={{ x: 980 }}
           toolBarRender={() => [
             <Button key="add" type="primary" onClick={() => edit('roles')}>
               添加角色
@@ -422,6 +437,7 @@ export default function AccountAdminView() {
           dataSource={menus}
           search={false}
           options={false}
+          scroll={{ x: 880 }}
           toolBarRender={() => [
             <Button key="add" onClick={() => edit('menus')}>
               添加菜单
@@ -485,6 +501,7 @@ export default function AccountAdminView() {
           search={false}
           options={{ reload: () => void load() }}
           pagination={{ pageSize: 15 }}
+          scroll={{ x: 750 }}
         />
       ),
     },
@@ -492,9 +509,40 @@ export default function AccountAdminView() {
   return (
     <ConfigProvider
       locale={zhCN}
+      // 全站按钮都写紧凑中文标签；关掉 antd 自动插入的空格，与自研按钮排版一致。
+      button={{ autoInsertSpace: false }}
       renderEmpty={() => <p className="family-secondary">暂时没有记录</p>}
       theme={{
-        token: { colorPrimary: '#324c66', borderRadius: 9, fontFamily: 'inherit', fontSize: 16 },
+        // 与全站设计 token 对齐：主操作=芽绿，圆角/边框/字号沿用同一套值。
+        token: {
+          colorPrimary: '#33a46d',
+          colorLink: '#1c6e48',
+          colorInfo: '#33a46d',
+          colorBorderSecondary: '#e6e1d6',
+          colorBgContainer: '#ffffff',
+          colorText: '#22303f',
+          borderRadius: 10,
+          fontFamily: 'inherit',
+          fontSize: 16,
+        },
+        components: {
+          // 芽绿底上的文字用深墨绿（与全站 --on-brand 一致）：白字只有 3.15，不达 AA。
+          Button: {
+            primaryColor: '#0f2318',
+          },
+          Table: {
+            headerBg: '#eeebe3',
+            headerColor: '#22303f',
+            headerSplitColor: 'transparent',
+            borderColor: '#e6e1d6',
+            rowHoverBg: '#e6f7ee',
+          },
+          Tabs: {
+            inkBarColor: '#33a46d',
+            itemSelectedColor: '#1c6e48',
+            itemHoverColor: '#1c6e48',
+          },
+        },
       }}
     >
       {contextHolder}
@@ -502,6 +550,8 @@ export default function AccountAdminView() {
         <header className="family-heading">
           <div>
             <h1>家庭管理</h1>
+            {/* 只读标题：为下面各分区的 h3 补齐层级，屏幕阅读器导航才连续。 */}
+            <h2 className="sr-only">家人账户、运行与共享和成长设置</h2>
             <p>准备好小岛，让家人安心探索。</p>
           </div>
           <Button onClick={() => setAdvanced(true)}>高级设置</Button>
@@ -536,7 +586,13 @@ export default function AccountAdminView() {
             sections.find((item) => item.key === 'growth')!,
           ]}
         />
-        <FamilyPanel open={advanced} title="高级设置" onClose={() => setAdvanced(false)}>
+        {/* 高级设置里都是多列表格，面板要够宽，表格再各自横向滚动。 */}
+        <FamilyPanel
+          open={advanced}
+          title="高级设置"
+          width="min(1040px, 100vw)"
+          onClose={() => setAdvanced(false)}
+        >
           <Tabs
             items={sections
               .filter((item) => ['roles', 'menus', 'security', 'audit'].includes(item.key))
@@ -664,7 +720,7 @@ export default function AccountAdminView() {
                       }))}
                   />
                 </Form.Item>
-                <p>页面权限和执行权限分别配置；大人开发工具只在主机本地可用。</p>
+                <p>页面权限和执行权限分别配置；码穹只在主机本地可用。</p>
               </>
             )}
             {editing?.type === 'menus' && (

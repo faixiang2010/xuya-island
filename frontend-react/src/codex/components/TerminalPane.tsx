@@ -7,6 +7,7 @@ import '@xterm/xterm/css/xterm.css'
 import { api } from '../api'
 import type { CodexSchemas } from '../types'
 import { useCodexStore, selectWorkspace } from '../store'
+import { accountStorage } from '../../account/session'
 
 interface Props {
   visible: boolean
@@ -17,6 +18,7 @@ interface Session {
   id: string
   workspaceId: string
   label: string
+  directory?: string
   terminal: Terminal
   fit: FitAddon
   socket?: WebSocket
@@ -34,6 +36,7 @@ export default function TerminalPane({ visible, onClose }: Props) {
   const [error, setError] = useState('')
   const [creating, setCreating] = useState(false)
   const [shell, setShell] = useState('')
+  const [directory, setDirectory] = useState('')
   const [, bump] = useReducer((count: number) => count + 1, 0)
   const observerRef = useRef<ResizeObserver | undefined>(undefined)
   const visibleRef = useRef(visible)
@@ -47,6 +50,19 @@ export default function TerminalPane({ visible, onClose }: Props) {
 
   const tabs = sessionsRef.current.filter((s) => s.workspaceId === selectedWorkspaceId)
   const active = sessionsRef.current.find((s) => s.id === selected)
+  const directoryKey = selectedWorkspaceId
+    ? `xuya.codex.terminal.directory.${selectedWorkspaceId}`
+    : ''
+  const activeDirectory = active?.directory || workspace?.path || ''
+
+  function changeDirectory(value: string) {
+    setDirectory(value)
+    if (directoryKey) accountStorage.setItem(directoryKey, value)
+  }
+
+  useEffect(() => {
+    setDirectory(directoryKey ? (accountStorage.getItem(directoryKey) ?? '') : '')
+  }, [directoryKey])
 
   function fit(session: Session) {
     if (!visibleRef.current || session.id !== selectedRef.current || !session.host?.clientWidth)
@@ -93,6 +109,7 @@ export default function TerminalPane({ visible, onClose }: Props) {
         if (message.type === 'exit') {
           session.status = '已退出'
           session.terminal.writeln(`\r\n[进程退出 ${message.exitCode ?? ''}]`)
+          bump()
         }
       } catch {
         session.terminal.write(String(event.data))
@@ -111,7 +128,7 @@ export default function TerminalPane({ visible, onClose }: Props) {
     }
   }
 
-  function createSession(id: string, workspaceId: string) {
+  function createSession(id: string, workspaceId: string, workingDirectory?: string) {
     const terminal = new Terminal({
       cursorBlink: true,
       fontSize: 16,
@@ -130,6 +147,7 @@ export default function TerminalPane({ visible, onClose }: Props) {
       id,
       workspaceId,
       label: `终端 ${sessionsRef.current.filter((s) => s.workspaceId === workspaceId).length + 1}`,
+      directory: workingDirectory,
       terminal,
       fit: fitAddon,
       status: '准备中',
@@ -159,6 +177,7 @@ export default function TerminalPane({ visible, onClose }: Props) {
         'POST',
         {
           shell: shell || undefined,
+          directory: directory.trim() || undefined,
           cols: 100,
           rows: 20,
         } satisfies CodexSchemas['CodexTerminalCreate'],
@@ -166,7 +185,7 @@ export default function TerminalPane({ visible, onClose }: Props) {
       if (disposedRef.current) return
       const id = result.id
       if (!id) throw new Error('终端没有返回有效标识。')
-      const session = createSession(id, selectedWorkspaceId)
+      const session = createSession(id, selectedWorkspaceId, result.directory)
       await connect(session)
       fit(session)
       session.terminal.focus()
@@ -236,7 +255,7 @@ export default function TerminalPane({ visible, onClose }: Props) {
             sessionsRef.current.some((session) => session.id === record.id)
           )
             continue
-          const session = createSession(record.id, selectedWorkspaceId)
+          const session = createSession(record.id, selectedWorkspaceId, record.directory)
           await connect(session)
         }
       } catch (e) {
@@ -289,9 +308,26 @@ export default function TerminalPane({ visible, onClose }: Props) {
         <span>
           <TerminalSquare size={16} />
           完整终端
-          <small>{active?.status}</small>
+          <small className="cx-terminal-meta" title={activeDirectory}>
+            {active?.status ? `${active.status} · ${activeDirectory}` : activeDirectory}
+          </small>
         </span>
         <div>
+          <input
+            className="cx-terminal-directory"
+            value={directory}
+            disabled={creating || workspace?.environment === 'docker'}
+            aria-label="终端工作目录"
+            title={directory || workspace?.path || '当前工作区目录'}
+            placeholder={workspace?.path ? `默认：${workspace.path}` : '默认：当前工作区'}
+            onChange={(event) => changeDirectory(event.target.value)}
+            onKeyDown={(event) => {
+              if (event.key === 'Enter' && !creating && workspace) {
+                event.preventDefault()
+                void create()
+              }
+            }}
+          />
           <select value={shell} aria-label="终端 Shell" onChange={(e) => setShell(e.target.value)}>
             <option value="">默认 Shell</option>
             <option value="powershell">PowerShell</option>
@@ -313,6 +349,14 @@ export default function TerminalPane({ visible, onClose }: Props) {
           </button>
         </div>
       </header>
+      {workspace?.mode === 'scratch' && (
+        <p className="cx-terminal-hint">
+          独立工作区目录为空。可在上方填写本机项目目录（如 D:\my-project），新建终端会从该目录启动。
+        </p>
+      )}
+      {workspace?.environment === 'docker' && (
+        <p className="cx-terminal-hint">Docker 工作区终端固定启动在 /workspace。</p>
+      )}
       {error && (
         <p className="cx-error" role="alert">
           {error}
@@ -334,7 +378,7 @@ export default function TerminalPane({ visible, onClose }: Props) {
       </div>
       {!tabs.length && (
         <div className="cx-terminal-empty">
-          <p>在隔离工作区中启动 PowerShell 或 CMD。</p>
+          <p>使用当前工作区或填写本机目录，启动 PowerShell 或 CMD。</p>
           <button
             className="cx-button"
             disabled={creating || !workspace}

@@ -1,9 +1,16 @@
 import { useEffect, useState, useRef } from 'react'
+import { Link } from 'react-router-dom'
 import { Button, Form, Input, InputNumber, Modal, Select, Switch, Tabs, message } from 'antd'
 import { ProTable, type ProColumns } from '@ant-design/pro-components'
 import { familyApi, type FamilyUser } from './api'
-import { exportLearningReport } from '../growth/export'
-import { specification, type Dashboard, type Reward, type Redemption } from '../growth/types'
+import {
+  activityPath,
+  specification,
+  type Dashboard,
+  type LearningSession,
+  type Reward,
+  type Redemption,
+} from '../growth/types'
 
 interface Project {
   id: string
@@ -16,6 +23,31 @@ const names: Record<string, string> = {
   cancelled: '已取消',
   rejected: '已拒绝',
   refunded: '已退款',
+}
+/** 活动记录按天分组，家长一眼就能看清哪一天练了几次。 */
+function dayLabel(at: Date) {
+  const now = new Date()
+  const startOfDay = (value: Date) =>
+    new Date(value.getFullYear(), value.getMonth(), value.getDate()).getTime()
+  const days = Math.round((startOfDay(now) - startOfDay(at)) / 86400000)
+  if (days <= 0) return '今天'
+  if (days === 1) return '昨天'
+  if (days === 2) return '前天'
+  return `${at.getMonth() + 1} 月 ${at.getDate()} 日`
+}
+function dayGroups(sessions: LearningSession[]) {
+  const groups = new Map<string, { key: string; label: string; items: LearningSession[] }>()
+  sessions.forEach((item) => {
+    const at = new Date(item.started_at)
+    const key = `${at.getFullYear()}-${at.getMonth() + 1}-${at.getDate()}`
+    const group = groups.get(key) ?? { key, label: dayLabel(at), items: [] }
+    group.items.push(item)
+    groups.set(key, group)
+  })
+  return [...groups.values()]
+}
+function timeLabel(value: string) {
+  return new Date(value).toLocaleTimeString('zh-CN', { hour12: false })
 }
 export default function FamilyGrowthAdmin({
   users,
@@ -256,20 +288,54 @@ export default function FamilyGrowthAdmin({
         )}
         {report && report.learner.id === learner && (
           <div>
-            <h3>{report.learner.nickname} · 本周陪伴概览</h3>
-            <p>{report.report.conclusion}</p>
-            <Button onClick={() => exportLearningReport(report.report)}>
-              导出带依据的学习报告
-            </Button>
-            <details>
-              <summary>查看活动日期与依据</summary>
-              {report.sessions.map((item) => (
-                <p key={item.id}>
-                  {new Date(item.started_at).toLocaleString('zh-CN')} ·{' '}
-                  {specification(item).title || '一次探索'} ·{' '}
-                  {item.status === 'completed' ? '完成' : '可继续'}
-                </p>
-              ))}
+            <h2>{report.learner.nickname} · 最近探索</h2>
+            <details className="family-sessions">
+              <summary>
+                查看活动记录
+                <span>{report.sessions.length} 次记录</span>
+              </summary>
+              <div className="family-sessions-body">
+                {dayGroups(report.sessions).map((group) => (
+                  <section key={group.key}>
+                    <h4>{group.label}</h4>
+                    <ol>
+                      {group.items.map((item) => {
+                        const path = activityPath(item)
+                        const done = item.status === 'completed'
+                        const row = (
+                          <>
+                            <time dateTime={item.started_at}>{timeLabel(item.started_at)}</time>
+                            <span className="family-session-title">
+                              {specification(item).title || '一次探索'}
+                            </span>
+                            <span
+                              className={
+                                done ? 'family-session-state done' : 'family-session-state'
+                              }
+                            >
+                              {done ? '完成' : '可继续'}
+                            </span>
+                          </>
+                        )
+                        return (
+                          <li key={item.id}>
+                            {path ? (
+                              <Link
+                                to={path}
+                                aria-label={'回到这次活动：' + specification(item).title}
+                              >
+                                {row}
+                              </Link>
+                            ) : (
+                              <span className="family-session-row">{row}</span>
+                            )}
+                          </li>
+                        )
+                      })}
+                    </ol>
+                  </section>
+                ))}
+              </div>
             </details>
           </div>
         )}

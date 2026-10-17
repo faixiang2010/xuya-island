@@ -15,6 +15,7 @@ import com.xuya.island.studio.vo.StudioViews;
 import com.xuya.island.work.service.WorkService;
 import java.nio.file.Path;
 import java.util.List;
+import javax.sql.DataSource;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -27,10 +28,12 @@ class ProjectServiceIntegrationTest {
     @TempDir private Path directory;
     private ProjectService projects;
     private StudioRepository repository;
+    private DataSource dataSource;
 
     @BeforeEach
     void setUp() {
         var source = DatabaseConfiguration.openDatabase(directory.resolve("xuya.db"));
+        dataSource = source;
         repository = new StudioRepository(JdbcClient.create(source));
         projects =
                 new ProjectService(
@@ -106,6 +109,57 @@ class ProjectServiceIntegrationTest {
         assertThrows(BusinessException.class, () -> projects.apply(c.id(), 2));
         assertEquals("print('孩子的新修改')", projects.get(p.id()).files().get(0).content());
         assertEquals("pending", projects.candidate(c.id()).status());
+    }
+
+    @Test
+    void deleteRemovesProjectAndEveryRelatedRecord() {
+        var p = create();
+        String session = session(p.id());
+        var candidate = projects.propose(session, p.id(), 1, files("print('候选')"), "改对白");
+        repository.insertRequest(session, "client-1", "turn-1", "{}", "edit");
+        repository.activeTime(session, "turn-1", 1200);
+        repository.insertExecution(
+                new StudioRepository.Execution(
+                        "execution-1",
+                        session,
+                        "request-1",
+                        candidate.id(),
+                        "client-execution-1",
+                        "running",
+                        null,
+                        System.currentTimeMillis() + 60000));
+
+        var deleted = projects.delete(p.id());
+
+        assertEquals(p.id(), deleted.id());
+        assertEquals(0, projects.list().size());
+        for (String table :
+                List.of(
+                        "studio_versions",
+                        "studio_sessions",
+                        "studio_requests",
+                        "studio_candidates",
+                        "studio_executions",
+                        "studio_budgets",
+                        "studio_runs")) {
+            assertEquals(
+                    0,
+                    JdbcClient.create(dataSource)
+                            .sql("SELECT COUNT(*) FROM " + table)
+                            .query(Integer.class)
+                            .single(),
+                    table);
+        }
+        BusinessException missing =
+                assertThrows(BusinessException.class, () -> projects.get(p.id()));
+        assertEquals("PROJECT_NOT_FOUND", missing.getCode());
+    }
+
+    @Test
+    void deleteRejectsUnknownProject() {
+        BusinessException missing =
+                assertThrows(BusinessException.class, () -> projects.delete("not-exist"));
+        assertEquals("PROJECT_NOT_FOUND", missing.getCode());
     }
 
     @Test

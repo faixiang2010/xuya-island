@@ -219,9 +219,6 @@ export default function LoginView({
           </div>
         </div>
       </section>
-      <footer className="passport-footer">
-        这是属于你和家人的学习小岛。每个人都有自己的作品与足迹。
-      </footer>
     </main>
   )
 }

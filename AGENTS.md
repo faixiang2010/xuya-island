@@ -1,12 +1,12 @@
 # 叙芽岛开发约定
 
-- 使用中文沟通，称呼用户“老大”，助手名称“Codex代码助手”。
+- 使用中文沟通，称呼用户“老大”，助手名称“代码助手”。
 - 此项目使用 Java 17，默认 `D:\GreenSoft\java\jdk-17.0.14`；Maven 为 `D:\GreenSoft\apache-maven-3.9.11`。不要修改系统默认 JDK 8。
 - 参考阿里巴巴 Java 开发手册，Java 使用 UTF-8、4 空格、显式 import、构造器注入、常量命名和清楚的类注释。
 - Controller 处理协议与校验，Service 控制规则与事务，Repository 负责参数化 SQL。DTO、DO、VO 的职责区分清楚。
 - 产品 Java 根包与 Maven groupId 统一为 com.xuya.island，启动类为 XuyaIslandApplication；业务类、模块和产品入口不得使用 Demo、示例工程或占位包名。课程示例、配置模板和测试夹具按真实用途命名。
 - JDBC、文件与同步 SDK 调用不得阻塞 WebFlux 事件循环。
-- 教学 AI 从 `TeachingAgentFactory` 装配 HarnessAgent；成人 codex 从 `CodexAgentFactory` 装配。两域独立检查真实工具权限，不通过提示词声称禁用机器工具。
+- 教学 AI 从 `TeachingAgentFactory` 装配 HarnessAgent；成人开发工作台从成人 Agent 工厂装配。两域独立检查真实工具权限，不通过提示词声称禁用机器工具。
 - 学习代码按3.11家庭部署设计使用管理员选定的主机Python：每次独立进程/目录，Windows Job限制内存和回收子进程；这是家庭可信执行，代码具有启动软件的Windows用户权限。教学AI不接入任意宿主Shell；运行协议不传账户凭证、模型密钥或Electron桥。浏览器Worker仅保留历史兼容源码，正式入口使用原生运行接口。
 - 密钥不写源码，不发给前端，不输出第三方异常正文。测试使用临时 SQLite 和本机模型固定响应，不访问付费 API。
 - 正式前端为 frontend-react；frontend-vue 已删除，不再保留历史源码。后续前端开发、验证、构建和发布统一使用 React，默认入口不得指向 Vue。
@@ -18,17 +18,17 @@
 
 ## 规划文档维护
 
-- 产品、课程、教学体验与技术规划统一维护在本机 `.codex/design/plan.md`（不进 Git）；后续优化直接修改该文件，不新增同级重复规划或单独课程调整方案。
-- 主规划区分当前实现与待开发目标；可执行课文、代码、用例和素材在版本化资源中维护，README 记录当前能力，验收结论与证据归 `.codex/evidence/`（不进 Git）。
+- 产品、课程、教学体验与技术规划统一维护在本机 `.agent/design/plan.md`（不进 Git）；后续优化直接修改该文件，不新增同级重复规划或单独课程调整方案。
+- 主规划区分当前实现与待开发目标；可执行课文、代码、用例和素材在版本化资源中维护，README 记录当前能力，验收结论与证据归 `.agent/evidence/`（不进 Git）。
 - Git 只提交成果性内容：产品能力、课程/技术规格、契约、可复现步骤与验证结果；过程、思考、调研、逐条修复史与历史快照不提交 Git。本机证据（截图、JSON）由 .gitignore 排除。
-- 各智能体（Codex、Trae 等）的中间文件、过程文件、计划方案、草稿与临时产物写入自己的工作目录（如 `.codex/`、`.trae/`，其他智能体类推），不写入 docs 或根目录，并由 .gitignore 排除；验证截图与 smoke/check JSON 证据同样归 `.codex/evidence/`，不进 docs。
-- 处理验收、回归、历史结论或“之前是怎么验证的”类任务前，先读本机工作区地图 `.codex/README.md` 与 `.codex/evidence/`（验收记录、截图、smoke/check 报告），不要重复造过程文档或写回 docs。
+- 各智能体（Trae 等）的中间文件、过程文件、计划方案、草稿与临时产物写入自己的工作目录（如 `.agent/`、`.trae/`，其他智能体类推），不写入 docs 或根目录，并由 .gitignore 排除；验证截图与 smoke/check JSON 证据同样归 `.agent/evidence/`，不进 docs。
+- 处理验收、回归、历史结论或“之前是怎么验证的”类任务前，先读本机工作区地图 `.agent/README.md` 与 `.agent/evidence/`（验收记录、截图、smoke/check 报告），不要重复造过程文档或写回 docs。
 - docs 只沉淀成果与结论，开发过程中不频繁更新，通常在 Git 提交前统一整合一次；开发过程中高频修改的是智能体自己的工作目录与各模块源码。
 
 ## 目录与交付清理
 
 - 保持工程干净、清晰：前后端和 Electron 的源码、依赖、锁文件、格式配置、脚本、日志与产物归各自模块；根目录只保留入口说明、开发约定与共享编辑器/Git 配置。不要重建根目录 npm 工作区、node_modules 或 scripts。
-- 提交到 Git 的文档集中在 docs/；规划文档在本机 `.codex/design/`。不要随手在根目录新增说明文档或日志。
+- 提交到 Git 的文档集中在 docs/；规划文档在本机 `.agent/design/`。不要随手在根目录新增说明文档或日志。
 - 后端数据放 backend/data，日志放各模块 logs，正式产物放各模块 dist。生成资源只进 backend/target/generated-resources，禁止写入 src。
 - 每次开发交付前清理自己创建的临时脚本、下载副本、测试库、截图副本和编译缓存；必要的验证证据先分类归档。当前执行 backend/scripts/clean.ps1 -WebOnly 后检查根目录及 git status，保留未参与本轮的 Electron 历史产物。
 - 本机模型 Key 保存在 Git 忽略的 backend/config/application-local.yml；公共 application.yml 只保留环境变量占位。禁止输出 Key 或将本机配置打入 JAR/安装包。

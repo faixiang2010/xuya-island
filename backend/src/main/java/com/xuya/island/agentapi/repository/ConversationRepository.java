@@ -114,6 +114,30 @@ public class ConversationRepository {
                 .update();
     }
 
+    /** 删除会话及其全部派生记录；表名为白名单，先删子表再删主表。 */
+    public void delete(String id) {
+        for (String table :
+                List.of(
+                        "codex_runs",
+                        "codex_events",
+                        "codex_responses",
+                        "codex_agui_requests",
+                        "codex_input_messages",
+                        "codex_goals",
+                        "codex_plans",
+                        "codex_automations",
+                        "codex_actions",
+                        "codex_projection")) {
+            jdbc.sql("DELETE FROM " + table + " WHERE conversation_id=:id")
+                    .param("id", id)
+                    .update();
+        }
+        jdbc.sql("DELETE FROM codex_conversations WHERE id=:id AND owner_id=:owner")
+                .param("id", id)
+                .param("owner", AccountScope.id())
+                .update();
+    }
+
     public record RunRow(
             String id,
             String conversationId,

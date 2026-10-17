@@ -108,6 +108,15 @@ export default function ConversationTimeline({ onPlan, onProject }: Props) {
               >
                 实现功能
               </button>
+              <button
+                onClick={() =>
+                  useCodexStore
+                    .getState()
+                    .setDraft('查询武汉今天和未来两天的天气，写明观测时间和数据来源。')
+                }
+              >
+                查天气
+              </button>
             </div>
           </div>
         ) : !messages.length ? (

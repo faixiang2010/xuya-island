@@ -10,6 +10,7 @@ import {
   waitForReady,
 } from './process-utils.mjs'
 import { mkdir, readFile, rm, writeFile } from 'node:fs/promises'
+import { existsSync } from 'node:fs'
 import path from 'node:path'
 
 checkFrontend()
@@ -25,12 +26,17 @@ for (const owner of selection.released)
 for (let i = 0; i < preferred.length; i++)
   if (preferred[i] !== selection.ports[i])
     console.log(`端口 ${preferred[i]} 被其他程序占用或不可用，改用 ${selection.ports[i]}。`)
+const bundledCandidate = path.join(root, 'electron/build/python/python.exe')
+const bundledPython =
+  process.env.XUYA_BUNDLED_PYTHON || (existsSync(bundledCandidate) ? bundledCandidate : '')
 const childEnvironment = {
   ...process.env,
   XUYA_PORT: String(backendPort),
   XUYA_RUNNER_PORT: String(runnerPort),
   XUYA_FRONTEND_PORT: String(frontendPort),
   XUYA_PORTS_PREPARED: '1',
+  // 仓库里已准备好的内置解释器同样注入给后端：开发模式也默认可用，不用管理员先去配置。
+  ...(bundledPython ? { XUYA_BUNDLED_PYTHON: bundledPython } : {}),
 }
 const sessionFile = path.join(root, 'backend/logs/dev-session.json')
 
@@ -79,7 +85,11 @@ try {
         { encoding: 'utf8', flush: true },
       )
       console.log(
-        `\n叙芽岛开发页面：http://127.0.0.1:${frontendPort}\n后端：http://127.0.0.1:${backendPort}\nPython 执行资源：http://127.0.0.1:${runnerPort}\n当前先打磨网页产品，Electron 打包放到最后。\n按 Ctrl+C 关闭本次启动的前后端。\n`,
+        `\n叙芽岛开发页面：http://127.0.0.1:${frontendPort}\n后端：http://127.0.0.1:${backendPort}\nPython 执行资源：http://127.0.0.1:${runnerPort}\n${
+          bundledPython
+            ? `内置 Python：${bundledPython}\n`
+            : '未找到内置 Python，请在家庭管理里选择解释器。\n'
+        }当前先打磨网页产品，Electron 打包放到最后。\n按 Ctrl+C 关闭本次启动的前后端。\n`,
       )
       return stopRequested
     })

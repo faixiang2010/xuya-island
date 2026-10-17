@@ -37,6 +37,14 @@ public class AgentProblemAdvice {
         IllegalArgumentException.class
     })
     ResponseEntity<ProblemDetail> invalid(Exception error, ServerWebExchange exchange) {
+        // 参数绑定失败是客户端输入问题；其它 IllegalArgumentException 往往是服务端解析或状态出错。
+        // 两者过去只回一句“请检查请求参数和长度”，排障时完全看不到原因，所以这里留下类型与堆栈。
+        LOG.warn(
+                "Agent API invalid request={} type={} message={} stack={}",
+                exchange.getAttributeOrDefault("requestId", ""),
+                error.getClass().getSimpleName(),
+                error.getMessage(),
+                stackTrace(error));
         return problem(HttpStatus.BAD_REQUEST, "INVALID_INPUT", "请检查请求参数和长度", exchange);
     }
 

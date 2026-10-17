@@ -20,7 +20,13 @@ export default defineConfig({
       'Permissions-Policy': `cross-origin-isolated=(self "http://127.0.0.1:${process.env.XUYA_RUNNER_PORT || ports.runner}")`,
     },
     port: Number(process.env.XUYA_FRONTEND_PORT || ports.frontend),
-    proxy: { '/api': `http://127.0.0.1:${process.env.XUYA_PORT || ports.backend}` },
+    proxy: {
+      '/api': {
+        target: `http://127.0.0.1:${process.env.XUYA_PORT || ports.backend}`,
+        // 终端输入走 /api/v1/codex/terminal/socket 的 WebSocket 升级，开发代理必须显式转发隧道。
+        ws: true,
+      },
+    },
   },
   test: {
     include: ['src/**/*.test.{ts,tsx}'],

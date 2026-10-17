@@ -28,7 +28,7 @@
   letter-spacing: 1px;
 }
 .studio-heading h1 span {
-  color: var(--sun);
+  color: var(--sun-ink);
 }
 .studio-heading p {
   color: var(--muted);
@@ -65,10 +65,12 @@
 }
 .studio-alert {
   background: var(--sun-soft);
-  border: 1px solid var(--line-strong);
+  border: 1px solid color-mix(in srgb, var(--sun) 34%, var(--line));
   border-radius: var(--radius-sm);
   padding: var(--sp-3) var(--sp-4);
-  margin-bottom: var(--sp-3);
+  /* 与面板里的其它内容对齐内缩，并按阅读宽度收窄，别整条铺满左右两边。 */
+  max-width: 46ch;
+  margin: 0 var(--sp-3) var(--sp-3);
   color: var(--sun-ink);
   overflow-wrap: anywhere;
 }
@@ -255,7 +257,23 @@
   display: grid;
   grid-template-columns: minmax(330px, 1.15fr) minmax(270px, 0.9fr) minmax(290px, 0.95fr);
   gap: var(--sp-4);
-  align-items: start;
+  /* 三栏等高：编辑、预览、搭档三块面板的上下边界连成一条线。 */
+  align-items: stretch;
+}
+.studio-workspace > .studio-editor-panel,
+.studio-workspace > .studio-preview-panel,
+.studio-workspace > .studio-companion {
+  display: flex;
+  flex-direction: column;
+}
+/* 编辑栏多出来的高度给编辑器，底部工具栏与另两栏的操作区落在同一水平线。 */
+.studio-workspace > .studio-editor-panel > .studio-editor {
+  flex: 1 1 auto;
+  min-height: 330px;
+}
+.studio-workspace > .studio-editor-panel > .studio-run-toolbar,
+.studio-workspace > .studio-preview-panel > .studio-console {
+  margin-top: auto;
 }
 .studio-editor-panel,
 .studio-preview-panel,
@@ -387,6 +405,9 @@
 }
 .studio-input button {
   margin-right: 6px;
+}
+.studio-stage {
+  position: relative;
 }
 .studio-companion-heading {
   display: flex;

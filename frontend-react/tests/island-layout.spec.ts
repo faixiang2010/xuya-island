@@ -1,6 +1,11 @@
 import { expect, test } from '@playwright/test'
 import { typingGames } from '../src/games/content'
 import type { Lesson, Progress } from '../src/types'
+import { resetTypingProgress, seedAccountStorage, signInAsAdministrator } from './support/session'
+
+test.beforeEach(async ({ page }) => {
+  await signInAsAdministrator(page)
+})
 
 function completedTypingRecords() {
   return Object.values(typingGames).flatMap((game) =>
@@ -15,12 +20,14 @@ function completedTypingRecords() {
 }
 
 async function restoreTypingRecords(page: import('@playwright/test').Page) {
-  await page.addInitScript((records) => {
-    localStorage.setItem(
-      'xuya:typing-progress:v2',
-      JSON.stringify({ version: 2, records, drafts: [] }),
-    )
-  }, completedTypingRecords())
+  // 草稿按账户隔离：写入带账户前缀的真实键，再完整重载让应用读到记录。
+  await seedAccountStorage(page, {
+    'xuya:typing-progress:v2': JSON.stringify({
+      version: 2,
+      records: completedTypingRecords(),
+      drafts: [],
+    }),
+  })
 }
 
 test('探险手册只展示当前任务，八个阶段在宽屏、平板和手机清楚可选', async ({ page }) => {
@@ -29,6 +36,8 @@ test('探险手册只展示当前任务，八个阶段在宽屏、平板和手�
   page.on('console', (message) => {
     if (message.type() === 'error') errors.push(`${message.text()} @ ${message.location().url}`)
   })
+  // 服务端会累积前序用例的练习记录，这里恢复干净地图再验证默认任务。
+  await resetTypingProgress(page)
   for (const [width, height] of [
     [1920, 1040],
     [1480, 980],
@@ -110,6 +119,10 @@ test('探险手册只展示当前任务，八个阶段在宽屏、平板和手�
 })
 
 test('鼠标与键盘选择阶段后，共享任务更新并从唯一主入口进入学习', async ({ page }) => {
+  // 需要干净地图来验证默认推荐起点：整轮运行共用同一个账户，前面的用例可能已经上过
+  // 第一课，这里把课堂进度和打字记录都屏蔽掉，推荐起点才会回到第一课。
+  await page.route('**/api/progress', (route) => route.fulfill({ json: [] }))
+  await resetTypingProgress(page)
   await page.goto('/')
   const steps = page.getByRole('list', { name: '学习步骤' }).getByRole('button')
   const task = page.getByRole('region', { name: '当前学习任务' })

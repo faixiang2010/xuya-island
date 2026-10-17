@@ -78,7 +78,11 @@ export interface paths {
     get: operations['get']
     put?: never
     post?: never
-    delete?: never
+    /**
+     * 彻底删除会话
+     * @description 删除会话及其全部记录与隔离工作区；有活动执行时返回409
+     */
+    delete: operations['delete']
     options?: never
     head?: never
     /**
@@ -467,6 +471,26 @@ export interface operations {
         content: {
           '*/*': components['schemas']['Conversation']
         }
+      }
+    }
+  }
+  delete: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        id: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description No Content */
+      204: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
       }
     }
   }

@@ -125,7 +125,7 @@ export default function ChromeDialog({ onClose }: { onClose: () => void }) {
                 复制扩展实际 ID，执行下方 <code>backend/scripts/codex-chrome.ps1</code>{' '}
                 安装命令，为当前用户注册 Native Messaging。
               </li>
-              <li>打开扩展并连接本机 Codex，然后点击“重新检查”。</li>
+              <li>打开扩展并连接本机码穹，然后点击“重新检查”。</li>
             </ol>
             <label className="cx-chrome-install">
               实际扩展 ID

@@ -7,11 +7,13 @@ export default function FamilyPanel({
   open,
   title,
   onClose,
+  width = 'min(720px, 100vw)',
   children,
 }: {
   open: boolean
   title: string
   onClose: () => void
+  width?: string
   children: ReactNode
 }) {
   const returnFocus = useRef<HTMLElement | null>(null)
@@ -24,9 +26,8 @@ export default function FamilyPanel({
       open={open}
       title={title}
       onClose={onClose}
-      getContainer={false}
       rootClassName="family-panel"
-      width="min(720px, 100vw)"
+      width={width}
       keyboard
       afterOpenChange={(visible) => {
         if (!visible && returnFocus.current?.isConnected) returnFocus.current.focus()

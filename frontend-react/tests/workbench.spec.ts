@@ -3,12 +3,17 @@ import { mkdtemp, rm, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 import os from 'node:os'
 import { execFileSync } from 'node:child_process'
+import { scopedValue, signInAsAdministrator } from './support/session'
+
+test.beforeEach(async ({ page }) => {
+  await signInAsAdministrator(page)
+})
 
 test('独立聊天无需项目，附件创建持久会话，刷新及再次新聊天保留正确上下文', async ({ page }) => {
   const errors: string[] = []
   page.on('pageerror', (error) => errors.push(error.message))
   await page.goto('/#/codex')
-  await expect(page.getByText('正在连接本机 Codex 工作台…')).toHaveCount(0, { timeout: 30000 })
+  await expect(page.getByText('正在连接本机码穹…')).toHaveCount(0, { timeout: 30000 })
   await page.locator('.cx-new-chat').click()
   await expect(page.getByText('独立聊天 · 可直接开始，也可选择项目')).toBeVisible()
   await expect(page.getByRole('dialog', { name: '项目与工作区' })).toHaveCount(0)
@@ -69,9 +74,7 @@ test('独立聊天无需项目，附件创建持久会话，刷新及再次新�
     .getByRole('button', { name: conversation.title || '新聊天', exact: true })
     .click()
   await expect(page.locator('.cx-composer-hint')).toContainText('独立工作目录')
-  expect(await page.evaluate(() => localStorage.getItem('xuya.codex.conversation'))).toBe(
-    conversation.id,
-  )
+  expect(await scopedValue(page, 'xuya.codex.conversation')).toBe(conversation.id)
   await page.locator('.cx-new-chat').click()
   await page.reload()
   await expect(page.getByRole('heading', { name: '开始创造吧。' })).toBeVisible()
@@ -99,6 +102,44 @@ test('独立聊天无需项目，附件创建持久会话，刷新及再次新�
   expect(errors).toEqual([])
 })
 
+test('终端可从用户填写的本机目录启动并执行命令', async ({ page }) => {
+  const directory = await mkdtemp(path.join(os.tmpdir(), 'xuya-terminal-cwd-'))
+  try {
+    await writeFile(path.join(directory, 'terminal-cwd.txt'), 'cwd-ok', 'utf8')
+    await page.goto('/#/codex')
+    await expect(page.getByText('正在连接本机码穹…')).toHaveCount(0, { timeout: 30000 })
+    await page.getByRole('button', { name: '打开终端' }).click()
+    await page.getByLabel('终端工作目录').fill(directory)
+    await page
+      .locator('.cx-terminal-pane header')
+      .getByRole('button', { name: '新建终端', exact: true })
+      .click()
+    await expect(page.locator('.cx-terminal-pane header')).toContainText('已连接', {
+      timeout: 30000,
+    })
+    await expect(page.locator('.cx-terminal-pane header')).toContainText(path.basename(directory))
+    await page.locator('.cx-terminal-host .xterm-helper-textarea').focus()
+    await page.keyboard.type('Get-ChildItem -Name')
+    await page.keyboard.press('Enter')
+    await expect(
+      page
+        .locator('.cx-terminal-host .xterm-rows > div')
+        .filter({ hasText: /^terminal-cwd\.txt\s*$/ }),
+    ).toBeVisible({ timeout: 15000 })
+    await page
+      .locator('.cx-terminal-tabs')
+      .getByRole('button', { name: /^关闭终端/ })
+      .first()
+      .click()
+    await expect(page.locator('.cx-terminal-tabs')).not.toContainText('终端 1')
+  } finally {
+    // Shell 退出前会锁住自己的当前目录，Windows 下等待句柄释放后再清理临时目录。
+    await rm(directory, { recursive: true, force: true, maxRetries: 10, retryDelay: 200 }).catch(
+      () => {},
+    )
+  }
+})
+
 test('codex 单入口全屏工作台、十类工具抽屉与三档权限，不等待课堂服务', async ({ page }) => {
   const errors: string[] = []
   page.on('pageerror', (error) => errors.push(error.message))
@@ -110,7 +151,7 @@ test('codex 单入口全屏工作台、十类工具抽屉与三档权限，不�
   await page.setViewportSize({ width: 1862, height: 1104 })
   await page.goto('/#/codex')
   await expect(page.getByTestId('codex-workbench')).toBeVisible()
-  await expect(page.getByText('正在连接本机 Codex 工作台…')).toHaveCount(0, { timeout: 30000 })
+  await expect(page.getByText('正在连接本机码穹…')).toHaveCount(0, { timeout: 30000 })
   expect(classroomRequests).toBe(0)
   await page.getByRole('button', { name: '帮我批准', exact: true }).click()
   await expect(
@@ -153,7 +194,7 @@ test('codex 单入口全屏工作台、十类工具抽屉与三档权限，不�
   await page.setViewportSize({ width: 390, height: 844 })
   await expect(page.getByRole('button', { name: '打开项目导航' })).toBeVisible()
   await page.getByRole('button', { name: '打开项目导航' }).click()
-  await expect(page.getByRole('complementary', { name: 'Codex 项目与聊天' })).toBeVisible()
+  await expect(page.getByRole('complementary', { name: '码穹 项目与聊天' })).toBeVisible()
   await expect(page.getByRole('button', { name: '工作台工具', exact: true })).toBeVisible()
   await page.locator('.cx-sidebar-backdrop').click({ position: { x: 350, y: 300 } })
   await page.locator('.cx-sidebar').evaluate(async (element) => {
@@ -223,9 +264,7 @@ test('真实项目、隔离工作区、附件和计划保存到持久 REST，未
       page.locator('.cx-terminal-host .xterm-rows > div').filter({ hasText: /^XUYA_PTY_OK\s*$/ }),
     ).toBeVisible({ timeout: 15000 })
     // 故意在工作区恢复请求未结束时打开终端，验证不会创建另一个 scratch 会话。
-    const originalChatId = await page.evaluate(() =>
-      localStorage.getItem('xuya.codex.conversation'),
-    )
+    const originalChatId = await scopedValue(page, 'xuya.codex.conversation')
     let unexpectedChats = 0
     page.on('request', (request) => {
       if (request.url().endsWith('/api/v1/conversations') && request.method() === 'POST')
@@ -242,9 +281,7 @@ test('真实项目、隔离工作区、附件和计划保存到持久 REST，未
       timeout: 30000,
     })
     expect(unexpectedChats).toBe(0)
-    expect(await page.evaluate(() => localStorage.getItem('xuya.codex.conversation'))).toBe(
-      originalChatId,
-    )
+    expect(await scopedValue(page, 'xuya.codex.conversation')).toBe(originalChatId)
     await expect(page.getByRole('button', { name: '终端 1', exact: true })).toBeVisible()
     await page.locator('.cx-terminal-host .xterm-helper-textarea').focus()
     await page.keyboard.type('echo XUYA_PTY_REATTACH')
@@ -279,4 +316,27 @@ test('OpenAPI 两个版本组生成的类型与后端契约一致', async () => 
       windowsHide: true,
     },
   )
+})
+
+test('会话可从侧栏重命名和删除，删除后列表与后端一并清理', async ({ page }) => {
+  const errors: string[] = []
+  page.on('pageerror', (error) => errors.push(error.message))
+  await page.goto('/#/codex')
+  await expect(page.getByText('正在连接本机码穹…')).toHaveCount(0, { timeout: 30000 })
+  // 前面用例已在共享临时库创建会话；对侧栏第一条做重命名与删除。
+  const row = page.locator('.cx-chat-row').first()
+  await expect(row.locator('.cx-recent-chat')).toBeVisible({ timeout: 15000 })
+
+  await row.locator('.cx-chat-actions summary').click()
+  await row.locator('.cx-chat-actions').getByRole('button', { name: '重命名' }).click()
+  await row.locator('.cx-chat-rename input').fill('我的第一个会话')
+  await row.locator('.cx-chat-rename button[aria-label="保存聊天名称"]').click()
+  await expect(page.locator('.cx-chat-row').filter({ hasText: '我的第一个会话' })).toBeVisible()
+
+  const renamed = page.locator('.cx-chat-row').filter({ hasText: '我的第一个会话' })
+  await renamed.locator('.cx-chat-actions summary').click()
+  page.once('dialog', (dialog) => dialog.accept())
+  await renamed.locator('.cx-chat-actions').getByRole('button', { name: '删除聊天' }).click()
+  await expect(page.locator('.cx-chat-row').filter({ hasText: '我的第一个会话' })).toHaveCount(0)
+  expect(errors).toEqual([])
 })

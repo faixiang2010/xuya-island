@@ -76,4 +76,10 @@ public class PlatformStore {
         }
         return List.copyOf(values);
     }
+
+    /** 删除一条平台元数据记录；不存在时静默跳过。 */
+    public synchronized void delete(String bucket, String id) throws IOException {
+        if (!id.matches("[a-zA-Z0-9_-]{1,100}")) throw new IllegalArgumentException("无效资源标识");
+        Files.deleteIfExists(root().resolve(bucket).resolve(id + ".json"));
+    }
 }

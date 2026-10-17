@@ -146,3 +146,23 @@ export function readAdventureDraft(
     return undefined
   }
 }
+
+/**
+ * 草稿按代码内容保存，旧版本会在打开时自动存一份，因此不能无条件覆盖新示例。
+ * 去掉注释后与当前示例相同，说明孩子没改过代码，直接用带注释的新示例；
+ * 真有改动时保留草稿，避免弄丢孩子的作品。
+ */
+export function resolveAdventureCode(saved: string | undefined, starterCode: string): string {
+  if (!saved) return starterCode
+  return stripCodeComments(saved) === stripCodeComments(starterCode) ? starterCode : saved
+}
+
+/** 去掉注释与行尾空白后比较代码内容，用于判断草稿是否只是旧版示例。 */
+export function stripCodeComments(code: string): string {
+  return code
+    .split('\n')
+    .filter((line) => !line.trim().startsWith('#'))
+    .map((line) => line.trimEnd())
+    .join('\n')
+    .trim()
+}

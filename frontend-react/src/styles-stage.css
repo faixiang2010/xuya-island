@@ -103,7 +103,8 @@
   transform-origin: center;
 }
 .cup-bounce {
-  animation: town-bounce 0.4s var(--ease-out);
+  /* 名字改成 town-lift：它只是单峰抬起，原本的名字会让人误以为是回弹缓动。 */
+  animation: town-lift 0.4s var(--ease-out);
   transform-origin: center;
 }
 @keyframes town-spill {
@@ -114,7 +115,7 @@
     opacity: 1;
   }
 }
-@keyframes town-bounce {
+@keyframes town-lift {
   50% {
     transform: translateY(-3px);
   }

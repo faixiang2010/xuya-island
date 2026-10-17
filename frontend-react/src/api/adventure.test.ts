@@ -1,6 +1,11 @@
 import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
-import { isAdventureEpisode, matchesScene, readAdventureDraft } from './adventure'
+import {
+  isAdventureEpisode,
+  matchesScene,
+  readAdventureDraft,
+  resolveAdventureCode,
+} from './adventure'
 
 const course = JSON.parse(
   readFileSync(
@@ -66,5 +71,12 @@ describe('离谱小镇内容与执行证据', () => {
         'town-cup-order',
       ),
     ).toBeUndefined()
+  })
+
+  it('旧草稿没改过代码时换成带注释的新示例，改过的草稿保留', () => {
+    const starter = '# 拿出杯子\ncup()\n# 倒奶\npour(1)\n'
+    expect(resolveAdventureCode(undefined, starter)).toBe(starter)
+    expect(resolveAdventureCode('cup()\npour(1)\n', starter)).toBe(starter)
+    expect(resolveAdventureCode('cup()\npour(2)\n', starter)).toBe('cup()\npour(2)\n')
   })
 })

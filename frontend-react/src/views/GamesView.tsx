@@ -1,13 +1,32 @@
 import { Link } from 'react-router-dom'
-import { Keyboard, Languages, ArrowRight, CheckCircle2 } from 'lucide-react'
-import { typingGames } from '../games/content'
-import { useGameProgress } from '../games/progress'
+import {
+  Keyboard,
+  Languages,
+  Palette,
+  Gamepad2,
+  ArrowRight,
+  CheckCircle2,
+  type LucideIcon,
+} from 'lucide-react'
+import { typingGames, type GameIcon, type GameId } from '../games/content'
+import { gameFinished, useGameProgress } from '../games/progress'
 import LearningAtmosphere from '../components/LearningAtmosphere'
 import styles from './GamesView.module.css'
+
+const gameIcons: Record<GameIcon, LucideIcon> = {
+  keyboard: Keyboard,
+  pinyin: Languages,
+  palette: Palette,
+  gamepad: Gamepad2,
+}
 
 export default function GamesView() {
   const records = useGameProgress((state) => state.records)
   const drafts = useGameProgress((state) => state.drafts)
+  // 还没练完的第一个小站作为推荐起点，避免出现“第二张卡莫名变色”。
+  const recommended: GameId | undefined = (Object.keys(typingGames) as GameId[]).find(
+    (id) => !gameFinished(id, records),
+  )
   return (
     <main className="page">
       <div className="page-heading">
@@ -19,19 +38,24 @@ export default function GamesView() {
           <h1>游戏中心</h1>
           <p>选一个主题，找线索、收集灵感，或让输入变成一段旋律。每次先玩 6 张卡片。</p>
         </div>
+        <LearningAtmosphere />
       </div>
-      <LearningAtmosphere />
       <div className={styles.cards}>
         {Object.values(typingGames).map((game, index) => {
-          const Icon = game.id === 'keyboard' ? Keyboard : Languages
+          const Icon = gameIcons[game.icon]
           const count = records.filter((record) => record.gameId === game.id).length
           const next =
             game.levels.find(
               (level) =>
                 !records.some((record) => record.gameId === game.id && record.levelId === level.id),
             ) ?? game.levels[0]
+          const started = count > 0 || drafts.some((draft) => draft.gameId === game.id)
           return (
-            <section key={game.id} className={styles.card}>
+            <section
+              key={game.id}
+              className={styles.card + (game.id === recommended ? ' ' + styles.cardNext : '')}
+            >
+              {game.id === recommended && <span className={styles.badge}>接着玩</span>}
               <div className={styles.icon}>
                 <Icon size={38} aria-hidden="true" />
               </div>
@@ -53,11 +77,7 @@ export default function GamesView() {
                 ))}
               </ul>
               <Link className="button primary" to={`/games/${game.id}?level=${next.id}`}>
-                {count === 0 && !drafts.some((draft) => draft.gameId === game.id)
-                  ? '开始练习'
-                  : count === game.levels.length
-                    ? '再玩一次'
-                    : '继续练习'}
+                {!started ? '开始练习' : count === game.levels.length ? '再玩一次' : '继续练习'}
                 <ArrowRight size={17} aria-hidden="true" />
               </Link>
               <div className={styles.progress}>
@@ -75,13 +95,8 @@ export default function GamesView() {
         })}
       </div>
       <section className={styles.note}>
-        <h2>第一次用电脑？和家人一起试试</h2>
-        <p>
-          点一下输入框，让光标出现。字母数字用英文输入；汉字用中文拼音输入法。拼音还不熟，可以请家人读卡片、一起选字。
-        </p>
-        <p>
-          每张正确卡片的进度保存在当前浏览器。可以随时休息，再回来继续；练习完成不代表已经掌握编程知识。
-        </p>
+        <h2>第一次用电脑？</h2>
+        <p>点输入框就能开始：字母用英文输入，汉字打拼音。想休息就离开，进度会留着。</p>
         <Link className="button secondary" to="/classroom/story-cover">
           已经会打字？试试第一段程序 →
         </Link>

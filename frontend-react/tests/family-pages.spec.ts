@@ -1,27 +1,14 @@
-import { expect, test, type Page } from '@playwright/test'
-test.use({ actionTimeout: 15000 })
+import { expect, test } from '@playwright/test'
+import { administratorHeaders, signInAsAdministrator } from './support/session'
 
-async function administrator(page: Page) {
-  await page.goto('/#/')
-  const state = await (await page.request.get('/api/v1/auth/state')).json()
-  if (!state.initialized) {
-    await page.getByLabel('账号', { exact: true }).fill('familyadmin')
-    await page.getByLabel('管理员昵称').fill('家庭管理员')
-    await page.getByLabel('密码', { exact: true }).fill('admin-password')
-    await page.getByRole('button', { name: '准备好我的小岛' }).click()
-  } else if (!state.user) {
-    await page.getByLabel('账号', { exact: true }).fill('familyadmin')
-    await page.getByLabel('密码', { exact: true }).fill('admin-password')
-    await page.getByRole('button', { name: '出发，去探险' }).click()
-  }
-  await expect(page.locator('.sidebar')).toBeVisible()
-  const current = await (await page.request.get('/api/v1/auth/state')).json()
-  return { Origin: process.env.XUYA_TEST_URL!, 'X-Xuya-CSRF': current.csrf }
-}
+test.use({ actionTimeout: 15000 })
+test.beforeEach(async ({ page }) => {
+  await signInAsAdministrator(page)
+})
 
 test('家庭页面状态、键盘与电脑阅读布局', async ({ page }) => {
   test.setTimeout(240000)
-  const headers = await administrator(page)
+  const headers = await administratorHeaders(page)
   await page.request.put('/api/v1/system/security', { headers, data: { captchaMode: 'off' } })
   await page.goto('/#/admin')
   await expect(page.getByRole('tab', { name: '家人账户' })).toHaveAttribute('aria-selected', 'true')
@@ -105,7 +92,10 @@ test('家庭页面状态、键盘与电脑阅读布局', async ({ page }) => {
   await page.getByRole('tab', { name: '运行与共享' }).click()
   await page.getByRole('combobox', { name: '选择运行环境' }).focus()
   await page.getByRole('combobox', { name: '选择运行环境' }).press('ArrowDown')
-  await page.getByText('内置 Python 3.13 · 推荐', { exact: true }).click()
+  // 当前环境就是内置 Python 时，选中项与下拉项文字相同；这里只点下拉里的选项。
+  await page
+    .locator('.ant-select-item-option-content', { hasText: '内置 Python 3.13 · 推荐' })
+    .click()
   await page.getByRole('button', { name: '检查并使用' }).click()
   await expect(page.getByRole('alert')).toContainText('原配置保留')
   await expect(

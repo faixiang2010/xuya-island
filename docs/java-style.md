@@ -6,11 +6,19 @@
 
 ```text
 com.xuya.island
+├── account/      家庭账户、角色菜单、本机信任与局域网共享
 ├── lesson/       内置课程，controller / service / vo
 ├── learning/     学习记录与练习尝试，controller / dto / repository / service / vo
+├── adventure/    冒险剧情课程，controller / service / vo
 ├── work/         作品，controller / dto / entity / repository / service / vo
 ├── attempt/      实际运行记录，controller / dto / entity / repository / service
+├── studio/       创作室项目与学习会话，controller / dto / repository / service / vo
+├── growth/       成长账本、积分与礼物审批
+├── execution/    主机原生 Python 执行、Windows Job 回收与执行世界
 ├── ai/           agent / controller / dto / service
+├── 成人工作台包/  工作区、终端、插件、决策与配置
+├── agentapi/     会话、AG-UI 协议与访问凭据
+├── observability/日志、追踪与脱敏
 ├── config/       SQLite、配置、数据目录锁、隔离资源服务、来源限制
 └── common/       业务异常、统一错误响应、就绪接口
 ```

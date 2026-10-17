@@ -66,7 +66,7 @@ coverage/
 playwright-report/
 test-results/
 
-# Local-only: planning doc and verification evidence live in the agent workspace (.codex/), not Git
+# Local-only: planning doc and verification evidence live in the agent workspace (.agent/), not Git
 /docs/verification/
 /docs/design/
 
@@ -82,7 +82,7 @@ test-results/
 /electron/runtime/
 
 # AI agent workspaces: intermediate/process files, plans, and drafts stay out of Git
-.codex/
+.agent/
 .trae/
 .trae-cn/
 .cursor/
@@ -90,6 +90,7 @@ test-results/
 .windsurf/
 .gemini/
 .agents/
+.impeccable/
 
 # Editor and operating-system files
 .idea/

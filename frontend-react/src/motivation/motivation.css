@@ -22,7 +22,8 @@
   animation: xiaoqi-greet 4s var(--ease-out) infinite;
 }
 .xiaoqi[data-mood='cheer'] .xiaoqi-image {
-  animation: xiaoqi-cheer 900ms var(--ease-spring) infinite;
+  /* 关键帧本身已带一次起落；再叠回弹缓动只是重复过冲，换平滑减速更有精神。 */
+  animation: xiaoqi-cheer 900ms var(--ease-out) infinite;
 }
 .xiaoqi-bubble {
   max-width: 260px;
@@ -85,7 +86,7 @@
   border-radius: var(--radius-xl);
   background: var(--surface);
   box-shadow: var(--shadow-3);
-  animation: celebration-rise 320ms var(--ease-spring) both;
+  animation: celebration-rise 320ms var(--ease-out) both;
 }
 .celebration-card[data-kind='level'] {
   border-color: var(--sun-soft);

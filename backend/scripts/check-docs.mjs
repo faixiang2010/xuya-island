@@ -35,8 +35,8 @@ for (const file of files) {
     try {
       await access(destination)
     } catch {
-      // Local-only workspace content (.codex/) is absent on a fresh checkout.
-      if (relative.startsWith('.codex/')) {
+      // Local-only workspace content (.agent/) is absent on a fresh checkout.
+      if (relative.startsWith('.agent/')) {
         local++
       } else {
         errors++

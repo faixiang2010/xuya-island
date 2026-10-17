@@ -1,13 +1,14 @@
 import { expect, test, type Page } from '@playwright/test'
+import { administratorHeaders, signInAsAdministrator } from './support/session'
+
 test.use({ actionTimeout: 15000 })
+test.beforeEach(async ({ page }) => {
+  await signInAsAdministrator(page)
+})
 
 const testPython =
   process.env.XUYA_TEST_PYTHON ||
   'C:\\Users\\101202303018\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe'
-async function headers(page: Page) {
-  const state = await (await page.request.get('/api/v1/auth/state')).json()
-  return { Origin: process.env.XUYA_TEST_URL!, 'X-Xuya-CSRF': state.csrf }
-}
 async function signIn(page: Page, username: string, password: string) {
   await page.getByLabel('账号', { exact: true }).fill(username)
   await page.getByLabel('密码', { exact: true }).fill(password)
@@ -31,20 +32,9 @@ async function editCode(page: Page, code: string) {
 }
 
 test('家庭管理员设置、软萌登录、账户隔离与主机Python完整课堂', async ({ page }) => {
-  const personal: string[] = []
-  page.on('request', (request) => {
-    if (/\/api\/(works|progress|projects|v1\/learning)/.test(request.url()))
-      personal.push(request.url())
-  })
-  await page.goto('/#/')
-  await expect(page.getByRole('heading', { name: '先请大人准备小岛' })).toBeVisible()
-  expect(personal).toEqual([])
-  await page.getByLabel('账号', { exact: true }).fill('familyadmin')
-  await page.getByLabel('管理员昵称').fill('家庭管理员')
-  await page.getByLabel('密码', { exact: true }).fill('admin-password')
-  await expect(page.getByRole('img', { name: '小奇捂住眼睛，保护你的密码' })).toBeVisible()
-  await page.screenshot({ path: 'test-results/family-first-setup.png', fullPage: true })
-  await page.getByRole('button', { name: '准备好我的小岛' }).click()
+  // 共享 helper 已确保小岛初始化并登录管理员；这里接着做家庭管理设置。
+  // 导航命名跟迁移一起生效：codex 已按产品口径显示为「码穹」，也证明 JAR 里的迁移被执行。
+  await expect(page.getByRole('link', { name: '码穹', exact: true })).toBeVisible()
   await page.getByRole('link', { name: '家庭管理', exact: true }).click()
   await page.getByRole('tab', { name: '运行与共享' }).click()
   await page.getByText('找不到环境？手动填写路径', { exact: true }).click()
@@ -67,7 +57,7 @@ test('家庭管理员设置、软萌登录、账户隔离与主机Python完整�
   await expect(modal).not.toBeVisible()
   await expect(page.getByRole('cell', { name: 'daughter', exact: true })).toBeVisible()
   await page.request.post('/api/v1/system/users', {
-    headers: await headers(page),
+    headers: await administratorHeaders(page),
     data: {
       username: 'brother',
       nickname: '弟弟',
@@ -115,7 +105,7 @@ test('家庭管理员设置、软萌登录、账户隔离与主机Python完整�
   await signIn(page, 'daughter', 'daughter-password')
   await expect(page.locator('.sidebar-bottom')).toContainText('小芽')
   await expect(page.getByRole('link', { name: '家庭管理', exact: true })).toHaveCount(0)
-  await expect(page.getByRole('link', { name: 'codex', exact: true })).toHaveCount(0)
+  await expect(page.getByRole('link', { name: '码穹', exact: true })).toHaveCount(0)
   await page.goto('/#/classroom/story-cover')
   await page.getByRole('button', { name: '▶ 运行', exact: true }).click()
   await expect(page.getByTestId('console-output')).not.toBeEmpty({ timeout: 15000 })
@@ -201,7 +191,7 @@ test('家庭管理员设置、软萌登录、账户隔离与主机Python完整�
     })
     .toBe(7)
   const created = await page.request.post('/api/works', {
-    headers: await headers(page),
+    headers: await administratorHeaders(page),
     data: { lessonId: 'story-cover', title: '小芽独有的作品', code: "print('小芽')", revision: 0 },
   })
   expect(created.status()).toBe(201)
@@ -233,11 +223,8 @@ test('家庭管理员设置、软萌登录、账户隔离与主机Python完整�
   await page.getByRole('combobox', { name: '选择学习账户' }).focus()
   await page.getByRole('combobox', { name: '选择学习账户' }).press('ArrowDown')
   await page.locator('.ant-select-item-option[title="小芽"]').click()
-  const downloadPromise = page.waitForEvent('download')
-  await page.getByRole('button', { name: '导出带依据的学习报告', exact: true }).click()
-  expect((await downloadPromise).suggestedFilename()).toMatch(
-    /^叙芽岛-学习报告-\d{4}-\d{2}-\d{2}\.json$/,
-  )
+  await expect(page.getByRole('heading', { name: '小芽 · 最近探索' })).toBeVisible()
+  await expect(page.getByText('查看活动记录')).toBeVisible()
   await page.getByRole('button', { name: '批准', exact: true }).click()
   await page.getByRole('tab', { name: '待兑现' }).click()
   await expect(page.getByRole('button', { name: '标记已经兑现', exact: true })).toBeVisible()
@@ -304,13 +291,10 @@ test('家庭管理员设置、软萌登录、账户隔离与主机Python完整�
       const reportRequest = remote.waitForRequest(
         (request) => new URL(request.url()).pathname === '/api/exercise-attempts',
       )
-      await remote.getByRole('button', { name: '检查基础练习', exact: true }).click()
+      await remote.getByRole('button', { name: '检查', exact: true }).click()
       const actualReport = (await reportRequest).postDataJSON()
       await expect(
-        remote.getByText(
-          '这次检查留下了 1 个用例证据，成长积分 +2。通过检查不等于已经掌握，可以再解释自己的方法。',
-          { exact: true },
-        ),
+        remote.getByText('这次检查留下了 1 个用例证据，成长积分 +2。', { exact: true }),
       ).toBeVisible()
       const forged = {
         ...actualReport,

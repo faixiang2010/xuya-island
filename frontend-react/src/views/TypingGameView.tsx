@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Link, Navigate, useParams, useSearchParams } from 'react-router-dom'
 import { CheckCircle2, Languages, ScanSearch, Palette, Music2, Send, Pause } from 'lucide-react'
 import {
+  checkChoice,
   checkTyping,
   missionSize,
   nextRequiredCharacter,
@@ -28,16 +29,17 @@ const themeIcons = { detective: ScanSearch, painting: Palette, piano: Music2 }
 export default function TypingGameView() {
   const { gameId } = useParams()
   const [search, setSearch] = useSearchParams()
-  if (gameId !== 'keyboard' && gameId !== 'pinyin') return <Navigate to="/games" replace />
-  const game = typingGames[gameId]
+  if (!gameId || !(gameId in typingGames)) return <Navigate to="/games" replace />
+  const id = gameId as GameId
+  const game = typingGames[id]
   const level = game.levels.find((item) => item.id === search.get('level')) ?? game.levels[0]
   return (
     <TypingRound
-      key={gameId + ':' + level.id + ':' + search.get('review')}
-      gameId={gameId}
+      key={id + ':' + level.id + ':' + search.get('review')}
+      gameId={id}
       levelId={level.id}
       review={search.get('review') === '1'}
-      onLevel={(id) => setSearch({ level: id })}
+      onLevel={(next) => setSearch({ level: next })}
     />
   )
 }
@@ -100,8 +102,15 @@ function TypingRound({
   const done = index === level.tasks.length
   const checkpoint = !done && index === missionEnd
   const task = level.tasks[Math.min(index, level.tasks.length - 1)]
-  const evaluation = checkTyping(gameId, task.target, answer)
-  const nextKey = gameId === 'keyboard' ? nextRequiredCharacter(task.target, answer) : ''
+  const isChoice = game.kind === 'choice'
+  const evaluation = isChoice
+    ? checkChoice(task.target, answer)
+    : checkTyping(gameId, task.target, answer)
+  const nextKey = isChoice
+    ? ''
+    : game.input === 'keyboard'
+      ? nextRequiredCharacter(task.target, answer)
+      : ''
   const needsShift = /^[A-Z]$/.test(nextKey)
 
   useEffect(() => {
@@ -240,7 +249,14 @@ function TypingRound({
     latestAnswer.current = value
     setAnswer(value)
     setDelivered('')
-    prepareLearningAudio(useLearningPreferences.getState().sound)
+    void prepareLearningAudio(useLearningPreferences.getState().sound)
+  }
+  function select(option: string) {
+    if (composing || paused || checkpoint || done) return
+    latestAnswer.current = option
+    setAnswer(option)
+    setDelivered('')
+    void prepareLearningAudio(useLearningPreferences.getState().sound)
   }
   function restart() {
     acceptedIndex.current = -1
@@ -284,15 +300,9 @@ function TypingRound({
           </h1>
           <p>{game.instruction}</p>
         </div>
+        <LearningAtmosphere />
       </div>
       <div className={styles.configuration} role="region" aria-label="练习设置">
-        <div className={styles.desktopSettings}>
-          <LearningAtmosphere compact />
-        </div>
-        <details className={styles.compactSettings}>
-          <summary>{world.title} · 主题、琴音和动画</summary>
-          <LearningAtmosphere compact />
-        </details>
         <label className={styles.levelSelect}>
           选择练习级别
           <select
@@ -441,138 +451,197 @@ function TypingRound({
         ) : (
           <div className={styles.play}>
             <div className={styles.inputPane}>
-              <div className={styles.target} data-correct={evaluation.correct && !composing}>
-                <span>请打出这条线索</span>
-                <strong data-testid="typing-target">
-                  {[...task.target].map((character, position) => (
-                    <span
-                      key={position}
-                      className={!composing && answer[position] === character ? styles.matched : ''}
-                    >
-                      {character}
-                    </span>
-                  ))}
-                </strong>
-                {task.pinyin && (
-                  <p>
-                    键入拼音：<b lang="en">{task.pinyin}</b>
+              {isChoice ? (
+                <>
+                  <div className={styles.target} data-correct={evaluation.correct && !composing}>
+                    <span>请选出正确的答案</span>
+                    <strong data-testid="typing-target" className={styles.prompt}>
+                      {task.prompt}
+                    </strong>
+                    {evaluation.correct && !composing && (
+                      <Send
+                        className={motion ? styles.delivery : ''}
+                        size={24}
+                        aria-hidden="true"
+                      />
+                    )}
+                  </div>
+                  <div className={styles.options} role="group" aria-label="选项">
+                    {(task.options ?? []).map((option) => (
+                      <button
+                        key={option}
+                        type="button"
+                        className={'button ' + (option === answer ? 'primary' : 'secondary')}
+                        onClick={() => select(option)}
+                      >
+                        {option}
+                      </button>
+                    ))}
+                  </div>
+                  <p id="typing-feedback" className={styles.feedback} role="status">
+                    {feedback}
                   </p>
-                )}
-                {gameId === 'keyboard' && (
-                  <small>
-                    {needsShift
-                      ? '这是大写字母：按住 Shift 再按字母键。'
-                      : /[a-z]/.test(nextKey)
-                        ? '这是小写字母：松开 Shift，注意 Caps Lock。'
-                        : '数字直接按，不需要 Shift。'}
-                  </small>
-                )}
-                {evaluation.correct && !composing && (
-                  <Send className={motion ? styles.delivery : ''} size={24} aria-hidden="true" />
-                )}
-              </div>
-              <div className={styles.form}>
-                <label htmlFor="typing-answer">
-                  {gameId === 'keyboard' ? '输入字母或数字' : '用拼音输入法输入汉字'}
-                </label>
-                <input
-                  id="typing-answer"
-                  ref={input}
-                  value={answer}
-                  autoComplete="off"
-                  autoCapitalize="off"
-                  spellCheck={false}
-                  maxLength={80}
-                  readOnly={evaluation.correct && !composing}
-                  aria-describedby="typing-feedback typing-help"
-                  onChange={(event) => edit(event.target.value)}
-                  onCompositionStart={() => {
-                    composition.current = true
-                    setComposing(true)
-                  }}
-                  onCompositionEnd={(event) => {
-                    composition.current = false
-                    edit(event.currentTarget.value)
-                    setComposing(false)
-                  }}
-                  onKeyDown={(event) => {
-                    setCapsLock(event.getModifierState('CapsLock'))
-                    if (
-                      event.key === 'Enter' &&
-                      !composition.current &&
-                      !event.nativeEvent.isComposing
-                    )
-                      event.preventDefault()
-                  }}
-                  onKeyUp={(event) => setCapsLock(event.getModifierState('CapsLock'))}
-                />
-              </div>
-              <p id="typing-feedback" className={styles.feedback} role="status">
-                {feedback}
-              </p>
-              <p id="typing-help" className={styles.help}>
-                {gameId === 'pinyin'
-                  ? '拼音候选没有出来？请先切换到中文拼音输入法；选好汉字后会自动送达。短句可以分几次选字，不必按 Enter 提交。'
-                  : '不用点确认，也不用按 Enter。前半段打对会等你继续，打错的内容会保留，方便退格修改。'}
-              </p>
-              <div className={styles.actions}>
-                <button className="button secondary" onClick={() => setPaused(true)}>
-                  歇一会
-                </button>
-                <button className="button secondary" onClick={restart}>
-                  重新练这一轮
-                </button>
-              </div>
+                  <div className={styles.actions}>
+                    <button className="button secondary" onClick={() => setPaused(true)}>
+                      歇一会
+                    </button>
+                    <button className="button secondary" onClick={restart}>
+                      重新练这一轮
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className={styles.target} data-correct={evaluation.correct && !composing}>
+                    <span>请打出这条线索</span>
+                    <strong data-testid="typing-target">
+                      {[...task.target].map((character, position) => (
+                        <span
+                          key={position}
+                          className={
+                            !composing && answer[position] === character ? styles.matched : ''
+                          }
+                        >
+                          {character}
+                        </span>
+                      ))}
+                    </strong>
+                    {task.pinyin && (
+                      <p>
+                        键入拼音：<b lang="en">{task.pinyin}</b>
+                      </p>
+                    )}
+                    {game.input === 'keyboard' && (
+                      <small>
+                        {needsShift
+                          ? '这是大写字母：按住 Shift 再按字母键。'
+                          : /[a-z]/.test(nextKey)
+                            ? '这是小写字母：松开 Shift，注意 Caps Lock。'
+                            : '数字直接按，不需要 Shift。'}
+                      </small>
+                    )}
+                    {evaluation.correct && !composing && (
+                      <Send
+                        className={motion ? styles.delivery : ''}
+                        size={24}
+                        aria-hidden="true"
+                      />
+                    )}
+                  </div>
+                  <div className={styles.form}>
+                    <label htmlFor="typing-answer">
+                      {game.input === 'keyboard' ? '输入字母或数字' : '用拼音输入法输入汉字'}
+                    </label>
+                    <input
+                      id="typing-answer"
+                      ref={input}
+                      value={answer}
+                      autoComplete="off"
+                      autoCapitalize="off"
+                      spellCheck={false}
+                      maxLength={80}
+                      readOnly={evaluation.correct && !composing}
+                      aria-describedby="typing-feedback typing-help"
+                      onChange={(event) => edit(event.target.value)}
+                      onCompositionStart={() => {
+                        composition.current = true
+                        setComposing(true)
+                      }}
+                      onCompositionEnd={(event) => {
+                        composition.current = false
+                        edit(event.currentTarget.value)
+                        setComposing(false)
+                      }}
+                      onKeyDown={(event) => {
+                        setCapsLock(event.getModifierState('CapsLock'))
+                        if (
+                          event.key === 'Enter' &&
+                          !composition.current &&
+                          !event.nativeEvent.isComposing
+                        )
+                          event.preventDefault()
+                      }}
+                      onKeyUp={(event) => setCapsLock(event.getModifierState('CapsLock'))}
+                    />
+                  </div>
+                  <p id="typing-feedback" className={styles.feedback} role="status">
+                    {feedback}
+                  </p>
+                  <p id="typing-help" className={styles.help}>
+                    {game.input === 'pinyin'
+                      ? '拼音候选没有出来？请先切换到中文拼音输入法；选好汉字后会自动送达。短句可以分几次选字，不必按 Enter 提交。'
+                      : '不用点确认，也不用按 Enter。前半段打对会等你继续，打错的内容会保留，方便退格修改。'}
+                  </p>
+                  <div className={styles.actions}>
+                    <button className="button secondary" onClick={() => setPaused(true)}>
+                      歇一会
+                    </button>
+                    <button className="button secondary" onClick={restart}>
+                      重新练这一轮
+                    </button>
+                  </div>
+                </>
+              )}
             </div>
             <aside className={styles.hints}>
-              {gameId === 'keyboard' && (
-                <div className={styles.keyboard} aria-label={'键位提示：下一位 ' + nextKey}>
-                  {keyRows.map((row) => (
-                    <div
-                      key={row}
-                      className={styles.keyRow}
-                      style={{
-                        gridTemplateColumns: `repeat(${row.length}, minmax(0, 1fr))`,
-                        width: `${row.length * 10}%`,
-                      }}
-                    >
-                      {[...row].map((key) => (
-                        <kbd
-                          key={key}
-                          className={key === nextKey.toLowerCase() ? styles.highlight : ''}
-                        >
-                          {key.toUpperCase()}
-                        </kbd>
-                      ))}
-                    </div>
-                  ))}
-                  <div className={styles.modifiers}>
-                    <kbd className={needsShift ? styles.highlight : ''}>Shift</kbd>
-                    <span>{needsShift ? '按住 Shift + 亮起的字母键' : '不用按住 Shift'}</span>
-                    <kbd className={capsLock ? styles.highlight : ''}>Caps Lock</kbd>
-                  </div>
-                  <small>
-                    {capsLock === true
-                      ? 'Caps Lock 已打开，输入小写时记得关掉。'
-                      : capsLock === false
-                        ? 'Caps Lock 已关闭。'
-                        : '亮起的是目标键。键盘印着大写，目标大小写仍要看清楚。'}
-                  </small>
-                </div>
-              )}
-              {gameId === 'pinyin' && (
-                <section className={styles.inputSteps} aria-label="拼音输入步骤">
-                  <Languages size={28} aria-hidden="true" />
-                  <h2>三个小步骤</h2>
-                  <ol>
-                    <li>切到中文拼音输入法</li>
-                    <li>输入拼音，选好汉字</li>
-                    <li>正确内容会自动送达</li>
-                  </ol>
-                  <p>系统候选框里可以按空格或数字选字。这里会等你，不催促。</p>
+              {isChoice ? (
+                <section className={styles.inputSteps} aria-label="怎么玩">
+                  <ScanSearch size={28} aria-hidden="true" />
+                  <h2>怎么玩</h2>
+                  <p>{level.discovery}</p>
                 </section>
+              ) : (
+                <>
+                  {game.input === 'keyboard' && (
+                    <div className={styles.keyboard} aria-label={'键位提示：下一位 ' + nextKey}>
+                      {keyRows.map((row) => (
+                        <div
+                          key={row}
+                          className={styles.keyRow}
+                          style={{
+                            gridTemplateColumns: `repeat(${row.length}, minmax(0, 1fr))`,
+                            width: `${row.length * 10}%`,
+                          }}
+                        >
+                          {[...row].map((key) => (
+                            <kbd
+                              key={key}
+                              className={key === nextKey.toLowerCase() ? styles.highlight : ''}
+                            >
+                              {key.toUpperCase()}
+                            </kbd>
+                          ))}
+                        </div>
+                      ))}
+                      <div className={styles.modifiers}>
+                        <kbd className={needsShift ? styles.highlight : ''}>Shift</kbd>
+                        <span>{needsShift ? '按住 Shift + 亮起的字母键' : '不用按住 Shift'}</span>
+                        <kbd className={capsLock ? styles.highlight : ''}>Caps Lock</kbd>
+                      </div>
+                      <small>
+                        {capsLock === true
+                          ? 'Caps Lock 已打开，输入小写时记得关掉。'
+                          : capsLock === false
+                            ? 'Caps Lock 已关闭。'
+                            : '亮起的是目标键。键盘印着大写，目标大小写仍要看清楚。'}
+                      </small>
+                    </div>
+                  )}
+                  {game.input === 'pinyin' && (
+                    <section className={styles.inputSteps} aria-label="拼音输入步骤">
+                      <Languages size={28} aria-hidden="true" />
+                      <h2>三个小步骤</h2>
+                      <ol>
+                        <li>切到中文拼音输入法</li>
+                        <li>输入拼音，选好汉字</li>
+                        <li>正确内容会自动送达</li>
+                      </ol>
+                      <p>系统候选框里可以按空格或数字选字。这里会等你，不催促。</p>
+                    </section>
+                  )}
+                  <LearningMedia kind={game.input} />
+                </>
               )}
-              <LearningMedia kind={gameId} />
             </aside>
           </div>
         )}

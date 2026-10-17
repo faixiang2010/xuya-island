@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.concurrent.Callable;
 import org.springframework.http.MediaType;
 import org.springframework.http.codec.ServerSentEvent;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -68,6 +69,11 @@ public class StudioController {
     public Mono<StudioViews.Project> copy(
             @PathVariable String id, @RequestBody StudioRequests.CopyWork request) {
         return blocking(() -> projects.copyWork(id, request));
+    }
+
+    @DeleteMapping("/api/projects/{id}")
+    public Mono<StudioViews.Project> delete(@PathVariable String id) {
+        return blocking(() -> projects.delete(id));
     }
 
     @GetMapping("/api/projects/{id}/versions")

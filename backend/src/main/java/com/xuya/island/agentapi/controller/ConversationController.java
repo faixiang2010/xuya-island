@@ -13,10 +13,12 @@ import jakarta.validation.Valid;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.codec.ServerSentEvent;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -86,6 +88,15 @@ public class ConversationController {
                 .subscribeOn(Schedulers.boundedElastic());
     }
 
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(summary = "彻底删除会话", description = "删除会话及其全部记录与隔离工作区；有活动执行时返回409")
+    public Mono<Void> delete(@PathVariable String id) {
+        return Mono.fromRunnable(() -> service.delete(id))
+                .subscribeOn(Schedulers.boundedElastic())
+                .then();
+    }
+
     @PostMapping("/{id}/runs")
     @ResponseStatus(HttpStatus.ACCEPTED)
     @Operation(summary = "幂等提交后台任务", description = "同一clientRequestId重试观察原任务，不重复执行；不同内容返回409")
@@ -120,43 +131,30 @@ public class ConversationController {
             }
         }
         AtomicLong position = new AtomicLong(initial);
+        AtomicInteger idle = new AtomicInteger();
+        return Mono.defer(() -> poll(id, position, idle))
+                .flatMapIterable(page -> page)
+                .map(this::encode)
+                .repeat();
+    }
+
+    /** 单次拉取；没有新事件时按空闲轮次退避，避免空轮询持续占用会话锁。 */
+    private Mono<List<AgentApi.Event>> poll(String id, AtomicLong position, AtomicInteger idle) {
         return Mono.fromCallable(() -> service.events(id, position.get()))
                 .subscribeOn(Schedulers.boundedElastic())
-                .doOnNext(
+                .flatMap(
                         page -> {
-                            if (!page.isEmpty()) position.set(page.get(page.size() - 1).cursor());
-                        })
-                .flatMapMany(
-                        first ->
-                                Flux.concat(
-                                                Flux.fromIterable(first),
-                                                Flux.interval(Duration.ofMillis(250))
-                                                        .onBackpressureDrop()
-                                                        .concatMap(
-                                                                tick ->
-                                                                        Mono.fromCallable(
-                                                                                        () ->
-                                                                                                service
-                                                                                                        .events(
-                                                                                                                id,
-                                                                                                                position
-                                                                                                                        .get()))
-                                                                                .subscribeOn(
-                                                                                        Schedulers
-                                                                                                .boundedElastic()),
-                                                                1)
-                                                        .doOnNext(
-                                                                page -> {
-                                                                    if (!page.isEmpty())
-                                                                        position.set(
-                                                                                page.get(
-                                                                                                page
-                                                                                                                .size()
-                                                                                                        - 1)
-                                                                                        .cursor());
-                                                                })
-                                                        .flatMapIterable(page -> page))
-                                        .map(this::encode));
+                            if (page.isEmpty())
+                                return Mono.just(page)
+                                        .delayElement(
+                                                Duration.ofMillis(
+                                                        Math.min(
+                                                                2000L,
+                                                                250L * idle.incrementAndGet())));
+                            idle.set(0);
+                            position.set(page.get(page.size() - 1).cursor());
+                            return Mono.just(page);
+                        });
     }
 
     public ServerSentEvent<String> encode(AgentApi.Event value) {

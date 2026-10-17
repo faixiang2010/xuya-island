@@ -120,6 +120,13 @@ public class ProjectService {
         return repository.versions(id);
     }
 
+    /** 删除项目：先确认属于当前账户，再在事务内清掉项目、版本与会话记录。 */
+    public StudioViews.Project delete(String id) {
+        var project = get(id);
+        transactions.executeWithoutResult(status -> repository.deleteProject(id));
+        return project;
+    }
+
     public StudioViews.Project restore(String id, StudioRequests.Restore request) {
         var version =
                 versions(id).stream()

@@ -1124,12 +1124,14 @@ export interface components {
     CodexTerminalCreate: {
       /** Format: int32 */
       cols?: number
+      directory?: string
       /** Format: int32 */
       rows?: number
       shell?: string
     }
     CodexTerminalInfo: {
       createdAt?: string
+      directory?: string
       environment?: string
       id?: string
       /** Format: int64 */

@@ -84,7 +84,7 @@ export default function PythonSettings() {
   const currentLabel = !environment
     ? '正在读取…'
     : environment.source === 'bundled'
-      ? `内置 Python ${bundled?.version || ''}`
+      ? `内置 Python ${bundled?.version || ''} · 默认使用`
       : environment.source === 'custom'
         ? '已选择主机Python'
         : '尚未配置'
@@ -102,13 +102,21 @@ export default function PythonSettings() {
   return (
     <section className="family-paper">
       <h2>Python运行环境</h2>
-      <p>准备一次，家人就能在课堂里运行程序。</p>
+      <p>
+        {bundled?.available
+          ? '软件自带内置 Python，家人打开课堂就能运行程序，不用额外配置。'
+          : '准备一次，家人就能在课堂里运行程序。'}
+      </p>
       <span className="family-status">{currentLabel}</span>
       {environment?.source === 'custom' && (
         <p className="family-secondary family-address">{environment.executable}</p>
       )}
       {bundled && !bundled.available && (
-        <p className="family-secondary">当前没有可用的内置Python，请选择主机上已安装的环境。</p>
+        <p className="family-secondary">
+          {environment?.source === 'custom'
+            ? '这台机器没有内置 Python，已自动使用电脑上已安装的 Python。'
+            : '这台机器没有内置 Python，也没有找到可用的 Python，请在下面选择或手动填写路径。'}
+        </p>
       )}
       <div className="family-setting-width">
         <label htmlFor="python-environment">选择运行环境</label>

@@ -20,7 +20,15 @@ public class CodexSkills {
     public synchronized void ensureInstalled() {
         if (installed) return;
         for (String name :
-                List.of("coding", "review", "planning", "documents", "github", "design", "pdf")) {
+                List.of(
+                        "coding",
+                        "review",
+                        "planning",
+                        "documents",
+                        "github",
+                        "design",
+                        "pdf",
+                        "web")) {
             Path active = properties.skillsDir().resolve(name);
             Path disabled = properties.dataDir().resolve("skills-disabled").resolve(name);
             if (Files.exists(active) || Files.exists(disabled)) continue;

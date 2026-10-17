@@ -2,14 +2,18 @@ import { newId } from '../shared/id'
 import { accountStorage, accountSessionStorage } from '../account/session'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom'
-import { Coffee, Sparkles, WandSparkles } from 'lucide-react'
+import { Coffee, Sparkles, Trash2, WandSparkles } from 'lucide-react'
+import { Modal } from 'antd'
 import CodeEditor from '../components/CodeEditor'
 import StagePreview from '../components/StagePreview'
 import StoryPreview from '../components/StoryPreview'
+import SuccessBurst from '../components/SuccessBurst'
 import { usePythonRunner } from '../runner/usePythonRunner'
 import { request, ApiError } from '../api/client'
+import { stripCodeComments } from '../api/adventure'
 import {
   connectStudioEvents,
+  deleteProject,
   getProject,
   projectList,
   studioPost,
@@ -47,6 +51,20 @@ import type { Lesson, TutorStatus, Work } from '../types'
 import type { StudioRunResult } from '../studio-types'
 import '../styles-studio.css'
 
+/** 项目里记录的是课堂 lessonId 或故事剧集 id，两者初始代码走同一个字段。 */
+async function teachingStarter(lessonId: string): Promise<string | undefined> {
+  try {
+    const lesson = await request<Lesson>(
+      lessonId.startsWith('town-')
+        ? `/adventure/episodes/${encodeURIComponent(lessonId)}`
+        : `/lessons/${encodeURIComponent(lessonId)}`,
+    )
+    return lesson.starterCode
+  } catch {
+    return undefined
+  }
+}
+
 // 对应 Vue ref 的读写语义：状态驱动渲染，ref 镜像供异步流程随时读取最新值。
 function useRefState<S>(initial: S) {
   const [value, setValue] = useState<S>(initial)
@@ -68,8 +86,6 @@ export default function StudioView() {
   const [project, assignProject, projectRef] = useRefState<StudioProject | undefined>(undefined)
   const [files, assignFiles, filesRef] = useRefState<ProjectFile[]>([])
   const [title, assignTitle, titleRef] = useRefState('')
-  const [preferenceThemes, setPreferenceThemes] = useState('')
-  const [preferenceHumor, setPreferenceHumor] = useState('')
   const [draftRevision, assignDraftRevision, draftRevisionRef] = useRefState(1)
   const [selectedFile, assignSelectedFile, selectedFileRef] = useRefState('main.py')
   const [filename, setFilename] = useState('')
@@ -82,6 +98,7 @@ export default function StudioView() {
   const [historyOpen, assignHistoryOpen, historyOpenRef] = useRefState(false)
   const [backup, assignBackup, backupRef] = useRefState<StudioDraft | undefined>(undefined)
   const [works, setWorks] = useState<Work[]>([])
+  const [pendingDelete, setPendingDelete] = useState<StudioProject>()
   const [workId, assignWorkId, workIdRef] = useRefState('')
   const [newTitle, setNewTitle] = useState('离谱奶茶店')
   const [newScene, setNewScene] = useState<'milk-tea' | 'free'>('milk-tea')
@@ -103,6 +120,7 @@ export default function StudioView() {
   const [runOwner, setRunOwner] = useState<'draft' | 'candidate'>('draft')
   const [candidateResults, setCandidateResults] = useState<Record<string, StudioRunResult>>({})
   const [input, setInput] = useState('')
+  const [burst, setBurst] = useState(0)
 
   const frameRef = useRef<HTMLIFrameElement>(null)
   const unsubscribeRef = useRef<(() => void) | undefined>(undefined)
@@ -111,7 +129,9 @@ export default function StudioView() {
   const aliveRef = useRef(true)
   const pumpActiveRef = useRef(false)
 
-  const runner = usePythonRunner(frameRef, () => {})
+  const runner = usePythonRunner(frameRef, (result) => {
+    if (result.status === 'success') setBurst((value) => value + 1)
+  })
   const {
     state,
     result,
@@ -240,51 +260,12 @@ export default function StudioView() {
   }
   function setProject(value: StudioProject) {
     assignProject(value)
-    setPreferenceThemes(value.preferences.favoriteThemes.join('、'))
-    setPreferenceHumor(value.preferences.humor)
     assignDraftRevision(value.revision)
     assignTitle(value.title)
     assignFiles(copyFiles(value.files))
     if (!filesRef.current.some((file) => file.path === selectedFileRef.current))
       assignSelectedFile('main.py')
     cache()
-  }
-  async function savePreferences(clear = false) {
-    const currentProject = projectRef.current
-    if (!currentProject || savingRef.current) return
-    assignSaving(true)
-    try {
-      const themes = clear
-        ? []
-        : preferenceThemes
-            .split(/[,，、\n]/)
-            .map((value) => value.trim())
-            .filter(Boolean)
-      const humor = clear ? '' : preferenceHumor.trim()
-      const saved = await studioRequest<StudioProject>(
-        `/projects/${currentProject.id}`,
-        {
-          method: 'PUT',
-          body: JSON.stringify({
-            title: currentProject.title,
-            revision: currentProject.revision,
-            files: currentProject.files,
-            preferences: { favoriteThemes: themes, humor },
-          }),
-        },
-        validProject,
-      )
-      assignProject(saved)
-      if (draftRevisionRef.current === currentProject.revision) assignDraftRevision(saved.revision)
-      setPreferenceThemes(saved.preferences.favoriteThemes.join('、'))
-      setPreferenceHumor(saved.preferences.humor)
-      cache()
-      setNotice(clear ? '已清除这个作品的创作偏好。' : '已记住你主动保存的创作偏好。')
-    } catch (error) {
-      setFailure(explain(error))
-    } finally {
-      assignSaving(false)
-    }
   }
   function restoreBackup() {
     const currentBackup = backupRef.current
@@ -488,11 +469,31 @@ export default function StudioView() {
     try {
       const id = typeof routeParams.projectId === 'string' ? routeParams.projectId : ''
       if (id) {
-        const value = await getProject(id)
+        let value = await getProject(id)
         if (ticket !== loadTicketRef.current || !aliveRef.current) return
+        // 从课堂或故事复制来的项目：只换掉旧版示例代码的注释，不碰孩子改过的内容。
+        const starter = value.lessonId ? await teachingStarter(value.lessonId) : undefined
+        if (ticket !== loadTicketRef.current || !aliveRef.current) return
+        const main = value.files.find((file) => file.path === 'main.py')
+        if (starter && main && stripCodeComments(main.content) === stripCodeComments(starter))
+          value = {
+            ...value,
+            files: value.files.map((file) =>
+              file.path === 'main.py' ? { ...file, content: starter } : file,
+            ),
+          }
         const saved = readStudioDraft(accountStorage, value.id)
+        const savedMain = saved?.files.find((file) => file.path === 'main.py')?.content
+        const savedIsOldSample =
+          !!starter &&
+          typeof savedMain === 'string' &&
+          stripCodeComments(savedMain) === stripCodeComments(starter)
         setProject(value)
-        if (saved && (saved.title !== value.title || !sameFiles(saved.files, value.files))) {
+        if (
+          saved &&
+          !savedIsOldSample &&
+          (saved.title !== value.title || !sameFiles(saved.files, value.files))
+        ) {
           assignTitle(saved.title)
           assignFiles(copyFiles(saved.files))
           assignDraftRevision(saved.revision)
@@ -558,7 +559,7 @@ export default function StudioView() {
               content:
                 newScene === 'milk-tea'
                   ? milkTeaStarter
-                  : 'from xuya.stage import actor, say, size\n\nactor("害羞怪兽", "monster")\nsay("我只是长得很凶……", actor="害羞怪兽")\nsize("害羞怪兽", 0.8)\n',
+                  : 'from xuya.stage import actor, say, size\n\n# 把“害羞怪兽”放到舞台上\nactor("害羞怪兽", "monster")\n# 让害羞怪兽说一句话\nsay("我只是长得很凶……", actor="害羞怪兽")\n# 把害羞怪兽缩放到 0.8 倍\nsize("害羞怪兽", 0.8)\n',
             },
           ],
           preferences: { favoriteThemes: [], humor: '有点离谱，但不拿别人开玩笑' },
@@ -573,7 +574,22 @@ export default function StudioView() {
     }
   }
   const milkTeaStarter =
-    'from xuya.stage import cup, pour, lid, pearls, drink, say\n\ncup()\npour(1)\npearls(3)\nlid()\ndrink("云朵奶茶", 1)\nsay("欢迎来到我的怪味奶茶店！")\n'
+    'from xuya.stage import cup, pour, lid, pearls, drink, say\n\n# 拿出一个空杯子\ncup()\n# 往杯子里倒入 1 份奶\npour(1)\n# 往杯子里放 3 颗珍珠\npearls(3)\n# 把杯盖盖好\nlid()\n# 做出一杯“云朵奶茶”\ndrink("云朵奶茶", 1)\n# 让角色说出欢迎语\nsay("欢迎来到我的怪味奶茶店！")\n'
+  async function removeProject(target: StudioProject) {
+    if (savingRef.current) return
+    assignSaving(true)
+    setFailure('')
+    try {
+      await deleteProject(target.id)
+      setProjects(await projectList())
+      setNotice(`已删除《${target.title}》。`)
+    } catch (error) {
+      setFailure(explain(error))
+    } finally {
+      assignSaving(false)
+      setPendingDelete(undefined)
+    }
+  }
   async function copyWork() {
     if (!workIdRef.current || savingRef.current) return
     assignSaving(true)
@@ -988,16 +1004,27 @@ export default function StudioView() {
               {projects.map((item) => {
                 const SceneIcon = item.scene === 'milk-tea' ? Coffee : Sparkles
                 return (
-                  <Link key={item.id} to={`/studio/${item.id}`} className="studio-project-card">
-                    <span>
-                      <SceneIcon size={32} aria-hidden="true" />
-                    </span>
-                    <h3>{item.title}</h3>
-                    <p>
-                      {item.files.length} 个文件 · 第 {item.revision} 版
-                    </p>
-                    <strong>继续创作 ↗</strong>
-                  </Link>
+                  <div key={item.id} className="studio-project-shell">
+                    <Link to={`/studio/${item.id}`} className="studio-project-card">
+                      <span>
+                        <SceneIcon size={32} aria-hidden="true" />
+                      </span>
+                      <h3>{item.title}</h3>
+                      <p>
+                        {item.files.length} 个文件 · 第 {item.revision} 版
+                      </p>
+                      <strong>继续创作 ↗</strong>
+                    </Link>
+                    <button
+                      type="button"
+                      className="card-delete"
+                      aria-label={`删除作品 ${item.title}`}
+                      disabled={saving}
+                      onClick={() => setPendingDelete(item)}
+                    >
+                      <Trash2 size={15} aria-hidden="true" />
+                    </button>
+                  </div>
                 )
               })}
             </div>
@@ -1042,42 +1069,6 @@ export default function StudioView() {
               )}
             </p>
           )}
-          <details className="studio-files-tools">
-            <summary>小奇记住了什么</summary>
-            <p>这里仅保存你主动选择的创作偏好，可以随时清除。</p>
-            <label>
-              喜欢的主题（用顿号分开）
-              <input
-                value={preferenceThemes}
-                onChange={(event) => setPreferenceThemes(event.target.value)}
-                aria-label="喜欢的创作主题"
-                maxLength={480}
-              />
-            </label>
-            <label>
-              喜欢的笑话风格
-              <input
-                value={preferenceHumor}
-                onChange={(event) => setPreferenceHumor(event.target.value)}
-                aria-label="喜欢的笑话风格"
-                maxLength={160}
-              />
-            </label>
-            <button
-              className="studio-text-button"
-              disabled={saving}
-              onClick={() => void savePreferences()}
-            >
-              记住这些偏好
-            </button>
-            <button
-              className="studio-text-button"
-              disabled={saving}
-              onClick={() => void savePreferences(true)}
-            >
-              清除创作偏好
-            </button>
-          </details>
           {staleDraft && (
             <p className="studio-alert">
               草稿来自第 {draftRevision} 版，作品已经保存到第 {project.revision} 版。
@@ -1191,7 +1182,10 @@ export default function StudioView() {
                 <h2>作品上场</h2>
                 <span>{runOwner === 'candidate' ? '小奇建议的试演' : '我的草稿试演'}</span>
               </div>
-              <StagePreview events={stageEvents} scene={project.scene} />
+              <div className="studio-stage">
+                <SuccessBurst burstKey={burst} />
+                <StagePreview events={stageEvents} scene={project.scene} />
+              </div>
               {result?.drawings.length ? (
                 <details open>
                   <summary>Python 画出的作品（{result.drawings.length} 个画笔动作）</summary>
@@ -1255,10 +1249,9 @@ export default function StudioView() {
             </section>
             <section className="studio-companion" aria-label="小奇搭档">
               {lessonMode && (
-                <p>
-                  这是课堂作品的独立副本。{' '}
-                  <Link to={'/studio/' + project.id + '?mode=studio'}>开始自由共创 →</Link>
-                </p>
+                <Link className="studio-text-button" to={'/studio/' + project.id + '?mode=studio'}>
+                  开启自由创作 →
+                </Link>
               )}
               <div className="studio-companion-heading">
                 <span className="studio-avatar" aria-hidden="true">
@@ -1287,11 +1280,7 @@ export default function StudioView() {
                 {!snapshot?.messages.length && (
                   <div className="studio-welcome">
                     <strong>你来决定，作品怎么离谱。</strong>
-                    <p>
-                      比如：“珍珠太多会不会撑爆杯子？”
-                      <br />
-                      先运行一次，再请我一起看结果。
-                    </p>
+                    <p>先运行一次，再告诉小奇你想改哪里。</p>
                   </div>
                 )}
                 {snapshot?.messages.map((message) => (
@@ -1319,16 +1308,6 @@ export default function StudioView() {
                       继续这一轮
                     </button>
                   )}
-                {snapshot && (
-                  <details>
-                    <summary>这一轮的思考进度</summary>
-                    <p>
-                      {snapshot.budget.modelCalls}/{snapshot.budget.limitCalls} 次思考 ·{' '}
-                      {snapshot.budget.repairAttempts}/{snapshot.budget.limitRepairs} 次修复
-                    </p>
-                    <p>达到这一轮的上限就会停下来，你可以调整想法再开新一轮。</p>
-                  </details>
-                )}
               </div>
               <form
                 className="studio-message-form"
@@ -1518,6 +1497,19 @@ export default function StudioView() {
           onLoad={runner.onFrameLoad}
         ></iframe>
       )}
+      <Modal
+        open={!!pendingDelete}
+        title="确定要删除这件作品吗？"
+        okText="删除"
+        cancelText="先留着"
+        okButtonProps={{ danger: true, disabled: saving }}
+        cancelButtonProps={{ disabled: saving }}
+        confirmLoading={saving}
+        onOk={() => pendingDelete && void removeProject(pendingDelete)}
+        onCancel={() => setPendingDelete(undefined)}
+      >
+        <p>《{pendingDelete?.title}》和它的历史版本都会被删掉，删除以后就找不回来了。</p>
+      </Modal>
     </main>
   )
 }

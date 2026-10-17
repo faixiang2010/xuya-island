@@ -1,0 +1,32 @@
+.burst {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  overflow: hidden;
+}
+.burst i {
+  position: absolute;
+  left: 50%;
+  top: 45%;
+  width: 8px;
+  height: 13px;
+  border-radius: 3px;
+  background: var(--c);
+  animation: fly 900ms cubic-bezier(0.16, 1, 0.3, 1) var(--d) forwards;
+}
+@keyframes fly {
+  from {
+    opacity: 1;
+    transform: translate(-50%, -50%) rotate(0deg) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translate(calc(-50% + var(--x)), calc(-50% + var(--y))) rotate(var(--r)) scale(0.55);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .burst {
+    display: none;
+  }
+}

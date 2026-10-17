@@ -4,13 +4,13 @@ const melody = [261.63, 329.63, 392, 440, 392, 329.63, 293.66, 261.63]
 export const melodyNames = ['do', 'mi', 'sol', 'la', 'sol', 'mi', 're', 'do']
 let sequenceVersion = 0
 
-export function prepareLearningAudio(enabled: boolean): boolean {
+export async function prepareLearningAudio(enabled: boolean): Promise<boolean> {
   if (!enabled) return false
   try {
     if (!window.AudioContext) return false
     context ??= new window.AudioContext()
-    if (context.state === 'suspended') void context.resume().catch(() => {})
-    return true
+    if (context.state === 'suspended') await context.resume()
+    return context.state === 'running'
   } catch {
     return false
   }
@@ -26,9 +26,9 @@ export function playLearningNote(enabled: boolean, index: number, celebration = 
       const start = context!.currentTime + delay + noteIndex * 0.13
       // A short, quiet additive tone. No network, microphone, or endless background loop.
       for (const [harmonic, volume] of [
-        [1, 0.075],
-        [2, 0.021],
-        [3, 0.009],
+        [1, 0.22],
+        [2, 0.06],
+        [3, 0.025],
       ]) {
         const oscillator = context!.createOscillator()
         const envelope = context!.createGain()
@@ -72,7 +72,7 @@ export function silenceLearningAudio() {
 export async function playLearningPhrase(enabled: boolean, start: number, length: number) {
   if (!enabled) return false
   silenceLearningAudio()
-  if (!prepareLearningAudio(enabled) || !context) return false
+  if (!(await prepareLearningAudio(enabled)) || !context) return false
   const ticket = sequenceVersion
   try {
     await context.resume()

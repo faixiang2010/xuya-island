@@ -1,7 +1,9 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { Link } from 'react-router-dom'
 import LearningMap from '../components/LearningMap'
 import LearningAtmosphere from '../components/LearningAtmosphere'
-import { Settings2 } from 'lucide-react'
+import { familyApi } from '../account/api'
+import { useFamily } from '../account/AuthGate'
 import { useClassroomStore } from '../stores/classroom'
 import { useGameProgress } from '../games/progress'
 import { stationSummary } from '../learning/stations'
@@ -11,6 +13,24 @@ export default function HomeView() {
   const lessons = useClassroomStore((state) => state.lessons)
   const progress = useClassroomStore((state) => state.progress)
   const records = useGameProgress((state) => state.records)
+  const family = useFamily()
+  // 提前告知，免得孩子点进课堂才发现跑不起来；只有能进家庭管理的人才给直达入口。
+  const [runtimeMissing, setRuntimeMissing] = useState(false)
+  const canManageRuntime =
+    family.user?.permissions.some(
+      (permission) => permission === '*' || permission === 'system:manage',
+    ) ?? false
+  useEffect(() => {
+    let alive = true
+    void familyApi<{ configured: boolean }>('/execution/environment')
+      .then((value) => {
+        if (alive) setRuntimeMissing(value.configured === false)
+      })
+      .catch(() => {})
+    return () => {
+      alive = false
+    }
+  }, [])
   const { done, total } = useMemo(
     () => stationSummary({ lessons, progress, records }),
     [lessons, progress, records],
@@ -31,15 +51,22 @@ export default function HomeView() {
               已走完 {done} / {total} 站
             </strong>
           </p>
-          <details className={styles.settings}>
-            <summary aria-label="学习设置">
-              <Settings2 size={21} aria-hidden="true" />
-              <span>设置</span>
-            </summary>
-            <LearningAtmosphere compact />
-          </details>
+          <LearningAtmosphere />
         </div>
       </header>
+      {runtimeMissing && (
+        <div className="runtime-setup">
+          <strong>这台电脑还没有可用的 Python</strong>
+          <p>课堂和创作室暂时不能运行代码。请大人打开「家庭管理 → 运行与共享」选择一个 Python。</p>
+          {canManageRuntime && (
+            <div className="runtime-setup-actions">
+              <Link className="button secondary" to="/admin?section=running">
+                现在去准备 →
+              </Link>
+            </div>
+          )}
+        </div>
+      )}
       <LearningMap />
     </main>
   )

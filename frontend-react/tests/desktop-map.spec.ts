@@ -1,4 +1,9 @@
 import { expect, test, type Page } from '@playwright/test'
+import { signInAsAdministrator } from './support/session'
+
+test.beforeEach(async ({ page }) => {
+  await signInAsAdministrator(page)
+})
 
 async function expectSingleScreen(page: Page, width: number, height: number) {
   expect(
@@ -90,7 +95,8 @@ test('桌面切换六个学习菜单时导航位置与尺寸固定', async ({ pa
       await page.goto(route)
       await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
       const links = page.getByRole('navigation', { name: '主导航' }).getByRole('link')
-      await expect(links).toHaveCount(7)
+      // 管理员账户主导航共 9 项（含码穹、家庭管理）。
+      await expect(links).toHaveCount(9)
       const geometry = await links.evaluateAll((elements) =>
         elements.map((element) => {
           const { x, y, width, height } = element.getBoundingClientRect()

@@ -75,8 +75,19 @@ class TerminalPlatformTest {
 
     @Test
     void realInteractiveTerminalAndOneUseTicket() throws IOException {
-        var terminal = terminals.create(workspaceId, windows ? "cmd" : "sh", 80, 24);
+        var terminal =
+                terminals.create(workspaceId, windows ? "cmd" : "sh", 80, 24, root.toString());
         assertTrue(terminal.running());
+        assertEquals(root.toRealPath().toString(), terminal.directory());
+        assertThrows(
+                BusinessException.class,
+                () ->
+                        terminals.create(
+                                workspaceId,
+                                windows ? "cmd" : "sh",
+                                80,
+                                24,
+                                root.resolve("missing").toString()));
         var ticket = terminals.ticket(terminal.id());
         assertEquals(terminal.id(), terminals.consumeTicket(ticket.ticket()));
         assertThrows(BusinessException.class, () -> terminals.consumeTicket(ticket.ticket()));

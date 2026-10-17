@@ -16,7 +16,7 @@
   cursor: pointer;
 }
 .growth-tabs button[aria-pressed='true'] {
-  color: var(--accent);
+  color: var(--accent-ink);
   border-bottom-color: var(--accent);
   font-weight: 700;
 }
@@ -36,7 +36,7 @@
 .growth-balance strong {
   display: block;
   font-size: 30px;
-  color: var(--accent);
+  color: var(--accent-ink);
 }
 .growth-balance span,
 .growth-balance small {
@@ -92,9 +92,6 @@ button.growth-history:hover {
   padding: var(--sp-4);
   background: var(--learning-soft, #fff1f7);
   border-radius: var(--radius-sm);
-}
-.growth-more details {
-  margin: 0;
 }
 @media (max-width: 650px) {
   .growth-gift-heading {

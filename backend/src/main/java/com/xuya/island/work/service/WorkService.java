@@ -5,7 +5,7 @@ import com.xuya.island.work.vo.WorkVO;
 import java.util.List;
 
 /**
- * 作品用例：查询、创建、保存。调用者应在非事件循环线程执行。
+ * 作品用例：查询、创建、保存与删除。调用者应在非事件循环线程执行。
  *
  * @author Codex代码助手
  */
@@ -18,4 +18,6 @@ public interface WorkService {
     WorkVO create(SaveWorkRequest request);
 
     WorkVO update(String id, SaveWorkRequest request);
+
+    WorkVO delete(String id);
 }

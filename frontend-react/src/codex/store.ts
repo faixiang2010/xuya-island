@@ -33,6 +33,7 @@ export type CodexConnection = 'offline' | 'connecting' | 'live' | 'retrying'
 export interface CodexState {
   initialized: boolean
   loading: boolean
+  switching: boolean
   busy: boolean
   error: string
   notice: string
@@ -83,6 +84,7 @@ export interface CodexState {
     id: string,
     changes: AgentSchemas['ConversationPatch'],
   ) => Promise<Conversation>
+  deleteConversation: (id: string) => Promise<void>
   disconnect: () => void
   connect: (id?: string) => void
   acceptEvent: (event: StreamEvent) => void
@@ -149,7 +151,7 @@ export const useCodexStore = create<CodexState>((set, get) => {
           : (chats.find((c) => c.id === last && !c.archived) ?? chats.find((c) => !c.archived))
       if (active) await selectConversation(active.id)
     } catch (e) {
-      set({ error: e instanceof Error ? e.message : 'Codex 本机服务没有连接。' })
+      set({ error: e instanceof Error ? e.message : '码穹本机服务没有连接。' })
     } finally {
       set({ loading: false })
     }
@@ -278,6 +280,7 @@ export const useCodexStore = create<CodexState>((set, get) => {
     const generation = ++switchGeneration
     disconnect()
     set({
+      switching: true,
       attachments: [],
       draft: '',
       activities: [],
@@ -285,23 +288,31 @@ export const useCodexStore = create<CodexState>((set, get) => {
       artifacts: [],
       sources: [],
       subagents: [],
+      // 立即清空聊天内容，避免切换慢时仍显示上一会话的消息。
+      messages: [],
+      runs: [],
+      interactions: [],
     })
-    const snapshot = await api<Snapshot>(`/conversations/${encodeURIComponent(id)}/snapshot`)
-    if (generation !== switchGeneration) return
-    applySnapshot(snapshot)
-    accountStorage.setItem('xuya.codex.conversation', id)
-    await selectProject(snapshot.conversation.projectId)
-    if (generation !== switchGeneration) return
-    if (!snapshot.conversation.projectId) {
-      const workspace = await api<Workspace>(
-        `${adult}/workspaces/${snapshot.conversation.workspaceId}`,
-      )
+    try {
+      const snapshot = await api<Snapshot>(`/conversations/${encodeURIComponent(id)}/snapshot`)
       if (generation !== switchGeneration) return
-      set({ workspaces: [workspace] })
+      applySnapshot(snapshot)
+      accountStorage.setItem('xuya.codex.conversation', id)
+      await selectProject(snapshot.conversation.projectId)
+      if (generation !== switchGeneration) return
+      if (!snapshot.conversation.projectId) {
+        const workspace = await api<Workspace>(
+          `${adult}/workspaces/${snapshot.conversation.workspaceId}`,
+        )
+        if (generation !== switchGeneration) return
+        set({ workspaces: [workspace] })
+      }
+      selectWorkspace(snapshot.conversation.workspaceId)
+      connect(id)
+      await refreshResources()
+    } finally {
+      if (generation === switchGeneration) set({ switching: false })
     }
-    selectWorkspace(snapshot.conversation.workspaceId)
-    connect(id)
-    await refreshResources()
   }
 
   async function refreshSnapshot() {
@@ -322,6 +333,17 @@ export const useCodexStore = create<CodexState>((set, get) => {
       conversation: state.conversation?.id === id ? updated : state.conversation,
     }))
     return updated
+  }
+
+  async function deleteConversation(id: string) {
+    await api<void>(`/conversations/${encodeURIComponent(id)}`, 'DELETE')
+    set((state) => ({
+      conversations: state.conversations.filter((chat) => chat.id !== id),
+    }))
+    if (get().conversation?.id === id) {
+      clearConversation()
+      accountStorage.setItem('xuya.codex.conversation', '')
+    }
   }
 
   async function refreshResources() {
@@ -359,28 +381,39 @@ export const useCodexStore = create<CodexState>((set, get) => {
     disconnect()
     const abort = new AbortController()
     streamAbort = abort
+    let attempts = 0
     set({ connection: 'connecting' })
     const runStream = async () => {
       try {
         set({ connection: 'live' })
         await streamEvents(
-          `/conversations/${id}/events?after=${encodeURIComponent(get().cursor)}`,
+          // 游标还没到位时传 0，别拼出空值的 after 参数触发服务端参数校验失败。
+          `/conversations/${id}/events?after=${encodeURIComponent(get().cursor || '0')}`,
           abort.signal,
           acceptEvent,
         )
-        if (!abort.signal.aborted) schedule()
+        attempts = 0
+        if (!abort.signal.aborted) schedule(2000)
       } catch {
-        if (!abort.signal.aborted) {
-          set({ notice: '事件流暂时中断，正在从已保存的位置恢复。' })
-          schedule()
+        if (abort.signal.aborted) return
+        attempts += 1
+        // 服务端一直拒绝时不要每两秒重试一次：指数退避，连续失败后停下等用户再来。
+        if (attempts >= 5) {
+          set({
+            connection: 'offline',
+            notice: '事件流多次中断，已停止自动重连；重新打开这个聊天可以再试。',
+          })
+          return
         }
+        set({ notice: '事件流暂时中断，正在从已保存的位置恢复。' })
+        schedule(2000 * 2 ** (attempts - 1))
       }
     }
-    const schedule = () => {
+    const schedule = (delay: number) => {
       set({ connection: 'retrying' })
       reconnectTimer = setTimeout(() => {
         if (!abort.signal.aborted) void runStream()
-      }, 2000)
+      }, delay)
     }
     void runStream()
   }
@@ -713,6 +746,7 @@ export const useCodexStore = create<CodexState>((set, get) => {
   return {
     initialized: false,
     loading: false,
+    switching: false,
     busy: false,
     error: '',
     notice: '',
@@ -755,6 +789,7 @@ export const useCodexStore = create<CodexState>((set, get) => {
     selectConversation,
     refreshSnapshot,
     updateConversation,
+    deleteConversation,
     disconnect,
     connect,
     acceptEvent,

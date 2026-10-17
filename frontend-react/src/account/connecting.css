@@ -1,0 +1,187 @@
+/* 连接等待界面：复用登录页通行证视觉语言。 */
+.connecting-screen {
+  box-sizing: border-box;
+  min-height: 100vh;
+  background: var(--canvas);
+  color: var(--ink);
+  padding: clamp(14px, 3vh, var(--sp-8)) 6vw clamp(10px, 2vh, var(--sp-5));
+  font-family: inherit;
+  font-size: var(--fs-body);
+  background-image: radial-gradient(#b5a18b25 0.7px, transparent 0.7px);
+  background-size: 8px 8px;
+}
+.passport-brand-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  font-size: 22px;
+  font-weight: 800;
+  border: 2px solid var(--ink);
+  border-radius: var(--radius-sm);
+  background: var(--accent);
+  transform: rotate(-8deg);
+}
+.connecting-spread {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 520px);
+  gap: clamp(24px, 3vw, 64px);
+  max-width: 1400px;
+  margin: clamp(40px, 9vh, 120px) auto 0;
+  align-items: start;
+}
+.connecting-left {
+  padding: 0 14px;
+}
+.connecting-title {
+  font-size: clamp(28px, min(3.6vw, 6vh), 48px);
+  line-height: 1.35;
+  letter-spacing: 2px;
+  margin: 18px 0 14px;
+}
+.connecting-subtitle {
+  font-size: clamp(14px, 2.3vh, 16px);
+  line-height: 1.8;
+  color: var(--muted);
+  max-width: 40ch;
+}
+.connecting-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: clamp(18px, 3vh, 28px);
+  padding: 8px 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  font-size: var(--fs-sm);
+  color: var(--muted);
+}
+.connecting-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  animation: connecting-pulse 1.6s ease-in-out infinite;
+}
+.connecting-dot--live {
+  background: var(--brand);
+  box-shadow: 0 0 0 0 var(--brand);
+}
+.connecting-dot--off {
+  background: var(--accent-ink);
+  box-shadow: 0 0 0 0 var(--accent-ink);
+  animation-duration: 2.4s;
+}
+@keyframes connecting-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 currentColor;
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 0 6px transparent;
+    transform: scale(1.15);
+  }
+}
+.connecting-right {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.connecting-mascot {
+  text-align: center;
+}
+.connecting-card {
+  position: relative;
+  padding: clamp(24px, 4vh, 36px) clamp(22px, 3vw, 34px) clamp(28px, 5vh, 44px);
+  background: var(--surface);
+  border: 2px solid var(--ink);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-2);
+  transform: skewX(-1.6deg);
+}
+.connecting-card > * {
+  transform: skewX(1.6deg);
+}
+.connecting-card:before {
+  content: '';
+  position: absolute;
+  top: -13px;
+  left: calc(50% - 36px);
+  height: 27px;
+  width: 72px;
+  background: #e5c4a6a8;
+  transform: rotate(-5deg);
+}
+.connecting-card h2 {
+  font-size: clamp(19px, 3.2vh, 24px);
+  margin: 0 0 10px;
+}
+.connecting-card p {
+  font-size: var(--fs-sm);
+  line-height: 1.75;
+  color: var(--muted);
+  margin: 0;
+}
+.connecting-detail-toggle {
+  display: inline-block;
+  margin-top: 14px;
+  padding: 4px 10px;
+  font-size: 12px;
+  color: var(--muted);
+  background: none;
+  border: 1px dashed var(--line);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition:
+    color 0.15s ease,
+    border-color 0.15s ease;
+}
+.connecting-detail-toggle:hover {
+  color: var(--ink);
+  border-color: var(--line-strong);
+}
+.connecting-detail {
+  margin: 8px 0 0;
+  padding: 10px 12px;
+  background: var(--canvas);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+.connecting-retry {
+  margin-top: 18px;
+  width: 100%;
+}
+@media (max-width: 960px) {
+  .connecting-screen {
+    padding: var(--sp-5) var(--sp-4);
+  }
+  .connecting-spread {
+    grid-template-columns: 1fr;
+    gap: 25px;
+    margin: 28px auto;
+    max-width: 520px;
+  }
+  .connecting-left {
+    text-align: center;
+  }
+  .connecting-title {
+    font-size: 26px;
+  }
+  .connecting-subtitle {
+    max-width: none;
+  }
+  .connecting-card {
+    transform: none;
+  }
+  .connecting-card > * {
+    transform: none;
+  }
+}

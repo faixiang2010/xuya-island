@@ -25,8 +25,9 @@ interface SavedProgress {
   drafts: GameDraft[]
 }
 function knownLevel(record: Record<string, unknown>) {
-  if (record.gameId !== 'keyboard' && record.gameId !== 'pinyin') return
-  return typingGames[record.gameId].levels.find(
+  const gameId = record.gameId
+  if (typeof gameId !== 'string' || !(gameId in typingGames)) return
+  return typingGames[gameId as GameId].levels.find(
     (level) => level.id === record.levelId && level.version === record.levelVersion,
   )
 }

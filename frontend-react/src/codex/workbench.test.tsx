@@ -97,7 +97,7 @@ function workspace(path = '/codex') {
   )
 }
 
-describe('Codex 桌面工作台', () => {
+describe('码穹 桌面工作台', () => {
   it('恢复工作区期间终端入口与快捷键不创建新会话', async () => {
     const newConversation = vi.fn(async () => {
       throw new Error('不应创建会话')
@@ -197,7 +197,7 @@ describe('Codex 桌面工作台', () => {
     })
     workspace('/codex')
     fireEvent.click(
-      within(screen.getByRole('complementary', { name: 'Codex 项目与聊天' })).getByRole('button', {
+      within(screen.getByRole('complementary', { name: '码穹 项目与聊天' })).getByRole('button', {
         name: '新聊天',
       }),
     )
@@ -236,7 +236,7 @@ describe('Codex 桌面工作台', () => {
       ].map((path, index) => ({
         id: String(index),
         parentId: null,
-        title: path === '/codex' ? 'codex' : path,
+        title: path === '/codex' ? '码穹' : path,
         path,
         permission: '',
         kind: 'menu',
@@ -254,7 +254,7 @@ describe('Codex 桌面工作台', () => {
     await waitFor(() => expect(mocks.classroom).toHaveBeenCalledTimes(1))
     const nav = screen.getByRole('navigation', { name: '主导航' })
     expect(nav.querySelectorAll('a')).toHaveLength(7)
-    expect(screen.getByRole('link', { name: 'codex' }).getAttribute('href')).toBe('/codex')
+    expect(screen.getByRole('link', { name: '码穹' }).getAttribute('href')).toBe('/codex')
     expect(screen.queryByRole('button', { name: /二级菜单/ })).toBeNull()
     island.unmount()
     mocks.classroom.mockClear()

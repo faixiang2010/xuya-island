@@ -599,6 +599,39 @@ public class WorkspaceService {
         return store.root().resolve("workspace-data").resolve(id);
     }
 
+    /** 删除会话隔离工作区：先 best-effort 移除 Git worktree 注册，再递归删除目录与元数据。 */
+    public synchronized void deleteWorkspace(String id) throws IOException {
+        WorkspaceInfo workspace = store.read("workspaces", id, WorkspaceInfo.class);
+        if (workspace == null) return;
+        if (workspace.mode().equals("worktree") && !workspace.projectId().isBlank()) {
+            ProjectInfo project = store.read("projects", workspace.projectId(), ProjectInfo.class);
+            if (project != null) {
+                try {
+                    ProcessCommands.run(
+                            Path.of(project.path()),
+                            List.of("git", "worktree", "remove", "--force", workspace.path()),
+                            COMMAND_TIMEOUT);
+                } catch (RuntimeException ignored) {
+                    // 目录随后仍会删除；残留的 worktree 注册由 git worktree prune 兜底。
+                }
+            }
+        }
+        deleteRecursively(area(id));
+        store.delete("workspaces", id);
+        store.delete("baseline-manifests", id);
+        store.delete("source-manifests", id);
+        LOG.info("Workspace removed workspace={}", id);
+    }
+
+    private static void deleteRecursively(Path root) throws IOException {
+        if (!Files.exists(root)) return;
+        try (var paths = Files.walk(root)) {
+            for (Path path : paths.sorted(Comparator.reverseOrder()).toList()) {
+                Files.deleteIfExists(path);
+            }
+        }
+    }
+
     @SuppressWarnings("unchecked")
     private Map<String, String> manifest(String bucket, String id) throws IOException {
         return store.read(bucket, id, Map.class);

@@ -3,11 +3,12 @@ import { useEffect, useMemo, useRef, useState, type ChangeEvent } from 'react'
 import { Link, useParams, useSearchParams } from 'react-router-dom'
 import CodeEditor from '../components/CodeEditor'
 import StoryPreview from '../components/StoryPreview'
-import LessonActivity from '../components/LessonActivity'
-import LearningQuest from '../components/LearningQuest'
 import LearningAtmosphere from '../components/LearningAtmosphere'
 import LearningMedia from '../components/LearningMedia'
+import SuccessBurst from '../components/SuccessBurst'
+import Xiaoqi from '../motivation/Xiaoqi'
 import { request } from '../api/client'
+import { useFamily } from '../account/AuthGate'
 import { useClassroomStore } from '../stores/classroom'
 import { usePythonRunner } from '../runner/usePythonRunner'
 import type { Progress, TutorStatus, VirtualFile } from '../types'
@@ -16,6 +17,12 @@ import { LearningRecorder, type LearningReceipt } from '../growth/outbox'
 export default function ClassroomView() {
   const { lessonId } = useParams()
   const [searchParams] = useSearchParams()
+  const family = useFamily()
+  // 只有能进家庭管理的人才给直达入口；孩子的账户点进去只会被拒。
+  const canManageRuntime =
+    family.user?.permissions.some(
+      (permission) => permission === '*' || permission === 'system:manage',
+    ) ?? false
   const lesson = useClassroomStore((s) => s.lesson)
   const draft = useClassroomStore((s) => s.draft)
   const progress = useClassroomStore((s) => s.progress)
@@ -31,6 +38,9 @@ export default function ClassroomView() {
   const save = useClassroomStore((s) => s.save)
   const frameRef = useRef<HTMLIFrameElement>(null)
   const [hintIndex, setHintIndex] = useState(-1)
+  const [hintOpen, setHintOpen] = useState(false)
+  const [burst, setBurst] = useState(0)
+  const [lessonDone, setLessonDone] = useState(false)
   const [referenceViewed, setReferenceViewed] = useState(false)
   const [inputMode, setInputMode] = useState<'live' | 'preset'>('live')
   const [presetText, setPresetText] = useState('')
@@ -66,6 +76,7 @@ export default function ClassroomView() {
   const executedVersionRef = useRef('')
   const runner = usePythonRunner(frameRef, async (result, code) => {
     setExecutedCode(code)
+    if (result.status === 'success') setBurst((value) => value + 1)
     try {
       await request('/attempts', {
         method: 'POST',
@@ -87,8 +98,11 @@ export default function ClassroomView() {
       setExecutionNote('运行成功返回；本次记录未能保存，可以继续创作。')
     }
   })
-  const { state, result, failure, preparation, frameUrl, liveOutput } = runner
+  const { state, result, failure, preparation, frameUrl, liveOutput, needsSetup } = runner
   const busy = useMemo(() => state === 'running' || state === 'waiting', [state])
+  const consoleVisible = Boolean(
+    result || liveOutput || state === 'waiting' || executionNote || checks.length || checkMessage,
+  )
   const currentProgress = useMemo(
     () =>
       progress.find(
@@ -104,15 +118,12 @@ export default function ClassroomView() {
       })),
     [lesson, lessons],
   )
-  // 四个小步的真实状态：运行过、改过并再次运行、保存过作品、写下过自己的发现。
-  const questProgress = useMemo(
-    () => [
-      Boolean(executedCode),
-      Boolean(executedCode) && executedCode !== (lesson?.starterCode ?? ''),
-      Boolean(draft.workId),
-      Boolean(currentProgress?.reflection?.trim()),
-    ],
-    [executedCode, lesson?.starterCode, draft.workId, currentProgress?.reflection],
+  const nextLesson = useMemo(
+    () =>
+      lesson?.number
+        ? lessons.find((item) => item.number === lesson.number + 1 && item.track === 'core')
+        : undefined,
+    [lesson, lessons],
   )
   const errorHint = useMemo(() => {
     const detail = result?.error ?? ''
@@ -135,6 +146,7 @@ export default function ClassroomView() {
       )
       setHintIndex((current?.hintLevel ?? 0) - 1)
       setReferenceViewed(current?.referenceViewed ?? false)
+      setLessonDone(current?.status === 'completed')
       setPresetText(store.lesson?.exampleInput.join('\n') ?? '')
     } catch (error) {
       useClassroomStore.setState({
@@ -198,9 +210,11 @@ export default function ClassroomView() {
         ],
       })
       if (aliveRef.current) setLearningMessage('学习记录已保存')
+      return true
     } catch (error) {
       if (aliveRef.current)
         setLearningMessage(error instanceof Error ? error.message : '学习记录未保存')
+      return false
     }
   }
   function openHint() {
@@ -208,6 +222,22 @@ export default function ClassroomView() {
     hintIndexRef.current = hintIndexRef.current + 1
     setHintIndex(hintIndexRef.current)
     void saveProgress()
+  }
+  function showHint() {
+    setHintOpen(true)
+    if (hintIndexRef.current < 0) openHint()
+  }
+  async function completeLesson() {
+    if (lessonDone || !lesson) return
+    const saved = await saveProgress({
+      status: 'completed',
+      reflection: currentProgress?.reflection ?? '',
+      parentObservation: currentProgress?.parentObservation ?? '',
+    })
+    if (saved) {
+      setLessonDone(true)
+      setBurst((value) => value + 1)
+    }
   }
   function viewReference() {
     learningRecorder.current?.event('help', { source: 'reference' })
@@ -300,7 +330,10 @@ export default function ClassroomView() {
         return
       }
       const passed = records.every((item) => item.passed)
-      if (passed) learningRecorder.current?.finish()
+      if (passed) {
+        learningRecorder.current?.finish()
+        setBurst((value) => value + 1)
+      }
       setCheckMessage(
         passed
           ? '检查通过！再试自己的输入，并解释你的方法。'
@@ -458,48 +491,31 @@ export default function ClassroomView() {
               <h1>{lesson.title}</h1>
               <p>{lesson.subtitle}</p>
             </div>
-            <span className="pill">
-              {lesson.number ? `活动 ${String(lesson.number).padStart(2, '0')}` : '自由探索'} ·
-              按自己的节奏来
-            </span>
-          </div>
-          <LearningAtmosphere compact />
-          <div className="classroom-intro">
-            <section className="mission-card">
-              <span>✧</span>
-              <div>
-                <strong>今天的小任务</strong>
-                <p>{lesson.mission}</p>
-              </div>
-            </section>
-            <div className="classroom-quest">
-              <LearningQuest
-                prediction={lesson.prediction}
-                change={lesson.exercises[0]?.instruction ?? lesson.mission}
-                creation={lesson.creation}
-                firstProgram={lesson.number === 1}
-                editorId="classroom-editor"
-                progress={questProgress}
-              />
+            <div className="heading-tools">
+              <span className="pill">
+                {lesson.number ? `活动 ${String(lesson.number).padStart(2, '0')}` : '自由探索'} ·
+                按自己的节奏来
+              </span>
+              <LearningAtmosphere />
             </div>
-            {lesson.number === 1 && (
-              <section className="first-program-guide" aria-label="第一次写程序">
-                <p>中文故事写在引号里面；代码的引号和括号用英文输入。打错可以退格修改，没关系。</p>
-                <Link className="back-link" to="/games">
-                  还不熟悉输入？先去游戏中心练一练 →
-                </Link>
-              </section>
-            )}
           </div>
-          {prerequisites.length > 0 && (
-            <p className="muted">
-              如果需要，可以先回顾{' '}
-              {prerequisites.map((item) => (
-                <Link key={item.id} to={`/classroom/${item.id}`}>
-                  {item.title}
-                </Link>
-              ))}{' '}
-              。这只是建议，课程均可自由选择。
+          <section className="lesson-task">
+            <div>
+              <span>今天的任务</span>
+              <p>{lesson.mission}</p>
+            </div>
+            {lessonDone && <Xiaoqi mood="cheer" size={52} />}
+            <button
+              className="button secondary"
+              disabled={lessonDone || busy || checking || saving}
+              onClick={() => void completeLesson()}
+            >
+              {lessonDone ? '已完成 ✓' : '完成这一课'}
+            </button>
+          </section>
+          {lesson.number === 1 && (
+            <p className="lesson-first-link">
+              第一次写代码？<Link to="/games">先去游戏中心练 3 分钟 →</Link>
             </p>
           )}
           <div className="classroom-grid">
@@ -522,7 +538,9 @@ export default function ClassroomView() {
                     {state === 'loading'
                       ? '准备 Python…'
                       : state === 'failed'
-                        ? '暂不可运行'
+                        ? needsSetup
+                          ? '等大人准备'
+                          : '暂不可运行'
                         : busy
                           ? '运行中…'
                           : '运行'}
@@ -532,35 +550,56 @@ export default function ClassroomView() {
                       ■ 停止
                     </button>
                   )}
-                  {state === 'failed' && (
+                  <button
+                    className="button secondary"
+                    disabled={state !== 'ready' || checking}
+                    onClick={() => void checkExercise()}
+                  >
+                    {checking ? '检查中…' : '检查'}
+                  </button>
+                  <button className="button ghost" disabled={busy || checking} onClick={showHint}>
+                    提示
+                  </button>
+                  {state === 'failed' && !needsSetup && (
                     <button className="button" onClick={() => runner.retry()}>
                       重新准备
                     </button>
                   )}
-                  {state === 'failed' && (
+                  {state === 'failed' && !needsSetup && (
                     <button className="button" disabled={!cacheAvailable} onClick={refreshPage}>
                       刷新页面
                     </button>
                   )}
                 </div>
-                <button
-                  className="text-button"
-                  disabled={busy || checking}
-                  onClick={() => setResetConfirm((value) => !value)}
-                >
-                  重新看示例
-                </button>
               </div>
               {state === 'loading' && (
                 <p className="inline-notice" role="status">
                   {preparation}
                 </p>
               )}
-              {failure && (
-                <div className="inline-notice" role="alert">
-                  {failure}
-                  {!cacheAvailable && <p>浏览器草稿缓存不可用，请先保存作品或复制代码再刷新。</p>}
+              {needsSetup ? (
+                <div className="runtime-setup">
+                  <strong>先请大人来准备小岛</strong>
+                  <p>{failure}</p>
+                  <p>你的代码已经留在这里了，准备好之后就能马上运行。</p>
+                  <div className="runtime-setup-actions">
+                    {canManageRuntime && (
+                      <Link className="button secondary" to="/admin?section=running">
+                        现在去准备 →
+                      </Link>
+                    )}
+                    <button className="text-button" onClick={() => void runner.retry()}>
+                      再试一次
+                    </button>
+                  </div>
                 </div>
+              ) : (
+                failure && (
+                  <div className="inline-notice" role="alert">
+                    {failure}
+                    {!cacheAvailable && <p>浏览器草稿缓存不可用，请先保存作品或复制代码再刷新。</p>}
+                  </div>
+                )
               )}
               {resetConfirm && (
                 <div className="inline-notice">
@@ -573,193 +612,274 @@ export default function ClassroomView() {
                   </button>
                 </div>
               )}
-              <div className="console">
-                <details className="input-settings">
-                  <summary>调试选项：输入方式与预设回答</summary>
-                  <label>
-                    输入方式
-                    <select
-                      value={inputMode}
-                      onChange={(event) => setInputMode(event.target.value as 'live' | 'preset')}
-                      aria-label="输入方式"
-                      disabled={busy || checking}
+              {hintOpen && (
+                <div className="lesson-hint">
+                  <div className="lesson-hint-head">
+                    <strong>提示</strong>
+                    <button
+                      className="text-button"
+                      disabled={hintIndex >= lesson.hints.length - 1}
+                      onClick={openHint}
                     >
-                      <option value="live">实时问答</option>
-                      <option value="preset">预设输入</option>
-                    </select>
-                  </label>
-                  {inputMode === 'preset' && (
-                    <label>
-                      预设输入（每行一次回答）
-                      <textarea
-                        value={presetText}
-                        onChange={(event) => setPresetText(event.target.value)}
-                        aria-label="预设输入"
-                        rows={3}
-                        placeholder="例如第一行填笔名，第二行填章节数；每次 input() 依次读取一行。"
-                        disabled={busy || checking}
-                      />
-                      <small>
-                        填写后点击“运行”。每次 input()
-                        自动读取一行回答，结果显示在下方“代码说了什么”。 只用 print()
-                        的代码不会读取预设回答；回答用完后，再次输入会遇到 EOF。
-                      </small>
-                      {!lesson.exampleInput.length && (
-                        <small>这课示例无需输入；可在第 5 课“程序采访作者”体验预设回答。</small>
-                      )}
-                    </label>
-                  )}
-                </details>
-                <div className="console-heading">
-                  <strong>代码说了什么</strong>
-                  <span>
-                    {result
-                      ? {
-                          success: '运行完成',
-                          error: '发现一个小问题',
-                          stopped: '已停止',
-                          timeout: '已超时',
-                        }[result.status]
-                      : '等你点击运行'}
-                  </span>
+                      {hintIndex < lesson.hints.length - 1 ? '再给一点' : '没有更多了'}
+                    </button>
+                    <button className="text-button" onClick={() => setHintOpen(false)}>
+                      收起
+                    </button>
+                  </div>
+                  {lesson.hints.slice(0, hintIndex + 1).map((hint, index) => (
+                    <p key={index}>
+                      <span>线索 {index + 1}</span>
+                      {hint}
+                    </p>
+                  ))}
+                  <details
+                    className="lesson-ai"
+                    onToggle={(event) => {
+                      if ((event.target as HTMLDetailsElement).open) viewReference()
+                    }}
+                  >
+                    <summary>看参考实现</summary>
+                    {lesson.exercises.map((exercise) => (
+                      <pre key={exercise.id} className="reference-code">
+                        {exercise.referenceCode}
+                      </pre>
+                    ))}
+                  </details>
+                  <details className="lesson-ai">
+                    <summary>问问小奇</summary>
+                    {!tutor?.configured ? (
+                      <p className="muted">让家长配置模型后，就能向小奇提问。</p>
+                    ) : (
+                      <form
+                        onSubmit={(event) => {
+                          event.preventDefault()
+                          void ask()
+                        }}
+                      >
+                        <textarea
+                          value={question}
+                          onChange={(event) => setQuestion(event.target.value)}
+                          aria-label="问问小奇"
+                          maxLength={2000}
+                          rows={2}
+                          placeholder="为什么文字要放在引号里？"
+                        />
+                        <button className="button secondary" disabled={asking || !question.trim()}>
+                          {asking ? '小奇正在想…' : '问问小奇'}
+                        </button>
+                      </form>
+                    )}
+                    {answer && (
+                      <p className="ai-answer" role="status">
+                        {answer}
+                      </p>
+                    )}
+                  </details>
                 </div>
-                {liveOutput ? (
-                  <pre data-testid="console-output">{liveOutput}</pre>
-                ) : (
-                  !result && <p className="muted">先猜一猜：屏幕上会出现什么？</p>
-                )}
-                {executionNote && !result && (
-                  <p className="inline-notice" role="alert">
-                    {executionNote}
-                  </p>
-                )}
-                {result?.error && result.status === 'error' ? (
-                  <>
-                    <p className="error-output">{errorHint}</p>
-                    <details className="error-details">
-                      <summary>查看 Python 的完整提示</summary>
+              )}
+              {consoleVisible && (
+                <div className="console">
+                  <div className="console-heading">
+                    <strong>代码说了什么</strong>
+                    <span>
+                      {result
+                        ? {
+                            success: '运行完成',
+                            error: '发现一个小问题',
+                            stopped: '已停止',
+                            timeout: '已超时',
+                          }[result.status]
+                        : '等你点击运行'}
+                    </span>
+                  </div>
+                  {liveOutput ? (
+                    <pre data-testid="console-output">{liveOutput}</pre>
+                  ) : (
+                    !result && <p className="muted">先猜一猜：屏幕上会出现什么？</p>
+                  )}
+                  {executionNote && !result && (
+                    <p className="inline-notice" role="alert">
+                      {executionNote}
+                    </p>
+                  )}
+                  {result?.error && result.status === 'error' ? (
+                    <>
+                      <p className="error-output">{errorHint}</p>
+                      <details className="error-details">
+                        <summary>查看 Python 的完整提示</summary>
+                        <pre className="error-output" data-testid="console-error">
+                          {result.error}
+                        </pre>
+                      </details>
+                    </>
+                  ) : (
+                    result?.error && (
                       <pre className="error-output" data-testid="console-error">
                         {result.error}
                       </pre>
-                    </details>
-                  </>
-                ) : (
-                  result?.error && (
-                    <pre className="error-output" data-testid="console-error">
-                      {result.error}
-                    </pre>
-                  )
-                )}
-                {result?.outputTruncated && (
-                  <p className="muted">输出较多，只显示前 20,000 个字符。</p>
-                )}
-                {result && (
-                  <small>
-                    {result.durationMs} ms · {executionNote}
-                  </small>
-                )}
-                {state === 'waiting' && (
-                  <form
-                    className="input-form"
-                    onSubmit={(event) => {
-                      event.preventDefault()
-                      answerInput()
-                    }}
-                  >
-                    <label>
-                      程序正在等待回答
-                      <input
-                        value={inputText}
-                        onChange={(event) => setInputText(event.target.value)}
-                        aria-label="回答程序"
-                        maxLength={4096}
-                        disabled={inputSending}
-                        autoFocus
-                      />
-                    </label>
-                    <button className="button primary" disabled={inputSending}>
-                      发送回答
-                    </button>
-                    <button
-                      className="text-button"
-                      type="button"
-                      disabled={inputSending}
-                      onClick={() => answerInput(true)}
+                    )
+                  )}
+                  {result?.outputTruncated && (
+                    <p className="muted">输出较多，只显示前 20,000 个字符。</p>
+                  )}
+                  {result && (
+                    <small>
+                      {result.durationMs} ms · {executionNote}
+                    </small>
+                  )}
+                  {state === 'waiting' && (
+                    <form
+                      className="input-form"
+                      onSubmit={(event) => {
+                        event.preventDefault()
+                        answerInput()
+                      }}
                     >
-                      结束输入（EOF）
-                    </button>
-                    <small>可以发送空回答；等待输入时暂停执行计时。</small>
-                  </form>
-                )}
-                <button
-                  className="button secondary"
-                  disabled={state !== 'ready' || checking}
-                  onClick={() => void checkExercise()}
-                >
-                  {checking ? '正在检查…' : '检查基础练习'}
-                </button>
-                <p role="status">{checkMessage}</p>
-                {runner.notice && (
-                  <p className="inline-notice" role="status">
-                    {runner.notice}
-                  </p>
-                )}
-                {growthMessage && <p role="status">{growthMessage}</p>}
-                {growthReceipt && (
-                  <p>
-                    这次检查留下了 {growthReceipt.summary.completed} 个用例证据，成长积分 +
-                    {growthReceipt.awarded}。通过检查不等于已经掌握，可以再解释自己的方法。
-                  </p>
-                )}
-                {checks.map((item) => (
-                  <details key={item.name}>
-                    <summary>
-                      {item.name} · {item.passed ? '通过' : '需要再看'}
-                    </summary>
-                    <pre>
-                      {item.output}
-                      {item.error}
-                    </pre>
-                  </details>
-                ))}
-                <details className="virtual-files">
-                  <summary>课堂文件：导入与导出</summary>
-                  <p>仅使用 Python 虚拟工作目录。每次运行重建；需要保留文件时，请主动导出。</p>
-                  <input
-                    type="file"
-                    aria-label="导入课堂文件"
-                    multiple
-                    accept=".json,.txt,.csv,.md"
-                    disabled={busy || checking}
-                    onChange={importFiles}
-                  />
-                  {importedFiles.map((file) => (
-                    <p key={file.name}>
-                      下次导入：{file.name}{' '}
+                      <label>
+                        程序正在等待回答
+                        <input
+                          value={inputText}
+                          onChange={(event) => setInputText(event.target.value)}
+                          aria-label="回答程序"
+                          maxLength={4096}
+                          disabled={inputSending}
+                          autoFocus
+                        />
+                      </label>
+                      <button className="button primary" disabled={inputSending}>
+                        发送回答
+                      </button>
                       <button
                         className="text-button"
-                        onClick={() =>
-                          setImportedFiles(importedFiles.filter((item) => item.name !== file.name))
-                        }
+                        type="button"
+                        disabled={inputSending}
+                        onClick={() => answerInput(true)}
                       >
-                        移除
+                        结束输入（EOF）
                       </button>
+                      <small>可以发送空回答；等待输入时暂停执行计时。</small>
+                    </form>
+                  )}
+                  <p role="status">{checkMessage}</p>
+                  {runner.notice && (
+                    <p className="inline-notice" role="status">
+                      {runner.notice}
                     </p>
+                  )}
+                  {growthMessage && <p role="status">{growthMessage}</p>}
+                  {growthReceipt && (
+                    <p>
+                      这次检查留下了 {growthReceipt.summary.completed} 个用例证据，成长积分 +
+                      {growthReceipt.awarded}。
+                    </p>
+                  )}
+                  {checks.map((item) => (
+                    <details key={item.name}>
+                      <summary>
+                        {item.name} · {item.passed ? '通过' : '需要再看'}
+                      </summary>
+                      <pre>
+                        {item.output}
+                        {item.error}
+                      </pre>
+                    </details>
                   ))}
-                  {result?.files?.map((file) => (
-                    <button key={file.name} className="button" onClick={() => exportFile(file)}>
-                      导出 {file.name}
-                    </button>
-                  ))}
-                </details>
-              </div>
+                </div>
+              )}
+              <details className="lesson-more">
+                <summary>更多工具</summary>
+                <div className="lesson-more-body">
+                  <details className="input-settings">
+                    <summary>调试：输入方式与预设回答</summary>
+                    <label>
+                      输入方式
+                      <select
+                        value={inputMode}
+                        onChange={(event) => setInputMode(event.target.value as 'live' | 'preset')}
+                        aria-label="输入方式"
+                        disabled={busy || checking}
+                      >
+                        <option value="live">实时问答</option>
+                        <option value="preset">预设输入</option>
+                      </select>
+                    </label>
+                    {inputMode === 'preset' && (
+                      <label>
+                        预设输入（每行一次回答）
+                        <textarea
+                          value={presetText}
+                          onChange={(event) => setPresetText(event.target.value)}
+                          aria-label="预设输入"
+                          rows={3}
+                          placeholder="例如第一行填笔名，第二行填章节数。"
+                          disabled={busy || checking}
+                        />
+                        <small>填写后点击“运行”。每行一次回答。</small>
+                      </label>
+                    )}
+                  </details>
+                  <details className="virtual-files">
+                    <summary>课堂文件：导入与导出</summary>
+                    <p>仅使用 Python 虚拟工作目录。每次运行重建；需要保留文件时，请主动导出。</p>
+                    <input
+                      type="file"
+                      aria-label="导入课堂文件"
+                      multiple
+                      accept=".json,.txt,.csv,.md"
+                      disabled={busy || checking}
+                      onChange={importFiles}
+                    />
+                    {importedFiles.map((file) => (
+                      <p key={file.name}>
+                        下次导入：{file.name}{' '}
+                        <button
+                          className="text-button"
+                          onClick={() =>
+                            setImportedFiles(
+                              importedFiles.filter((item) => item.name !== file.name),
+                            )
+                          }
+                        >
+                          移除
+                        </button>
+                      </p>
+                    ))}
+                    {result?.files?.map((file) => (
+                      <button key={file.name} className="button" onClick={() => exportFile(file)}>
+                        导出 {file.name}
+                      </button>
+                    ))}
+                  </details>
+                  <button
+                    className="text-button"
+                    disabled={busy || checking}
+                    onClick={() => setResetConfirm((value) => !value)}
+                  >
+                    重新看示例
+                  </button>
+                  {prerequisites.length > 0 && (
+                    <p className="muted">
+                      可以先回顾{' '}
+                      {prerequisites.map((item) => (
+                        <Link key={item.id} to={`/classroom/${item.id}`}>
+                          {item.title}
+                        </Link>
+                      ))}
+                      。
+                    </p>
+                  )}
+                  {lesson.number === 1 && <LearningMedia kind="program" />}
+                </div>
+              </details>
             </section>
             <section className="creation-panel panel">
               <div className="panel-heading">
-                <span>✦ 我的创作</span>
+                <span>✦ 作品预览</span>
                 <span className="muted">运行后看看变化</span>
               </div>
               <div className="preview-wrap">
+                <SuccessBurst burstKey={burst} />
                 <StoryPreview result={result} type={lesson.previewType} theme={theme} />
               </div>
               {lesson.previewType === 'cover' && (
@@ -809,93 +929,22 @@ export default function ClassroomView() {
                 {!cacheAvailable && (
                   <p className="error-output">浏览器缓存不可用，请及时保存或复制代码。</p>
                 )}
-              </div>
-            </section>
-            <aside className="guide-panel">
-              <div className="guide-header">
-                <span className="qi-avatar">✦</span>
-                <div>
-                  <h2>小奇陪你想</h2>
-                  <small>给一点提示，留一点想象</small>
-                </div>
-              </div>
-              <div className="guide-message">
-                先看看代码，再猜一猜。
-                <br />
-                如果卡住了，我们就一起找一个小线索。
-              </div>
-              <h3>今天认识这些</h3>
-              <ul className="goals">
-                {lesson.goals.map((goal) => (
-                  <li key={goal}>{goal}</li>
-                ))}
-              </ul>
-              <button
-                className="button hint-button full-width"
-                disabled={hintIndex >= lesson.hints.length - 1}
-                onClick={openHint}
-              >
-                {hintIndex < 0
-                  ? '给我一个小提示'
-                  : hintIndex < lesson.hints.length - 1
-                    ? '再给一点线索'
-                    : '线索已经都打开啦'}
-              </button>
-              {lesson.hints.slice(0, hintIndex + 1).map((hint, index) => (
-                <div key={index} className="hint-card">
-                  <span>线索 {index + 1}</span>
-                  <p>{hint}</p>
-                </div>
-              ))}
-              <div className="ai-section">
-                <span className="pill small">
-                  {tutor?.configured ? 'AI 已配置' : '内置提示可用'}
-                </span>
-                {!tutor?.configured ? (
-                  <p className="muted">让家长配置模型后，就能向小奇提问。现在也可以完成整节课。</p>
-                ) : (
-                  <form
-                    onSubmit={(event) => {
-                      event.preventDefault()
-                      void ask()
-                    }}
-                  >
-                    <label htmlFor="question">有什么想问小奇的？</label>
-                    <textarea
-                      id="question"
-                      value={question}
-                      onChange={(event) => setQuestion(event.target.value)}
-                      maxLength={2000}
-                      rows={3}
-                      placeholder="为什么文字要放在引号里？"
-                    />
-                    <button
-                      className="button secondary full-width"
-                      disabled={asking || !question.trim()}
-                    >
-                      {asking ? '小奇正在想…' : '问问小奇'}
-                    </button>
-                    <small>提问会把当前代码和最近运行结果发给家长配置的模型服务。</small>
-                  </form>
-                )}
-                {answer && (
-                  <p className="ai-answer" role="status">
-                    {answer}
+                {lessonDone && (
+                  <p className="lesson-done" role="status">
+                    这一课完成了！
+                    {nextLesson ? (
+                      <Link to={`/classroom/${nextLesson.id}`}>下一课：{nextLesson.title} →</Link>
+                    ) : (
+                      <Link to="/studio">去创作室 →</Link>
+                    )}
                   </p>
                 )}
               </div>
-            </aside>
+            </section>
           </div>
-          {lesson.number === 1 && <LearningMedia kind="program" />}
-          <LessonActivity
-            lesson={lesson}
-            current={currentProgress}
-            hintLevel={hintIndex + 1}
-            referenceViewed={referenceViewed}
-            onSave={saveProgress}
-            onReference={viewReference}
-          />
-          <p role="status">{learningMessage}</p>
+          <p className="lesson-status" role="status">
+            {learningMessage}
+          </p>
         </>
       ) : (
         <div className="loading-card">

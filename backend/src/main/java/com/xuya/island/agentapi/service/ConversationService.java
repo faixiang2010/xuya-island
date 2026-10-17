@@ -20,6 +20,11 @@ import org.springframework.transaction.support.TransactionTemplate;
 public class ConversationService {
     private static final org.slf4j.Logger LOG =
             org.slf4j.LoggerFactory.getLogger(ConversationService.class);
+
+    /** 需要结合待处理交互才能完成投影的原生事件类型。 */
+    private static final List<String> PENDING_EVENT_TYPES =
+            List.of("interaction/requested", "turn/suspended");
+
     private final ConversationRepository repository;
     private final WorkspaceService workspaces;
     private final AgentRuntimeAdapter runtime;
@@ -461,13 +466,14 @@ public class ConversationService {
                                 row.id(), task.turnId(), task.executionRunId(), task.status());
                 }
             }
-            for (var event : runtime.events(specification, repository.projected(id))) {
+            for (var event : projectableEvents(id, specification)) {
                 transactions.executeWithoutResult(
                         status -> {
-                            // 逐事件读取最新 pending：原生代理异步挂起时，挂起事件与 pending 登记
-                            // 之间存在微小窗口，预读快照会让 turn/suspended 丢掉 interrupt outcome，
-                            // 导致用户看不到提问。pending() 是内存映射读取，逐事件读取开销可忽略。
-                            projector.project(id, event, runtime.pending(specification));
+                            // 只有需要挂起结果的投影才读取最新 pending：原生代理异步挂起时，
+                            // 挂起事件与 pending 登记之间存在微小窗口，预读快照会让 turn/suspended
+                            // 丢掉 interrupt outcome。其余事件逐条读取会为每条事件重开一次原生日志
+                            // 连接，代价极高，会把整个会话卡在锁上。
+                            projector.project(id, event, pendingFor(specification, event));
                             repository.projected(id, event.seq());
                         });
             }
@@ -497,6 +503,31 @@ public class ConversationService {
                     projector.projectChild(id, taskId, child);
             }
         }
+    }
+
+    /** 读取待投影的原生事件；持久化游标超前已提交前缀时一次性拉回，避免反复失败。 */
+    private List<AgentRuntimeAdapter.NativeEvent> projectableEvents(
+            String id, AgentRuntimeAdapter.RuntimeSpec specification) {
+        long projected = repository.projected(id);
+        try {
+            return runtime.events(specification, projected);
+        } catch (AgentRuntimeAdapter.NativeCursorUnavailableException exception) {
+            repository.projected(id, exception.floor());
+            LOG.warn(
+                    "Native projection cursor reset session={} from={} to={}",
+                    id,
+                    projected,
+                    exception.floor());
+            return List.of();
+        }
+    }
+
+    /** 只有挂起交互相关的投影才需要最新待处理交互，其余投影不必打开原生日志。 */
+    private List<AgentRuntimeAdapter.NativeInteraction> pendingFor(
+            AgentRuntimeAdapter.RuntimeSpec specification, AgentRuntimeAdapter.NativeEvent event) {
+        return PENDING_EVENT_TYPES.contains(event.type())
+                ? runtime.pending(specification)
+                : List.of();
     }
 
     public AgentApi.ConversationSnapshot snapshot(String id) {
@@ -689,6 +720,33 @@ public class ConversationService {
                     changes.getOrDefault("archived", current.archived()),
                     changes.getOrDefault("pinned", current.pinned()));
             return get(id);
+        }
+    }
+
+    /** 彻底删除会话：先校验无活动执行，再删除账本与隔离工作区；不可恢复。 */
+    public void delete(String id) {
+        synchronized (lock(id)) {
+            AgentApi.Conversation current = get(id);
+            if (repository.runs(id).stream()
+                    .anyMatch(
+                            row ->
+                                    List.of("running", "queued", "suspended")
+                                            .contains(row.status())))
+                throw ApiFailure.conflict("请先结束或中断当前任务，再删除聊天");
+            String workspaceId = current.workspaceId();
+            transactions.executeWithoutResult(status -> repository.delete(id));
+            if (!workspaceId.isBlank()) {
+                try {
+                    workspaces.deleteWorkspace(workspaceId);
+                } catch (IOException | RuntimeException exception) {
+                    LOG.warn(
+                            "会话工作目录清理失败 session={} workspace={} errorType={}",
+                            id,
+                            workspaceId,
+                            exception.getClass().getSimpleName());
+                }
+            }
+            LOG.info("Conversation deleted session={} workspace={}", id, workspaceId);
         }
     }
 

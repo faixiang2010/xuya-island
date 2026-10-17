@@ -1,6 +1,7 @@
 .page.page:global(.page) {
   max-width: none;
-  min-height: 100vh;
+  /* 扣掉顶栏高度（66px）：内容刚好一屏时不该再冒出滚动条。 */
+  min-height: calc(100vh - 66px);
   padding: 30px clamp(24px, 3vw, 48px) 28px;
   color: var(--ink);
   margin: 0;
@@ -25,11 +26,6 @@
 .heading p {
   color: var(--muted);
   font-size: 15px;
-}
-.settings {
-  position: relative;
-  z-index: 5;
-  flex-shrink: 0;
 }
 /* 八站总进度：只占标题行原有高度，不影响地图与任务卡布局。 */
 .tools {
@@ -67,42 +63,6 @@
   border-radius: inherit;
   background: var(--brand);
   transition: width var(--dur-2) var(--ease-out);
-}
-.settings > summary {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  list-style: none;
-  padding: 10px;
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  color: var(--muted);
-  font-size: var(--fs-sm);
-  min-width: 44px;
-  min-height: 44px;
-  background: var(--canvas);
-}
-.settings > summary span {
-  display: none;
-}
-.settings > summary::-webkit-details-marker {
-  display: none;
-}
-.settings > summary:hover {
-  background: var(--accent-soft);
-}
-.settings > summary:focus-visible {
-  outline: 3px solid var(--accent-ink);
-  outline-offset: 3px;
-}
-.settings > section {
-  position: absolute;
-  width: min(550px, 75vw);
-  right: 0;
-  top: calc(100% + 8px);
-  background: var(--surface);
-  margin: 0;
-  box-shadow: var(--shadow-2);
 }
 :global(.app-shell[data-learning-theme][data-learning-surface='notebook'] .main-shell) {
   background: var(--canvas);
@@ -155,10 +115,7 @@
   }
 }
 @media (max-width: 600px) {
-  .settings > summary span {
-    display: none;
-  }
-  .settings > section {
-    width: min(325px, 88vw);
+  .tools {
+    flex-wrap: wrap;
   }
 }

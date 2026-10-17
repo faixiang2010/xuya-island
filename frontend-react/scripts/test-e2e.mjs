@@ -1,7 +1,7 @@
 import { fileURLToPath } from 'node:url'
 import { spawn } from 'node:child_process'
 import { randomUUID } from 'node:crypto'
-import { closeSync, openSync } from 'node:fs'
+import { closeSync, existsSync, openSync } from 'node:fs'
 import { mkdir, rm } from 'node:fs/promises'
 import net from 'node:net'
 import path from 'node:path'
@@ -90,6 +90,8 @@ try {
   await mkdir(path.join(root, 'backend/logs'), { recursive: true })
   await releasePorts()
   const log = openSync(path.join(root, 'backend/logs/e2e-backend.log'), 'w')
+  // 与开发启动保持一致：仓库里已准备好的内置解释器同样注入，测的就是真实运行环境。
+  const bundledPython = path.join(root, 'electron/build/python/python.exe')
   let server
   try {
     server = spawn(
@@ -109,6 +111,7 @@ try {
           XUYA_CONFIG_DIR: path.join(testDirectory, 'config'),
           XUYA_MODEL_API_KEY: '',
           LOGGING_FILE_NAME: '',
+          ...(existsSync(bundledPython) ? { XUYA_BUNDLED_PYTHON: bundledPython } : {}),
         },
       },
     )

@@ -33,6 +33,7 @@ import {
   PinOff,
   Archive,
   ArchiveRestore,
+  Trash2,
 } from 'lucide-react'
 import {
   useCodexStore,
@@ -71,6 +72,7 @@ export default function CodexView() {
   const selectedProjectId = useCodexStore((s) => s.selectedProjectId)
   const conversation = useCodexStore((s) => s.conversation)
   const loading = useCodexStore((s) => s.loading)
+  const switching = useCodexStore((s) => s.switching)
   const busy = useCodexStore((s) => s.busy)
   const initialized = useCodexStore((s) => s.initialized)
   const connection = useCodexStore((s) => s.connection)
@@ -84,6 +86,7 @@ export default function CodexView() {
   const selectProjectAction = useCodexStore((s) => s.selectProject)
   const refreshSnapshot = useCodexStore((s) => s.refreshSnapshot)
   const updateConversation = useCodexStore((s) => s.updateConversation)
+  const deleteConversation = useCodexStore((s) => s.deleteConversation)
   const initialize = useCodexStore((s) => s.initialize)
   const connect = useCodexStore((s) => s.connect)
   const disconnect = useCodexStore((s) => s.disconnect)
@@ -99,6 +102,8 @@ export default function CodexView() {
   const [chrome, setChrome] = useState(false)
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({})
   const [renaming, setRenaming] = useState(false)
+  const [renamingChatId, setRenamingChatId] = useState<string>()
+  const [chatTitle, setChatTitle] = useState('')
   const [archives, setArchives] = useState(false)
   const [title, setTitle] = useState('')
   const [theme, setTheme] = useState(() =>
@@ -230,7 +235,48 @@ export default function CodexView() {
     await perform(() => updateConversation(id, { archived: false }))
   }
 
+  async function deleteChat(id: string, label: string) {
+    if (!window.confirm(`确定删除聊天「${label || '新聊天'}」吗？删除后无法恢复。`)) return
+    await perform(() => deleteConversation(id))
+  }
+
   function chatRow(chat: (typeof conversations)[number]) {
+    if (renamingChatId === chat.id) {
+      return (
+        <div className="cx-chat-row" key={chat.id}>
+          <form
+            className="cx-chat-rename"
+            onSubmit={(event) => {
+              event.preventDefault()
+              const next = chatTitle.trim()
+              if (!next) return
+              void perform(async () => {
+                await updateConversation(chat.id, { title: next })
+                setRenamingChatId(undefined)
+              })
+            }}
+          >
+            <input
+              value={chatTitle}
+              onChange={(event) => setChatTitle(event.target.value)}
+              aria-label="聊天名称"
+              autoFocus
+            />
+            <button className="cx-icon" aria-label="保存聊天名称" type="submit">
+              <Check size={15} />
+            </button>
+            <button
+              className="cx-icon"
+              aria-label="取消重命名"
+              type="button"
+              onClick={() => setRenamingChatId(undefined)}
+            >
+              <X size={15} />
+            </button>
+          </form>
+        </div>
+      )
+    }
     return (
       <div className="cx-chat-row" key={chat.id}>
         <button
@@ -250,10 +296,19 @@ export default function CodexView() {
           )}
         </button>
         <details className="cx-chat-actions">
-          <summary aria-label={`操作聊天 ${chat.title}`}>
+          <summary aria-label={`操作聊天 ${chat.title || '新聊天'}`}>
             <Ellipsis size={15} />
           </summary>
           <div>
+            <button
+              onClick={() => {
+                setChatTitle(chat.title || '')
+                setRenamingChatId(chat.id)
+              }}
+            >
+              <SquarePen size={14} />
+              重命名
+            </button>
             <button
               onClick={() =>
                 void perform(() => updateConversation(chat.id, { pinned: !chat.pinned }))
@@ -265,6 +320,10 @@ export default function CodexView() {
             <button onClick={() => void archiveChat(chat.id)}>
               <Archive size={14} />
               归档聊天
+            </button>
+            <button className="cx-danger" onClick={() => void deleteChat(chat.id, chat.title)}>
+              <Trash2 size={14} />
+              删除聊天
             </button>
           </div>
         </details>
@@ -334,17 +393,17 @@ export default function CodexView() {
       )}
       <aside
         className={'cx-sidebar' + (mobileSidebar ? ' cx-mobile-open' : '')}
-        aria-label="Codex 项目与聊天"
+        aria-label="码穹 项目与聊天"
       >
         <div className="cx-sidebar-top">
           <button
             className="cx-brand"
-            aria-label="Codex 应用菜单"
+            aria-label="码穹 应用菜单"
             aria-expanded={navigation}
             onClick={() => setNavigation(!navigation)}
           >
             <Code2 size={21} />
-            codex
+            码穹
             <ChevronDown size={15} />
           </button>
           <div>
@@ -654,7 +713,9 @@ export default function CodexView() {
         <div className={'cx-body' + (!rail ? ' cx-rail-hidden' : '')}>
           <section className="cx-center cx-center-chat" aria-label="编码聊天">
             {loading ? (
-              <div className="cx-loading">正在连接本机 Codex 工作台…</div>
+              <div className="cx-loading">正在连接本机码穹…</div>
+            ) : switching ? (
+              <div className="cx-loading">正在载入会话…</div>
             ) : (
               <>
                 <ConversationTimeline onProject={() => go('projects')} onPlan={() => go('tasks')} />
@@ -742,14 +803,24 @@ export default function CodexView() {
                       · {new Date(chat.updatedAt).toLocaleDateString('zh-CN')}
                     </small>
                   </div>
-                  <button
-                    className="cx-button"
-                    aria-label={`恢复聊天 ${chat.title}`}
-                    onClick={() => void restoreChat(chat.id)}
-                  >
-                    <ArchiveRestore size={15} />
-                    恢复聊天
-                  </button>
+                  <div className="cx-archive-actions">
+                    <button
+                      className="cx-button"
+                      aria-label={`恢复聊天 ${chat.title}`}
+                      onClick={() => void restoreChat(chat.id)}
+                    >
+                      <ArchiveRestore size={15} />
+                      恢复聊天
+                    </button>
+                    <button
+                      className="cx-button cx-danger"
+                      aria-label={`删除聊天 ${chat.title}`}
+                      onClick={() => void deleteChat(chat.id, chat.title)}
+                    >
+                      <Trash2 size={15} />
+                      删除
+                    </button>
+                  </div>
                 </article>
               ))}
             {!conversations.some(
