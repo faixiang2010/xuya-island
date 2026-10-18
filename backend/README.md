@@ -13,6 +13,7 @@ Java 17 / Spring Boot 4.0.8 WebFlux / SQLite / AgentScope 2.1.0-BETA1，启动�
 | 后端测试 | `node backend/scripts/backend-task.mjs test` |
 | 集成构建 | `node backend/scripts/build.mjs` |
 | 运行已构建 JAR | `node backend/scripts/run-jar.mjs` |
+| 生成跨平台 JAR 运行包 | `node backend/scripts/package-jar.mjs` |
 | 清理中间产物 | `node backend/scripts/clean.mjs` |
 
 JDK 17+ 与 Maven 3.9+ 不做自动探测，必须复制 `config/toolchain.example.json` 为 `config/toolchain.json` 并填写 `javaHome`、`mavenHome`，或用 `XUYA_JAVA_HOME`、`XUYA_MAVEN_HOME` 覆盖。`toolchain.json` 已被 Git 忽略。

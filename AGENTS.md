@@ -2,7 +2,7 @@
 
 - 使用中文沟通，称呼用户“老大”，助手名称“代码助手”。
 - 此项目使用 Java 17 与 Maven 3.9+。两者不做自动探测，必须由开发人员复制 `backend/config/toolchain.example.json` 为 Git 忽略的 `backend/config/toolchain.json` 并填写 `javaHome`、`mavenHome`，或用 `XUYA_JAVA_HOME`、`XUYA_MAVEN_HOME` 覆盖。源码、脚本和文档不得写入个人电脑的实际安装路径。不要修改系统默认 JDK 8。
-- 源码启动、测试、构建、JAR 运行和清理在 Windows 与 macOS 使用同一套 Node 入口：`dev.mjs`、`backend-task.mjs`、`build.mjs`、`run-jar.mjs`、`clean.mjs`，端口检查统一为 `ports.mjs`。不再保留平台专用的 PowerShell 启动脚本；改动启动链路时两平台都要验证。
+- 源码启动、测试、构建、JAR 运行、跨平台运行包和清理在 Windows 与 macOS 使用同一套 Node 入口：`dev.mjs`、`backend-task.mjs`、`build.mjs`、`run-jar.mjs`、`package-jar.mjs`、`clean.mjs`，端口检查统一为 `ports.mjs`。不再保留平台专用的 PowerShell 启动脚本；改动启动链路时两平台都要验证。
 - 参考阿里巴巴 Java 开发手册，Java 使用 UTF-8、4 空格、显式 import、构造器注入、常量命名和清楚的类注释。
 - Controller 处理协议与校验，Service 控制规则与事务，Repository 负责参数化 SQL。DTO、DO、VO 的职责区分清楚。
 - 产品 Java 根包与 Maven groupId 统一为 com.xuya.island，启动类为 XuyaIslandApplication；业务类、模块和产品入口不得使用 Demo、示例工程或占位包名。课程示例、配置模板和测试夹具按真实用途命名。
@@ -11,7 +11,7 @@
 - 学习代码按3.11家庭部署设计使用管理员选定的主机Python：每次独立进程/目录，Windows 用 Job Object 限制内存和回收子进程，macOS 用进程树回收；这是家庭可信执行，代码具有启动软件的账户权限。教学AI不接入任意宿主Shell；运行协议不传账户凭证、模型密钥或Electron桥。浏览器Worker仅保留历史兼容源码，正式入口使用原生运行接口。
 - 密钥不写源码，不发给前端，不输出第三方异常正文。测试使用临时 SQLite 和本机模型固定响应，不访问付费 API。
 - 正式前端为 frontend-react；frontend-vue 已删除，不再保留历史源码。后续前端开发、验证、构建和发布统一使用 React，默认入口不得指向 Vue。
-- 功能交付需同步 README 和验证记录。前端执行 `npm --prefix frontend-react test`，跨平台脚本执行 `node --test backend/scripts/runtime.test.mjs`；后端统一用 `node backend/scripts/backend-task.mjs test` 验证，全栈构建执行 `node backend/scripts/build.mjs`；运行器、存储或编辑行为变更还需在隔离测试数据上执行浏览器测试。
+- 功能交付需同步 README 和验证记录。前端执行 `npm --prefix frontend-react test`，跨平台脚本执行 `node --test backend/scripts/runtime.test.mjs`；后端统一用 `node backend/scripts/backend-task.mjs test` 验证，全栈构建执行 `node backend/scripts/build.mjs`；改打包或运行包链路时还需执行 `node backend/scripts/package-jar.mjs --reuse-build` 并启动验证。运行器、存储或编辑行为变更还需在隔离测试数据上执行浏览器测试。
 - 浏览器测试使用 `npm --prefix frontend-react run test:e2e` 的自动隔离入口，不手动连接正式服务。当前先打磨 Java/React 产品功能，日常开发和 CI 不运行 Electron；产品稳定后最后再打包。
 - 阶段边界（由老大集中统一安排）：日常每个改动先不考虑手机端界面适配，也不做 Electron 打包与安装验证。这两项不是不做，而是留给后续专门阶段由老大统一安排，届时再集中处理；不要因单个小改动顺手做移动端或打包，避免重复耗费时间精力。浏览器测试与界面验收默认聚焦桌面，除非该次任务明确要求移动端。
 - 默认端口为前端 43171、后端 43172、Python 资源 43173，脚本配置在 backend/config/ports.json。端口变化需同步代理、允许来源和执行域；端口与进程归属统一由 `backend/scripts/ports.mjs` 检查，禁止仅凭端口或进程名关闭程序，必须确认本工程路径与入口。其他程序占用时换空闲端口。

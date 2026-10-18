@@ -78,6 +78,23 @@ node backend/scripts/run-jar.mjs
 
 Windows 与 macOS 使用同一套 Node 命令。只有在 PowerShell 拦截 `npm.ps1` 时，才把 `npm` 换成 `npm.cmd`。依赖已装且锁文件未变时可跳过 `ci`。脚本读 `backend/config/ports.json`，端口被占用时自动换空闲端口，以终端输出为准。
 
+### 打包
+
+最常用的是跨平台 JAR 运行包，目标机器只需要 JDK 17+：
+
+```bash
+node backend/scripts/package-jar.mjs
+```
+
+产物：
+
+```text
+backend/dist/xuya-portable/
+backend/dist/xuya-portable.zip
+```
+
+复制到其他 Windows/macOS/Linux 机器后，先把 `.env.example` 复制为 `.env` 并填写 JDK 17+ 的 `JAVA_HOME`，然后 Windows 执行 `start.cmd`，macOS/Linux 执行 `bash start.sh`。源码包与 Windows 安装包的区别见[打包与跨平台分发](./docs/packaging.md)。
+
 > **没有预置账号或默认密码。** 首次打开先创建超级管理员，再到「家人账户」添加学习者。Python 通常无需手动选择：安装版优先内置，源码版自动使用本机已安装的 Python。
 
 ## 关键边界
@@ -104,6 +121,7 @@ npm --prefix frontend-react run test:e2e
 ## 文档
 
 - [首次使用与家庭配置](./docs/getting-started.md#first-use) · [本地开发上手](./docs/getting-started.md)
+- [打包与跨平台分发](./docs/packaging.md)
 - [Java 规范](./docs/java-style.md) · [成人工作台（码穹）](./docs/workbench.md)
 - 模块说明：[后端](./backend/README.md) · [React](./frontend-react/README.md) · [Electron](./electron/README.md)
 - [文档索引](./docs/README.md)

@@ -118,10 +118,13 @@ node backend/scripts/run-jar.mjs
 | 后端测试 | `node backend/scripts/backend-task.mjs test` |
 | 后端构建 | `node backend/scripts/backend-task.mjs build` |
 | 运行已构建 JAR | `node backend/scripts/run-jar.mjs` |
+| 生成跨平台 JAR 运行包 | `node backend/scripts/package-jar.mjs` |
 | 清理中间产物 | `node backend/scripts/clean.mjs`（`--all` 时含 Electron 构建缓存） |
 | 端口与进程归属检查 | 由启动/构建脚本自动调用 `backend/scripts/ports.mjs` |
 
 `build.mjs`、`dev.mjs`、`test-e2e.mjs` 内部也调用同一套 Node 入口，不再区分 Windows PowerShell 与 macOS 命令。
+
+跨平台 JAR 运行包、源码包和 Windows 安装包的区别与完整用法见[打包与跨平台分发](./packaging.md)。
 
 <a id="first-use"></a>
 

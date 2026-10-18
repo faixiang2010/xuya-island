@@ -1,0 +1,444 @@
+import { spawn } from 'node:child_process'
+import { cp, mkdir, rm, writeFile } from 'node:fs/promises'
+import { existsSync } from 'node:fs'
+import path from 'node:path'
+import { backendRoot, workspaceRoot } from './runtime.mjs'
+
+/**
+ * 生成跨平台 JAR 运行包：目标机器只需要 JDK 17+，不依赖 Electron 或源码工具链。
+ * 默认先执行完整构建；--reuse-build 复用现有 backend/dist/xuya-backend.jar；--no-zip 只生成目录。
+ */
+
+const reuseBuild = process.argv.includes('--reuse-build')
+const createZip = !process.argv.includes('--no-zip')
+const distRoot = path.join(backendRoot, 'dist')
+const packageRoot = path.join(distRoot, 'xuya-portable')
+const stagingRoot = path.join(distRoot, '.xuya-portable-staging')
+const zipFile = path.join(distRoot, 'xuya-portable.zip')
+const jarFile = path.join(distRoot, 'xuya-backend.jar')
+
+function assertInsideDist(target) {
+  const relative = path.relative(distRoot, target)
+  if (!relative || relative.startsWith('..') || path.isAbsolute(relative))
+    throw new Error(`运行包路径越界：${target}`)
+}
+
+function run(command, args, options = {}) {
+  return new Promise((resolve, reject) => {
+    const child = spawn(command, args, { stdio: 'inherit', ...options })
+    child.once('error', reject)
+    child.once('exit', (code) =>
+      code === 0 ? resolve() : reject(new Error(`命令退出码：${code}`)),
+    )
+  })
+}
+
+async function buildIfNeeded() {
+  if (reuseBuild) {
+    if (!existsSync(jarFile))
+      throw new Error(
+        '没有找到 backend/dist/xuya-backend.jar，请先执行 node backend/scripts/build.mjs。',
+      )
+    console.log('复用现有 backend/dist/xuya-backend.jar。')
+    return
+  }
+  console.log('正在构建最新前后端一体 JAR…')
+  await run(process.execPath, [path.join(workspaceRoot, 'backend/scripts/build.mjs')], {
+    cwd: workspaceRoot,
+  })
+}
+
+async function writeLaunchers(root = packageRoot) {
+  const startCmd = [
+    '@echo off',
+    'chcp 65001 >nul',
+    'setlocal',
+    'cd /d "%~dp0"',
+    'if exist ".env" (',
+    '  for /f "usebackq eol=# tokens=1,* delims==" %%a in (".env") do (',
+    '    if not "%%a"=="" set "%%a=%%b"',
+    '  )',
+    ')',
+    'set "JAVA_EXE=java"',
+    'if defined JAVA_HOME if exist "%JAVA_HOME%\\bin\\java.exe" set "JAVA_EXE=%JAVA_HOME%\\bin\\java.exe"',
+    '"%JAVA_EXE%" -version >nul 2>&1',
+    'if errorlevel 1 goto javaMissing',
+    'set "JAVA_VERSION="',
+    'set "JAVA_VERSION_FILE=%TEMP%\\xuya-java-version-%RANDOM%.txt"',
+    '"%JAVA_EXE%" -version > "%JAVA_VERSION_FILE%" 2>&1',
+    'for /f "tokens=3" %%v in (\'findstr /i "version" "%JAVA_VERSION_FILE%"\') do set "JAVA_VERSION=%%~v"',
+    'del "%JAVA_VERSION_FILE%" >nul 2>&1',
+    'if not defined JAVA_VERSION goto javaTooOld',
+    'for /f "tokens=1,2 delims=." %%a in ("%JAVA_VERSION%") do (',
+    '  set "JAVA_MAJOR=%%a"',
+    '  if "%%a"=="1" set "JAVA_MAJOR=%%b"',
+    ')',
+    'if not defined JAVA_MAJOR goto javaTooOld',
+    'if %JAVA_MAJOR% LSS 17 goto javaTooOld',
+    'if not defined XUYA_DATA_DIR set "XUYA_DATA_DIR=%CD%\\data"',
+    'if not defined XUYA_CONFIG_DIR set "XUYA_CONFIG_DIR=%CD%\\config"',
+    'if not defined LOGGING_FILE_NAME set "LOGGING_FILE_NAME=%CD%\\logs\\backend.log"',
+    'if not defined XUYA_PORT set "XUYA_PORT=43172"',
+    'if not defined XUYA_RUNNER_PORT set "XUYA_RUNNER_PORT=43173"',
+    'if not exist "%XUYA_DATA_DIR%" mkdir "%XUYA_DATA_DIR%"',
+    'if not exist "%XUYA_CONFIG_DIR%" mkdir "%XUYA_CONFIG_DIR%"',
+    'if not exist "%CD%\\logs" mkdir "%CD%\\logs"',
+    '"%JAVA_EXE%" -Dfile.encoding=UTF-8 -jar "xuya-backend.jar"',
+    'endlocal',
+    'exit /b 0',
+    ':javaMissing',
+    'echo 未找到 Java。请安装 JDK 17+，或设置 JAVA_HOME 后重试。',
+    'pause',
+    'exit /b 1',
+    ':javaTooOld',
+    'echo 当前 Java 版本为 %JAVA_VERSION%，需要 JDK 17+。',
+    'echo 请安装 JDK 17+，或把 JAVA_HOME 指向 JDK 17+ 后重试。',
+    'pause',
+    'exit /b 1',
+    '',
+  ].join('\r\n')
+
+  const startSh = [
+    '#!/usr/bin/env bash',
+    'set -euo pipefail',
+    'cd "$(dirname "$0")"',
+    'if [ -f .env ]; then',
+    '  set -a',
+    // 兼容在 Windows 上编辑后带到 macOS 的 CRLF 文件。
+    "  . <(tr -d '\\r' < .env)",
+    '  set +a',
+    'fi',
+    'JAVA="${JAVA_HOME:+$JAVA_HOME/bin/}java"',
+    'if ! command -v "$JAVA" >/dev/null 2>&1; then',
+    '  echo "未找到 Java。请安装 JDK 17+，或设置 JAVA_HOME 后重试。" >&2',
+    '  exit 1',
+    'fi',
+    'JAVA_VERSION="$("$JAVA" -version 2>&1 | awk -F \'"\' \'/version/ {print $2; exit}\')"',
+    'JAVA_MAJOR="${JAVA_VERSION%%.*}"',
+    'if [ "$JAVA_MAJOR" = "1" ]; then',
+    '  JAVA_MAJOR="$(printf \'%s\' "$JAVA_VERSION" | cut -d. -f2)"',
+    'fi',
+    'if [ -z "$JAVA_MAJOR" ] || [ "$JAVA_MAJOR" -lt 17 ]; then',
+    '  echo "当前 Java 版本为 ${JAVA_VERSION:-未知}，需要 JDK 17+。" >&2',
+    '  echo "请安装 JDK 17+，或把 JAVA_HOME 指向 JDK 17+ 后重试。" >&2',
+    '  exit 1',
+    'fi',
+    'export XUYA_DATA_DIR="${XUYA_DATA_DIR:-$PWD/data}"',
+    'export XUYA_CONFIG_DIR="${XUYA_CONFIG_DIR:-$PWD/config}"',
+    'export LOGGING_FILE_NAME="${LOGGING_FILE_NAME:-$PWD/logs/backend.log}"',
+    'export XUYA_PORT="${XUYA_PORT:-43172}"',
+    'export XUYA_RUNNER_PORT="${XUYA_RUNNER_PORT:-43173}"',
+    'mkdir -p "$XUYA_DATA_DIR" "$XUYA_CONFIG_DIR" "$(dirname "$LOGGING_FILE_NAME")"',
+    'exec "$JAVA" -Dfile.encoding=UTF-8 -jar xuya-backend.jar',
+    '',
+  ].join('\n')
+
+  await writeFile(path.join(root, 'start.cmd'), startCmd, 'utf8')
+  await writeFile(path.join(root, 'start.sh'), startSh, 'utf8')
+
+  const startEnv = [
+    '# 复制本文件为 .env 后填写；不要直接修改 .env.example。',
+    '# Windows PowerShell: Copy-Item .env.example .env',
+    '# macOS/Linux:        cp .env.example .env',
+    '',
+    '# JDK 17+ 根目录（不是 bin 目录）。Windows 例：C:/Java/jdk-17',
+    '# macOS 例：/Library/Java/JavaVirtualMachines/temurin-17.jdk/Contents/Home',
+    'JAVA_HOME=',
+    '',
+    '# 可选：端口',
+    '# XUYA_PORT=43172',
+    '# XUYA_RUNNER_PORT=43173',
+    '',
+    '# 可选：局域网共享时改为 0.0.0.0',
+    '# XUYA_BIND_ADDRESS=127.0.0.1',
+    '',
+    '# 可选：强制指定 Python 3 可执行文件（不是目录）；也可以启动后在家庭管理中选择',
+    '# XUYA_BUNDLED_PYTHON=C:/Python313/python.exe',
+    '',
+    '# 可选：模型 Key。推荐写在 config/application-local.yml，也可以直接写在这里',
+    '# XUYA_MODEL_API_KEY=',
+    '# XUYA_MODEL_BASE_URL=https://api.deepseek.com',
+    '# XUYA_MODEL_NAME=deepseek-flash',
+    '',
+    '# 可选：AgentScope JEV / Studio 扩展服务，默认关闭；一般不用改',
+    '# XUYA_JEV_ENABLED=false',
+    '# XUYA_STUDIO_ENABLED=false',
+    '',
+    '# 可选：留空时使用运行包目录下的 data/config/logs',
+    '# XUYA_DATA_DIR=',
+    '# XUYA_CONFIG_DIR=',
+    '# LOGGING_FILE_NAME=',
+    '',
+  ].join('\n')
+  await writeFile(path.join(root, '.env.example'), startEnv, 'utf8')
+}
+
+async function writeReadme(root = packageRoot) {
+  const readme = [
+    '# 叙芽岛 · 跨平台运行包',
+    '',
+    '这是一个只依赖 JDK 的 Java 一体化运行包，不包含 Electron，也不需要 Node、Maven 或源码。',
+    'JAR 内已经包含 Java 后端、React 页面、SQLite 迁移、课程资源与 Python 运行辅助脚本。',
+    '',
+    '## 运行要求',
+    '',
+    '| 依赖 | 是否必须 | 说明 |',
+    '|---|---|---|',
+    '| JDK | 必须 | 17 或更高版本；在 `.env` 的 `JAVA_HOME` 填写根目录（多 JDK 时尤其重要） |',
+    '| Python 3 | 可选 | 课堂里运行代码时需要；只影响代码执行，不影响启动和浏览 |',
+    '| 模型 Key | 可选 | 小奇和成人工作台的 AI 需要；写在 `config/application-local.yml` 或 `.env` |',
+    '',
+    '## 先复制 .env.example 为 .env',
+    '',
+    '运行包根目录已经有 `.env.example` 示例。先复制出 `.env`，再填写自己的配置：',
+    '',
+    'Windows PowerShell：',
+    '',
+    '```powershell',
+    'Copy-Item .env.example .env',
+    '```',
+    '',
+    'macOS / Linux：',
+    '',
+    '```bash',
+    'cp .env.example .env',
+    '```',
+    '',
+    '然后用记事本或编辑器打开 `.env`，至少填写 JDK 17+ 的根目录：',
+    '',
+    '```text',
+    'JAVA_HOME=C:/Java/jdk-17',
+    '```',
+    '',
+    'macOS 示例：',
+    '',
+    '```text',
+    'JAVA_HOME=/Library/Java/JavaVirtualMachines/temurin-17.jdk/Contents/Home',
+    '```',
+    '',
+    '`JAVA_HOME` 要指向 JDK 根目录，不是 `bin` 目录。机器上有多个 JDK 时，把这里改成你希望叙芽岛使用的那一个；启动脚本会优先使用它，不依赖 PATH 默认版本。',
+    '',
+    '端口、数据目录、局域网共享、Python 和模型 Key 也都可以写在 `.env`，示例文件里有注释。',
+    '',
+    '`XUYA_JEV_ENABLED` 和 `XUYA_STUDIO_ENABLED` 是 AgentScope 可选扩展服务开关，默认 `false`，普通使用不需要打开。',
+    '',
+    '## 启动',
+    '',
+    '### Windows',
+    '',
+    '双击 `start.cmd`，或在 PowerShell 中执行：',
+    '',
+    '```powershell',
+    '.\\start.cmd',
+    '```',
+    '',
+    '### macOS / Linux',
+    '',
+    '从 Windows 压缩包解压后，`start.sh` 可能没有执行权限，用 bash 启动即可：',
+    '',
+    '```bash',
+    'bash start.sh',
+    '```',
+    '',
+    '也可以手动运行：',
+    '',
+    '```bash',
+    'java -Dfile.encoding=UTF-8 -jar xuya-backend.jar',
+    '```',
+    '',
+    '启动后打开：http://127.0.0.1:43172',
+    '',
+    '## 端口与环境变量',
+    '',
+    '优先写在 `.env`；下面的系统环境变量方式适合临时覆盖。',
+    '',
+    '| 变量 | 默认值 | 说明 |',
+    '|---|---|---|',
+    '| `XUYA_PORT` | 43172 | 页面和 API 端口 |',
+    '| `XUYA_RUNNER_PORT` | 43173 | 历史 Python 资源端口 |',
+    '| `XUYA_DATA_DIR` | `./data` | 数据库、作品和运行数据 |',
+    '| `XUYA_CONFIG_DIR` | `./config` | 本机配置目录 |',
+    '| `LOGGING_FILE_NAME` | `./logs/backend.log` | 后端日志 |',
+    '| `XUYA_BIND_ADDRESS` | 127.0.0.1 | 局域网共享时设为 0.0.0.0 |',
+    '',
+    '端口被占用时直接换一个，例如 Windows：',
+    '',
+    '```powershell',
+    '$env:XUYA_PORT=43272; $env:XUYA_RUNNER_PORT=43273; .\\start.cmd',
+    '```',
+    '',
+    'macOS / Linux：',
+    '',
+    '```bash',
+    'XUYA_PORT=43272 XUYA_RUNNER_PORT=43273 bash start.sh',
+    '```',
+    '',
+    '## 首次使用',
+    '',
+    '程序没有预置账号或默认密码。首次打开会要求创建超级管理员，之后再到「家庭管理 → 家人账户」添加学习者。',
+    '',
+    '## Python 配置',
+    '',
+    '推荐启动后由管理员在「家庭管理 → 运行与共享 → Python 环境」选择解释器，选择结果保存在 `data` 里。',
+    '',
+    '如果不想打开界面，也可以在 `.env` 中取消注释并填写：',
+    '',
+    '```text',
+    'XUYA_BUNDLED_PYTHON=C:/Python313/python.exe',
+    '```',
+    '',
+    '这里要填 Python 可执行文件（`python.exe` / `python3`），不是安装目录。不装 Python 仍可启动、浏览、编辑和保存，只是不能运行课堂代码。',
+    '',
+    '## 模型 Key 配置',
+    '',
+    '推荐复制模板后填写：',
+    '',
+    '```bash',
+    'cp config/application-local.example.yml config/application-local.yml',
+    '```',
+    '',
+    '在 `config/application-local.yml` 中填写：',
+    '',
+    '```yaml',
+    'xuya:',
+    '  model:',
+    '    api-key: 你的Key',
+    '```',
+    '',
+    '也可以不建 YAML，直接在 `.env` 中取消注释填写：',
+    '',
+    '```text',
+    'XUYA_MODEL_API_KEY=你的Key',
+    'XUYA_MODEL_BASE_URL=https://api.deepseek.com',
+    'XUYA_MODEL_NAME=deepseek-flash',
+    '```',
+    '',
+    '不配模型 Key 不影响启动、学习和运行 Python，只影响小奇与成人工作台的 AI。',
+    '',
+    '## 数据、配置与升级',
+    '',
+    '- 数据默认写入运行包目录下的 `data`，不要随意删除。',
+    '- JDK、端口、数据目录、局域网共享等运行配置写在 `.env`。',
+    '- 模型 Key 放在 `config/application-local.yml`；可以从 `config/application-local.example.yml` 复制后填写。',
+    '- 升级时只替换 `xuya-backend.jar`，保留 `data`、`config` 和 `.env` 即可。',
+    '- 换机器时复制整个运行包目录，或至少复制 `xuya-backend.jar`、`.env`、`data` 和 `config`。',
+    '',
+    '## 局域网共享',
+    '',
+    '在 `.env` 中取消注释并改为 `XUYA_BIND_ADDRESS=0.0.0.0`，或临时设置：',
+    '',
+    '```powershell',
+    '# Windows PowerShell',
+    '$env:XUYA_BIND_ADDRESS="0.0.0.0"; .\\start.cmd',
+    '```',
+    '',
+    '```bash',
+    '# macOS / Linux',
+    'XUYA_BIND_ADDRESS=0.0.0.0 bash start.sh',
+    '```',
+    '',
+    '然后用本机局域网地址访问，例如 http://192.168.1.10:43172。主机需要保持运行，防火墙需放行端口。',
+    '',
+    '## 这个包里没有的',
+    '',
+    '- **JDK**：需要目标机器自己安装 Java 17+。',
+    '- **Python**：课堂运行代码需要主机 Python 3；不装仍可登录、浏览、编辑和保存。',
+    '- **模型 Key**：需要自己配置。',
+    '- **Electron 桌面外壳**：这是网页运行包，不生成 Windows 安装程序或 macOS App。',
+    '',
+    '## 常见问题',
+    '',
+    '| 现象 | 处理 |',
+    '|---|---|',
+    '| 提示“未找到 Java” | 安装 JDK 17+，设置 `JAVA_HOME`，或把 `java` 加入 PATH |',
+    '| 提示“当前 Java 版本…需要 JDK 17+” | PATH 里的 `java` 是旧版本；在 `.env` 写 `JAVA_HOME=JDK 17+ 根目录` |',
+    '| 机器有多个 JDK | 在 `.env` 写 `JAVA_HOME=想使用的 JDK 17+ 根目录`，启动脚本优先使用它 |',
+    '| 页面打不开 | 看控制台端口提示；确认 `XUYA_PORT` 未被其他程序占用 |',
+    '| 课堂提示未配置 Python | 安装 Python 3，或在「家庭管理 → 运行与共享」手动选择解释器 |',
+    '| 局域网其他设备打不开 | 设置 `XUYA_BIND_ADDRESS=0.0.0.0`，并检查防火墙 |',
+    '| 想换数据目录 | 在 `.env` 写 `XUYA_DATA_DIR=新目录` |',
+    '',
+  ].join('\n')
+  await writeFile(path.join(root, 'README.md'), readme, 'utf8')
+}
+
+async function createArchive(sourceRoot) {
+  if (!createZip) {
+    console.log('已跳过压缩，只生成目录。')
+    return
+  }
+  await rm(zipFile, { force: true })
+  try {
+    if (process.platform === 'win32') {
+      await run(
+        'powershell.exe',
+        [
+          '-NoProfile',
+          '-NonInteractive',
+          '-Command',
+          `Compress-Archive -Path '${path.join(sourceRoot, '*')}' -DestinationPath '${zipFile}' -Force`,
+        ],
+        { cwd: workspaceRoot },
+      )
+    } else {
+      await run('zip', ['-r', '-q', zipFile, '.'], { cwd: sourceRoot })
+    }
+    console.log(`已生成压缩包：${path.relative(workspaceRoot, zipFile)}`)
+  } catch (error) {
+    console.warn(`压缩包生成失败，目录仍然可用：${error.message}`)
+  }
+}
+
+async function preparePackage(root) {
+  await mkdir(path.join(root, 'config'), { recursive: true })
+  await cp(jarFile, path.join(root, 'xuya-backend.jar'))
+  await cp(
+    path.join(backendRoot, 'config/application-local.example.yml'),
+    path.join(root, 'config/application-local.example.yml'),
+  )
+  await writeLaunchers(root)
+  await writeReadme(root)
+}
+
+/** 只覆盖程序文件，保留运行包目录里已有的 data、logs、.env 和本机配置。 */
+async function mergeArtifacts(sourceRoot, targetRoot) {
+  const artifacts = [
+    'xuya-backend.jar',
+    'start.cmd',
+    'start.sh',
+    '.env.example',
+    'README.md',
+    'config/application-local.example.yml',
+  ]
+  await mkdir(targetRoot, { recursive: true })
+  for (const relative of artifacts) {
+    const destination = path.join(targetRoot, relative)
+    await mkdir(path.dirname(destination), { recursive: true })
+    await cp(path.join(sourceRoot, relative), destination)
+  }
+}
+
+async function main() {
+  assertInsideDist(packageRoot)
+  assertInsideDist(stagingRoot)
+  assertInsideDist(zipFile)
+  await buildIfNeeded()
+  if (!existsSync(jarFile)) throw new Error('构建后仍未找到 backend/dist/xuya-backend.jar。')
+  await rm(stagingRoot, { recursive: true, force: true })
+  await mkdir(stagingRoot, { recursive: true })
+  try {
+    await preparePackage(stagingRoot)
+    await createArchive(stagingRoot)
+    await mergeArtifacts(stagingRoot, packageRoot)
+  } finally {
+    await rm(stagingRoot, { recursive: true, force: true })
+  }
+  console.log(`\n跨平台运行包目录：${path.relative(workspaceRoot, packageRoot)}`)
+  console.log('已保留原有 data、logs、.env 和 config/application-local.yml。')
+  console.log('目标机器只需要 JDK 17+；Windows 双击 start.cmd，macOS/Linux 执行 bash start.sh。')
+}
+
+main().catch((error) => {
+  console.error(error.message)
+  process.exitCode = 1
+})

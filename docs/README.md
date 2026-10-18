@@ -8,6 +8,7 @@
 |---|---|
 | 了解当前能力、启动和数据 | [项目 README](../README.md) |
 | 启动、首次使用、账号密码、Python 与共享配置 | [本地开发与首次使用](./getting-started.md) |
+| 打包、跨平台 JAR 运行包、源码包与 Windows 安装包 | [打包与跨平台分发](./packaging.md) |
 | Java 分层与编码规则 | [Java 开发规范](./java-style.md) |
 | 成人开发工作台（码穹）契约与接入 | [成人开发工作台](./workbench.md) |
 
@@ -15,7 +16,7 @@
 
 | 位置 | 内容 |
 |---|---|
-| `docs/` | 提交到 Git 的文档：本页索引 + 上手、Java 规范、成人工作台接口 |
+| `docs/` | 提交到 Git 的文档：本页索引 + 上手、打包、Java 规范、成人工作台接口 |
 | `.agent/design/` | 唯一产品、课程与技术规划（本机，不进 Git） |
 | `.agent/evidence/` | 本机验收证据与记录（截图、JSON、验证记录），不进 Git |
 
