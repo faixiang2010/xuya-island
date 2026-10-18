@@ -84,7 +84,7 @@ jobs:
       - name: 解析 Java 与 Maven 路径
         shell: pwsh
         run: |
-          # backend.ps1 依赖 XUYA_JAVA_HOME / XUYA_MAVEN_HOME，从 CI 预装工具链解析。
+          # Node 启动与构建脚本读取 XUYA_JAVA_HOME / XUYA_MAVEN_HOME，从 CI 预装工具链解析。
           $mvn = (Get-Command mvn.cmd -ErrorAction Stop).Source
           "XUYA_MAVEN_HOME=$(Split-Path (Split-Path $mvn -Parent) -Parent)" | Out-File -Append -Encoding utf8 $env:GITHUB_ENV
           "XUYA_JAVA_HOME=$env:JAVA_HOME" | Out-File -Append -Encoding utf8 $env:GITHUB_ENV

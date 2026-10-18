@@ -14,17 +14,17 @@ import {
   waitForExit,
   waitForReady,
 } from '../../backend/scripts/process-utils.mjs'
+import { resolveJavaExecutable } from '../../backend/scripts/runtime.mjs'
 
 const frontendDirectory = path.resolve(fileURLToPath(new URL('..', import.meta.url)))
 const frontendModule = path.basename(frontendDirectory)
 checkFrontend(frontendDirectory)
-const java = path.join(
-  process.env.XUYA_JAVA_HOME || 'D:\\GreenSoft\\java\\jdk-17.0.14',
-  'bin/java.exe',
-)
-requireFile(java, '浏览器测试需要 Java 17+，请设置 XUYA_JAVA_HOME。')
+const java = resolveJavaExecutable()
 const playwright = path.join(frontendDirectory, 'node_modules/@playwright/test/cli.js')
-requireFile(playwright, '请先执行 npm.cmd --prefix frontend-react ci。')
+requireFile(
+  playwright,
+  `请先执行 npm --prefix frontend-react ci（Windows PowerShell 可改用 npm.cmd）。`,
+)
 const testDirectory = path.join(root, 'backend/target', `e2e-${randomUUID()}`)
 const children = []
 const reservations = []
@@ -91,7 +91,14 @@ try {
   await releasePorts()
   const log = openSync(path.join(root, 'backend/logs/e2e-backend.log'), 'w')
   // 与开发启动保持一致：仓库里已准备好的内置解释器同样注入，测的就是真实运行环境。
-  const bundledPython = path.join(root, 'electron/build/python/python.exe')
+  const bundledCandidates =
+    process.platform === 'win32'
+      ? [path.join(root, 'electron/build/python/python.exe')]
+      : [
+          path.join(root, 'electron/build/python/bin/python3'),
+          path.join(root, 'electron/build/python/bin/python3.12'),
+        ]
+  const bundledPython = bundledCandidates.find((candidate) => existsSync(candidate)) || ''
   let server
   try {
     server = spawn(

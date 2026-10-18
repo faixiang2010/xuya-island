@@ -2,7 +2,7 @@ import { defineConfig } from '@playwright/test'
 
 if (process.env.XUYA_E2E_ISOLATED !== '1' || !process.env.XUYA_TEST_URL)
   throw new Error(
-    '请使用 npm.cmd --prefix frontend-react run test:e2e，自动启动临时数据库，避免误写正式学习数据。',
+    '请使用 npm --prefix frontend-react run test:e2e，自动启动临时数据库，避免误写正式学习数据。',
   )
 
 export default defineConfig({

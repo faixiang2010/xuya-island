@@ -183,6 +183,7 @@ public class OfficeService {
                 List.of(
                         "C:/Program Files/LibreOffice/program/soffice.exe",
                         "C:/Program Files (x86)/LibreOffice/program/soffice.exe",
+                        "/Applications/LibreOffice.app/Contents/MacOS/soffice",
                         "/usr/bin/libreoffice",
                         "/usr/bin/soffice"))
             if (Files.isRegularFile(Path.of(candidate))) return Path.of(candidate);

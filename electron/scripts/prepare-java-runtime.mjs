@@ -3,7 +3,9 @@ import { spawn } from 'node:child_process'
 import { randomUUID } from 'node:crypto'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
+import { readToolchain } from '../../backend/scripts/runtime.mjs'
 const root = path.resolve(fileURLToPath(new URL('../..', import.meta.url)))
+const executableSuffix = process.platform === 'win32' ? '.exe' : ''
 
 function waitForExit(child) {
   return new Promise((resolve, reject) => {
@@ -14,7 +16,11 @@ function waitForExit(child) {
   })
 }
 
-const javaDirectory = process.env.XUYA_JAVA_HOME || 'D:\\GreenSoft\\java\\jdk-17.0.14'
+const { javaHome: javaDirectory } = readToolchain()
+if (!javaDirectory)
+  throw new Error(
+    '未配置 JDK 17+。请在 backend/config/toolchain.json 填写 javaHome，或设置 XUYA_JAVA_HOME。',
+  )
 const destination = path.join(root, 'electron/build/runtime')
 const buildDirectory = path.dirname(destination)
 const metadataFile = path.join(buildDirectory, 'runtime-manifest.json')
@@ -25,7 +31,7 @@ const release = await readFile(path.join(javaDirectory, 'release'), 'utf8').catc
 const javaVersion = release.match(/^JAVA_VERSION="([^"]+)"/m)?.[1]
 if (!javaVersion || Number(javaVersion.split('.')[0]) < 17)
   throw new Error('桌面运行时必须使用 Java 17+。')
-await access(path.join(javaDirectory, 'bin/jlink.exe'))
+await access(path.join(javaDirectory, `bin/jlink${executableSuffix}`))
 const fingerprint = JSON.stringify({
   javaDirectory: path.resolve(javaDirectory),
   release,
@@ -34,7 +40,7 @@ const fingerprint = JSON.stringify({
 })
 let reusable = false
 try {
-  await access(path.join(destination, 'bin/java.exe'))
+  await access(path.join(destination, `bin/java${executableSuffix}`))
   reusable = (await readFile(metadataFile, 'utf8')) === fingerprint
 } catch {
   /* Missing or older cache needs rebuilding. */
@@ -55,7 +61,7 @@ if (reusable) {
   try {
     await waitForExit(
       spawn(
-        path.join(javaDirectory, 'bin/jlink.exe'),
+        path.join(javaDirectory, `bin/jlink${executableSuffix}`),
         [
           '--add-modules',
           modules,

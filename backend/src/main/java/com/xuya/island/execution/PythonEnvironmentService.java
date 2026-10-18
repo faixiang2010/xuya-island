@@ -12,6 +12,7 @@ import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -165,7 +166,7 @@ public class PythonEnvironmentService {
         for (String directory :
                 System.getenv().getOrDefault("PATH", "").split(File.pathSeparator)) {
             if (directory.isBlank()) continue;
-            for (String name : List.of("python.exe", "python3.exe", "python", "python3")) {
+            for (String name : interpreterNames()) {
                 try {
                     Path candidate = Path.of(directory).resolve(name);
                     if (Files.isRegularFile(candidate)) candidates.add(candidate.toString());
@@ -174,32 +175,57 @@ public class PythonEnvironmentService {
                 }
             }
         }
-        String localAppData = System.getenv("LOCALAPPDATA");
-        if (localAppData != null && !localAppData.isBlank()) {
-            try {
-                addInstalled(candidates, Path.of(localAppData, "Programs", "Python"));
-            } catch (RuntimeException ignored) {
-                // 环境变量里出现非法路径时跳过。
+        if (windows()) {
+            String localAppData = System.getenv("LOCALAPPDATA");
+            if (localAppData != null && !localAppData.isBlank()) {
+                try {
+                    addInstalled(
+                            candidates, Path.of(localAppData, "Programs", "Python"), "python.exe");
+                } catch (RuntimeException ignored) {
+                    // 环境变量里出现非法路径时跳过。
+                }
             }
-        }
-        addInstalled(candidates, Path.of("C:\\"));
-        for (String key : List.of("ProgramFiles", "ProgramFiles(x86)")) {
-            String directory = System.getenv(key);
-            if (directory == null || directory.isBlank()) continue;
-            try {
-                addInstalled(candidates, Path.of(directory));
-            } catch (RuntimeException ignored) {
-                // 环境变量里出现非法路径时跳过。
+            addInstalled(candidates, Path.of("C:\\"), "python.exe");
+            for (String key : List.of("ProgramFiles", "ProgramFiles(x86)")) {
+                String directory = System.getenv(key);
+                if (directory == null || directory.isBlank()) continue;
+                try {
+                    addInstalled(candidates, Path.of(directory), "python.exe");
+                } catch (RuntimeException ignored) {
+                    // 环境变量里出现非法路径时跳过。
+                }
             }
+        } else {
+            // macOS 的 python.org 安装包与 Homebrew 常见位置；PATH 已覆盖的会去重。
+            for (String directory : List.of("/opt/homebrew/bin", "/usr/local/bin", "/usr/bin")) {
+                for (String name : interpreterNames()) {
+                    Path candidate = Path.of(directory, name);
+                    if (Files.isRegularFile(candidate)) candidates.add(candidate.toString());
+                }
+            }
+            addInstalled(
+                    candidates,
+                    Path.of("/Library/Frameworks/Python.framework/Versions"),
+                    "bin/python3");
         }
         return List.copyOf(candidates);
     }
 
-    private void addInstalled(Set<String> candidates, Path root) {
+    private static List<String> interpreterNames() {
+        return windows()
+                ? List.of("python.exe", "python3.exe", "python", "python3")
+                : List.of("python3", "python");
+    }
+
+    private static boolean windows() {
+        return System.getProperty("os.name").toLowerCase(Locale.ROOT).contains("win");
+    }
+
+    private void addInstalled(Set<String> candidates, Path root, String relative) {
         if (root == null || !Files.isDirectory(root)) return;
         try (var entries = Files.list(root)) {
             entries.filter(Files::isDirectory)
-                    .map(path -> path.resolve("python.exe"))
+                    .map(path -> path.resolve(relative))
                     .filter(Files::isRegularFile)
                     .sorted(Comparator.reverseOrder())
                     .forEach(path -> candidates.add(path.toString()));

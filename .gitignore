@@ -23,6 +23,7 @@ build/
 /backend/data/
 /backend/config/application-local.yml
 /backend/config/application-local.yaml
+/backend/config/toolchain.json
 /backend/config/ports.json
 /backend/config/network.json
 /backend/logs/

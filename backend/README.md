@@ -4,17 +4,22 @@ Java 17 / Spring Boot 4.0.8 WebFlux / SQLite / AgentScope 2.1.0-BETA1，启动�
 
 ## 启动与验证
 
-从项目根目录执行：
+从项目根目录执行，Windows 与 macOS 使用同一套命令：
 
-```powershell
-node backend/scripts/dev.mjs                 # 联合启动 React 与 Java
-& backend/scripts/backend.ps1 -Task run      # 单独运行后端
-& backend/scripts/backend.ps1 -Task test     # 测试
-node backend/scripts/build.mjs               # 集成构建
-& backend/scripts/run-jar.ps1                # 运行已构建 JAR
-```
+| 用途 | 命令 |
+|---|---|
+| 联合启动 React 与 Java | `node backend/scripts/dev.mjs` |
+| 单独运行后端 | `node backend/scripts/backend-task.mjs run` |
+| 后端测试 | `node backend/scripts/backend-task.mjs test` |
+| 集成构建 | `node backend/scripts/build.mjs` |
+| 运行已构建 JAR | `node backend/scripts/run-jar.mjs` |
+| 清理中间产物 | `node backend/scripts/clean.mjs` |
 
-API 默认 43172、React 43171，43173 为历史资源端口。工具路径、端口与调试见[本地开发与首次使用](../docs/getting-started.md)。
+JDK 17+ 与 Maven 3.9+ 不做自动探测，必须复制 `config/toolchain.example.json` 为 `config/toolchain.json` 并填写 `javaHome`、`mavenHome`，或用 `XUYA_JAVA_HOME`、`XUYA_MAVEN_HOME` 覆盖。`toolchain.json` 已被 Git 忽略。
+
+`ports.mjs` 在 Windows 上通过 PowerShell 读取 Win32 进程，在 macOS 上使用 `lsof` + `ps`，只结束确认属于本工程的进程。完整依赖与平台差异见[本地开发与首次使用](../docs/getting-started.md)。
+
+API 默认 43172、React 43171，43173 为历史资源端口。
 
 ## 分层与存储
 

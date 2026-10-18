@@ -57,11 +57,11 @@
 
 ## 验证
 
-```powershell
-& backend/scripts/backend.ps1 -Task test
-npm.cmd --prefix frontend-react test
+```bash
+node backend/scripts/backend-task.mjs test
+npm --prefix frontend-react test
 node backend/scripts/build.mjs
-npm.cmd --prefix frontend-react run test:e2e
+npm --prefix frontend-react run test:e2e
 ```
 
 已构建后可复用现有产物定向复核工作台场景；修改源码后需重新构建。默认 E2E 入口使用随机端口、临时数据库和空模型配置，不访问付费 API。

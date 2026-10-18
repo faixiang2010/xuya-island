@@ -23,9 +23,15 @@ export const defaultPorts = JSON.parse(
   ),
 )
 const execFileAsync = promisify(execFile)
-const npmCli =
-  process.env.npm_execpath ||
-  path.join(path.dirname(process.execPath), 'node_modules/npm/bin/npm-cli.js')
+
+/** npm 入口：优先使用当前 Node 的 npm-cli.js，macOS 上再回退到 PATH 里的 npm。 */
+function resolveNpmCli() {
+  const candidates = [
+    process.env.npm_execpath,
+    path.join(path.dirname(process.execPath), 'node_modules/npm/bin/npm-cli.js'),
+  ]
+  return candidates.find((candidate) => candidate && existsSync(candidate)) || ''
+}
 
 export function checkNode() {
   const [major, minor] = process.versions.node.split('.').map(Number)
@@ -42,7 +48,7 @@ export function checkFrontend(directory = frontendDirectory) {
   for (const file of ['vite/bin/vite.js', 'pyodide/pyodide.mjs'])
     requireFile(
       path.join(directory, 'node_modules', file),
-      `请先在项目根目录执行 npm.cmd --prefix ${path.basename(directory)} ci。`,
+      `请先在项目根目录执行 npm --prefix ${path.basename(directory)} ci。`,
     )
 }
 
@@ -93,35 +99,31 @@ export function readDevSession() {
 }
 
 export async function managePorts(mode, ports = []) {
-  const args = [
-    '-NoProfile',
-    '-ExecutionPolicy',
-    'Bypass',
-    '-File',
-    path.join(root, 'backend/scripts/ports.ps1'),
-    '-Mode',
-    mode,
-  ]
-  if (ports.length) args.push('-Ports', ports.join(','))
+  const { runPorts } = await import('./ports.mjs')
   try {
-    const result = await execFileAsync('powershell.exe', args, {
-      windowsHide: true,
-      encoding: 'utf8',
-    })
-    return JSON.parse(result.stdout.trim())
+    return await runPorts(mode, ports)
   } catch (error) {
+    const message = error instanceof Error ? error.message : String(error)
     if (mode === 'Guard') {
-      if (error.stderr?.includes('Close the project backend or desktop'))
+      if (message.includes('Close the project backend or desktop'))
         throw new Error('请先关闭本项目后端或桌面，再构建或清理；服务可能使用了自动选择的端口。')
-      throw new Error('无法完成构建前的进程归属检查，请检查运行环境权限。')
+      throw new Error(`无法完成构建前的进程归属检查：${message}`)
     }
-    throw new Error(`端口检查失败：${error.stderr?.trim() || error.message}`)
+    throw new Error(`端口检查失败：${message}`)
   }
 }
 
 export function npm(args, options = {}) {
-  requireFile(npmCli, '没有找到 npm，请安装包含 npm 的 Node.js，或设置 npm_execpath。')
-  return spawn(process.execPath, [npmCli, ...args], {
+  const cli = resolveNpmCli()
+  if (cli)
+    return spawn(process.execPath, [cli, ...args], {
+      cwd: frontendDirectory,
+      stdio: 'inherit',
+      ...options,
+    })
+  if (process.platform === 'win32')
+    throw new Error('没有找到 npm，请安装包含 npm 的 Node.js，或设置 npm_execpath。')
+  return spawn('npm', args, {
     cwd: frontendDirectory,
     stdio: 'inherit',
     ...options,
@@ -129,19 +131,11 @@ export function npm(args, options = {}) {
 }
 
 export function backend(task, options = {}) {
-  return spawn(
-    'powershell.exe',
-    [
-      '-NoProfile',
-      '-ExecutionPolicy',
-      'Bypass',
-      '-File',
-      path.join(root, 'backend/scripts/backend.ps1'),
-      '-Task',
-      task,
-    ],
-    { cwd: root, stdio: 'inherit', windowsHide: true, ...options },
-  )
+  return spawn(process.execPath, [path.join(root, 'backend/scripts/backend-task.mjs'), task], {
+    cwd: root,
+    stdio: 'inherit',
+    ...options,
+  })
 }
 
 export function waitForExit(child) {
@@ -167,6 +161,43 @@ export async function waitForReady(url, timeout = 120000) {
   throw new Error(`服务启动超时：${url}`)
 }
 
+function processAlive(pid) {
+  try {
+    process.kill(pid, 0)
+    return true
+  } catch {
+    return false
+  }
+}
+
+async function processDescendants(pid) {
+  try {
+    const { stdout } = await execFileAsync('ps', ['-axo', 'pid=,ppid='], { encoding: 'utf8' })
+    const children = new Map()
+    for (const line of stdout.split(/\r?\n/)) {
+      const [childText, parentText] = line.trim().split(/\s+/)
+      const childPid = Number(childText)
+      const parentPid = Number(parentText)
+      if (!Number.isInteger(childPid) || !Number.isInteger(parentPid)) continue
+      if (!children.has(parentPid)) children.set(parentPid, [])
+      children.get(parentPid).push(childPid)
+    }
+    const result = []
+    const queue = [pid]
+    while (queue.length && result.length < 512) {
+      const current = queue.shift()
+      for (const next of children.get(current) || []) {
+        if (result.includes(next)) continue
+        result.push(next)
+        queue.push(next)
+      }
+    }
+    return result
+  } catch {
+    return []
+  }
+}
+
 export async function stopProcessTree(child) {
   if (!child?.pid || child.exitCode !== null || child.signalCode !== null) return
   if (process.platform === 'win32') {
@@ -179,7 +210,35 @@ export async function stopProcessTree(child) {
         resolve,
       ),
     )
-  } else child.kill('SIGTERM')
+    if (child.exitCode === null && child.signalCode === null)
+      await Promise.race([new Promise((resolve) => child.once('exit', resolve)), delay(5000)])
+    return
+  }
+  // macOS/Linux 用 ps 进程树只结束本次启动的子进程，避免残留 Maven/Vite/Java。
+  const descendants = await processDescendants(child.pid)
+  const targets = [...descendants].reverse()
+  for (const pid of targets) {
+    try {
+      process.kill(pid, 'SIGTERM')
+    } catch {
+      /* 已退出。 */
+    }
+  }
+  try {
+    child.kill('SIGTERM')
+  } catch {
+    /* 已退出。 */
+  }
   if (child.exitCode === null && child.signalCode === null)
-    await Promise.race([new Promise((resolve) => child.once('exit', resolve)), delay(5000)])
+    await Promise.race([new Promise((resolve) => child.once('exit', resolve)), delay(3000)])
+  for (const pid of [...targets, child.pid]) {
+    if (!processAlive(pid)) continue
+    try {
+      process.kill(pid, 'SIGKILL')
+    } catch {
+      /* 权限或时序变化，保持原状。 */
+    }
+  }
+  if (child.exitCode === null && child.signalCode === null)
+    await Promise.race([new Promise((resolve) => child.once('exit', resolve)), delay(2000)])
 }

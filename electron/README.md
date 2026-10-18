@@ -30,7 +30,7 @@ npm.cmd --prefix electron run dist     # 构建 NSIS 安装包
 - **签名**：`win.signAndEditExecutable` 默认 false；配置 `WINDOWS_CERT_BASE64`/`WINDOWS_CERT_PASSWORD` Secret 后 `release.yml` 自动改证书签名。
 - **安装自检**：启动时校验后端 JAR 与 Java 运行时，缺失提示重装；学习数据在用户目录不受影响。
 
-本地 Java 用 Java 17；`prepare:java` 经 jlink 生成含 HTTP/JDBC/字符集/TLS 的运行时，不拷整个 JDK。展开资源 `asar=false`，渲染进程 sandbox/contextIsolation 且无 Node 桥；正式交付阶段再验 ASAR、签名与自定义图标。
+本地 Java 17 从 Git 忽略的 `backend/config/toolchain.json`（`javaHome`）或 `XUYA_JAVA_HOME` 读取，不在源码中写死安装路径；`prepare:java` 经 jlink 生成含 HTTP/JDBC/字符集/TLS 的运行时，不拷整个 JDK。展开资源 `asar=false`，渲染进程 sandbox/contextIsolation 且无 Node 桥；正式交付阶段再验 ASAR、签名与自定义图标。
 
 Electron 44 的 npm 包无 `postinstall`，首次或二进制缺失时执行 `npm.cmd --prefix electron run prepare:electron` 下载；下载慢设 `ELECTRON_MIRROR=https://registry.npmmirror.com/-/binary/electron/`。
 

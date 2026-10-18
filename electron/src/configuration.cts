@@ -44,6 +44,29 @@ export function validPort(value: unknown, name: string): number {
   return port
 }
 
+/** 开发模式下从本机工具链配置读取 JDK；打包后使用随包运行时。 */
+function developmentJavaExecutable(workspaceRoot: string): string {
+  let configured = process.env.XUYA_JAVA_HOME || ''
+  if (!configured) {
+    try {
+      const value: unknown = JSON.parse(
+        fs.readFileSync(path.join(workspaceRoot, 'backend/config/toolchain.json'), 'utf8'),
+      )
+      if (value && typeof value === 'object' && !Array.isArray(value)) {
+        const home = (value as { javaHome?: unknown }).javaHome
+        if (typeof home === 'string') configured = home.trim()
+      }
+    } catch {
+      /* 缺少本机配置时由下面的错误提示引导。 */
+    }
+  }
+  if (!configured)
+    throw new Error(
+      '未配置 JDK 17+。请在 backend/config/toolchain.json 填写 javaHome，或设置 XUYA_JAVA_HOME。',
+    )
+  return path.join(configured, 'bin', process.platform === 'win32' ? 'java.exe' : 'java')
+}
+
 /** 只读取公开端口配置；模型配置由 Java 后端独立加载。 */
 export function loadConfiguration(): DesktopConfiguration {
   const packaged = app.isPackaged
@@ -97,7 +120,7 @@ export function loadConfiguration(): DesktopConfiguration {
       : path.join(workspaceRoot, 'backend/dist/xuya-backend.jar'),
     java: packaged
       ? path.join(process.resourcesPath, 'runtime/bin/java.exe')
-      : path.join(process.env.XUYA_JAVA_HOME || 'D:\\GreenSoft\\java\\jdk-17.0.14', 'bin/java.exe'),
+      : developmentJavaExecutable(workspaceRoot),
     bundledPython,
     dataDirectory,
     configDirectory: path.resolve(

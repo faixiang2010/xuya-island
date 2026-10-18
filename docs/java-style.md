@@ -43,7 +43,6 @@ com.xuya.island
 
 JUnit 测试使用真实临时 SQLite，覆盖中文恢复、事务回滚、同时保存冲突、API 参数和来源限制。Harness 测试真实装配 Agent，模型返回固定响应；兼容接口使用本机 HTTP 服务验证路径与请求内容。
 
-```powershell
-Set-Location 'D:\electron\xuya-island'
-powershell -NoProfile -ExecutionPolicy Bypass -File backend/scripts/backend.ps1 -Task test
+```bash
+node backend/scripts/backend-task.mjs test
 ```

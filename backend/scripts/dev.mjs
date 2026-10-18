@@ -26,9 +26,17 @@ for (const owner of selection.released)
 for (let i = 0; i < preferred.length; i++)
   if (preferred[i] !== selection.ports[i])
     console.log(`端口 ${preferred[i]} 被其他程序占用或不可用，改用 ${selection.ports[i]}。`)
-const bundledCandidate = path.join(root, 'electron/build/python/python.exe')
+const bundledCandidates =
+  process.platform === 'win32'
+    ? [path.join(root, 'electron/build/python/python.exe')]
+    : [
+        path.join(root, 'electron/build/python/bin/python3'),
+        path.join(root, 'electron/build/python/bin/python3.12'),
+      ]
 const bundledPython =
-  process.env.XUYA_BUNDLED_PYTHON || (existsSync(bundledCandidate) ? bundledCandidate : '')
+  process.env.XUYA_BUNDLED_PYTHON ||
+  bundledCandidates.find((candidate) => existsSync(candidate)) ||
+  ''
 const childEnvironment = {
   ...process.env,
   XUYA_PORT: String(backendPort),

@@ -4,18 +4,20 @@
 
 ## 开发与验证
 
-从项目根目录执行：
+从项目根目录执行（Windows 与 macOS 命令一致；PowerShell 拦截 `npm.ps1` 时改用 `npm.cmd`）：
 
-```powershell
-npm.cmd --prefix frontend-react ci
+```bash
+npm --prefix frontend-react ci
 node backend/scripts/dev.mjs
-npm.cmd --prefix frontend-react test
-npm.cmd --prefix frontend-react run build
-npm.cmd --prefix frontend-react run format:check
-npm.cmd --prefix frontend-react run test:e2e
+npm --prefix frontend-react test
+npm --prefix frontend-react run build
+npm --prefix frontend-react run format:check
+npm --prefix frontend-react run test:e2e
 ```
 
-工具路径、端口与调试见[本地开发与首次使用](../docs/getting-started.md)。浏览器测试自动构建源码，用临时学习库/随机端口/空模型配置，全部用例经 `tests/support/session.ts` 走真实管理员登录；当前为 13 个 spec、56 条用例，单元测试 28 个文件、103 条。`--reuse-build` 只用于本轮已构建时，`--lan` 走本机私有 IPv4。`test:curriculum`、`test:adventure` 是历史 Pyodide 兼容检查，正式运行由 Java 启动原生 Python。
+启动前后端前，先按[本地开发与首次使用](../docs/getting-started.md)配置 `backend/config/toolchain.json` 里的 JDK 与 Maven。工具路径、端口与调试见同一文档。macOS 首次跑浏览器测试前执行 `npx playwright install chromium`。
+
+浏览器测试自动构建源码，用临时学习库/随机端口/空模型配置，全部用例经 `tests/support/session.ts` 走真实管理员登录；当前为 13 个 spec、56 条用例，单元测试 28 个文件、103 条。`--reuse-build` 只用于本轮已构建时，`--lan` 走本机私有 IPv4。`test:curriculum`、`test:adventure` 是历史 Pyodide 兼容检查，正式运行由 Java 启动原生 Python。
 
 ## 模块职责
 
