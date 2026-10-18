@@ -311,13 +311,16 @@ XUYA_STUDIO_ENABLED=true
 | 文件 | 读取方 | 适合放什么 |
 |---|---|---|
 | `.env` | `start.cmd` / `start.sh` 读取并导出为环境变量 | JDK、端口、Python、模型 Key、局域网、扩展服务开关 |
+| `config/network.json` | 家庭管理界面写入，启动脚本读取 | 局域网共享开关（重启生效，`.env` 显式设置优先） |
 | `config/application-local.yml` | Java 后端启动时读取 | 结构化应用配置，模型与可选服务 |
 
 `.env` 本身不会被 Java 直接读取；手动执行 `java -jar` 时不会自动加载 `.env`，需要用启动脚本，或自己设置环境变量。
 
 ### 9. 局域网共享
 
-启动前在 `.env` 中取消注释并改为 `XUYA_BIND_ADDRESS=0.0.0.0`，或临时设置：
+可以在「家庭管理 → 局域网共享」里打开并保存。设置写入 `config/network.json`，**需要重启叙芽岛服务后才生效**；重启时启动脚本会先自动停止同一数据目录的旧实例。`start.sh` / `start.cmd` 启动时会读取该文件；`.env` 或系统环境变量里显式设置的 `XUYA_BIND_ADDRESS` 优先。
+
+也可以启动前在 `.env` 中取消注释并改为 `XUYA_BIND_ADDRESS=0.0.0.0`，或临时设置：
 
 ```powershell
 # Windows PowerShell
@@ -381,9 +384,10 @@ Windows 的 `start.cmd` 内部执行 `chcp 65001`，因此 UTF-8 中文提示可
 | 提示“未找到可用的 JDK 17+” | 安装 JDK 17+，或在 `.env` 写 `JAVA_HOME=JDK 根目录`；按输出确认脚本检查到的 java 路径与版本 |
 | 配置了 JDK 仍提示 Java 1.8 | 确认改的是复制出来的 `.env` 而不是 `.env.example`；`JAVA_HOME` 要写 JDK 根目录；留空则自动探测 PATH 与常见安装目录 |
 | 机器有多个 JDK | 在 `.env` 写 `JAVA_HOME=想使用的 JDK 17+ 根目录`，启动脚本优先使用它 |
+| 启动报“此数据目录已有后端运行” | 脚本会先自动停止同一数据目录的旧实例；仍出现时确认没有其他副本共用同一 `data` 目录，或手动结束旧进程 |
 | 页面打不开 | 看控制台端口提示；确认 `XUYA_PORT` 未被占用 |
 | 课堂提示未配置 Python | 安装 Python 3，或在家庭管理手动选择 |
-| 局域网其他设备打不开 | 设置 `XUYA_BIND_ADDRESS=0.0.0.0`，检查防火墙 |
+| 局域网其他设备打不开 | 在界面保存共享设置后重启服务；脚本会读取 `config/network.json`，`.env` 的 `XUYA_BIND_ADDRESS` 优先；再检查防火墙 |
 | 想换数据目录 | 在 `.env` 写 `XUYA_DATA_DIR=新目录` |
 
 ---
@@ -484,5 +488,6 @@ npm --prefix electron run dist    # NSIS 安装包
 - 运行包自动创建 `data` 和 `logs`，不写入源码目录。
 - 重复打包会保留 `data`、`logs`、`.env` 和 `config/application-local.yml`；zip 只包含程序文件。
 - `start.sh` 在 Windows Git Bash 下用假 JDK 模拟验证：`.env` 优先、空值不覆盖、CRLF 与引号、`~` / `$HOME` / `${HOME}` 展开、`JAVA_HOME` 指向 `bin`、旧 JDK 诊断、缺少 `.env` 提示、自动补执行位、PATH 与常见安装目录探测，共 12 项通过。
+- 启动脚本读取 `config/network.json` 决定 `XUYA_BIND_ADDRESS`，并优先采用 `.env` / 系统环境变量；启动前会停止同一数据目录的旧实例，避免 `backend.lock` 冲突。
 
 macOS 真实启动仍需在 Mac 上按“源码包”或“跨平台 JAR 运行包”各跑一次；本机只能完成 Windows 实跑和 macOS 分支模拟。
