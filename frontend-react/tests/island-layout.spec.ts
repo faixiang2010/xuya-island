@@ -133,7 +133,7 @@ test('鼠标与键盘选择阶段后，共享任务更新并从唯一主入口�
   await expect(task).toContainText('拼音打字')
   await expect(task).toContainText('输入拼音')
   await expect(task).toContainText('未开始')
-  await expect(start).toHaveAttribute('href', '#/games/pinyin?level=characters')
+  await expect(start).toHaveAttribute('href', '#/games/pinyin?level=six-up-1')
   await expect(page).toHaveURL(/\/#?\/?$/)
   await start.click()
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('拼音汉字小站')
@@ -260,14 +260,14 @@ test('练习设置与正文对齐且输入和反馈在桌面首屏可用', async
   ]) {
     await page.setViewportSize({ width, height })
     for (const game of ['keyboard', 'pinyin']) {
-      await page.goto(`/#/games/${game}?level=${game === 'keyboard' ? 'uppercase' : 'characters'}`)
+      await page.goto(`/#/games/${game}?level=${game === 'keyboard' ? 'uppercase' : 'six-up-1'}`)
       const input = page.getByRole('textbox')
       const round = page.getByRole('region', { name: '打字练习' })
       const settings = page.getByRole('region', { name: '练习设置' })
       const boundaries = await Promise.all([settings.boundingBox(), round.boundingBox()])
       expect(Math.abs(boundaries[0]!.x - boundaries[1]!.x)).toBeLessThanOrEqual(1)
       expect(Math.abs(boundaries[0]!.width - boundaries[1]!.width)).toBeLessThanOrEqual(1)
-      await input.fill(game === 'keyboard' ? 'f' : 'shan')
+      await input.fill(game === 'keyboard' ? 'f' : 'lv tan')
       await expect(page.getByRole('status')).toContainText(
         game === 'keyboard' ? '大写 F' : '选出汉字',
       )

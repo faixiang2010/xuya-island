@@ -108,9 +108,15 @@ export default function FallingGameView({
   function spawn() {
     counter.current += 1
     const word = difficulty.words[Math.floor(Math.random() * difficulty.words.length)]
+    const wide = word.length > 12
     const next = [
       ...wordsRef.current,
-      { id: counter.current, word, x: 22 + Math.random() * 56, y: -8 },
+      {
+        id: counter.current,
+        word,
+        x: (wide ? 30 : 22) + Math.random() * (wide ? 40 : 56),
+        y: -8,
+      },
     ]
     updateWords(next)
   }
@@ -195,7 +201,7 @@ export default function FallingGameView({
         else if (!active?.word.toLowerCase().startsWith(next)) updateActive(undefined)
         return
       }
-      if (!/^[a-z]$/i.test(event.key)) return
+      if (!/^[a-z. -]$/i.test(event.key)) return
       event.preventDefault()
       const key = event.key.toLowerCase()
       const current = statsRef.current
@@ -327,7 +333,11 @@ export default function FallingGameView({
               <span
                 key={item.id}
                 data-testid="falling-word"
-                className={styles.word + (isActive ? ' ' + styles.wordActive : '')}
+                className={
+                  styles.word +
+                  (item.word.length > 12 ? ' ' + styles.wordLong : '') +
+                  (isActive ? ' ' + styles.wordActive : '')
+                }
                 style={{ left: `${item.x}%`, top: `${item.y}%` }}
               >
                 {[...item.word].map((letter, position) => (
@@ -348,7 +358,7 @@ export default function FallingGameView({
               <h2>{difficulty.title}</h2>
               <p>{difficulty.goal}</p>
               <p className={styles.tip}>
-                输入落得最低的词，打对自动击落；漏词会扣护盾。按 Esc 可以暂停。
+                输入落得最低的词或短语，打对自动击落；漏词会扣护盾。按 Esc 可以暂停。
               </p>
               <button className="button primary" onClick={start}>
                 开始这一局 →

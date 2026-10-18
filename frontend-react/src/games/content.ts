@@ -1,6 +1,7 @@
 import { fallingLevels } from './fallingWords.ts'
 import { fingerLevels } from './fingerCourse.ts'
 import { passageLevels } from './passages.ts'
+import { sixthGradeWordGroups } from './chineseWords.ts'
 
 export type GameId =
   'keyboard' | 'pinyin' | 'finger' | 'falling' | 'passage' | 'passage-en' | 'style' | 'quiz'
@@ -95,58 +96,34 @@ export const typingGames: Record<GameId, TypingGame> = {
   pinyin: {
     id: 'pinyin',
     title: '拼音汉字小站',
-    description: '用拼音寻找汉字，把你的中文点子送进故事里。',
-    instruction: '切换到中文拼音输入法，输入拼音并选出汉字。选字完成后自动送达，途中不会判错。',
+    description: '部编版六年级上下册全部“看拼音写词语”，共 440 个词语逐课练习。',
+    instruction:
+      '切换到中文拼音输入法，按课文顺序输入六年级上下册全部词语的拼音并选出汉字。选字完成后自动送达，途中不会判错。',
     kind: 'typing',
     input: 'pinyin',
     icon: 'pinyin',
     badgeTitle: '拼音小达人',
     levels: [
-      {
-        id: 'characters',
-        title: '1 · 一个汉字',
-        version: 1,
-        goal: '输入拼音，在候选里选出目标汉字。',
-        discovery: '同一个拼音可能有多个汉字，选字时还要看清意思。',
-        tasks: chinese([
-          ['山', 'shan'],
-          ['水', 'shui'],
-          ['日', 'ri'],
-          ['月', 'yue'],
-          ['人', 'ren'],
-          ['大', 'da'],
-          ['小', 'xiao'],
-          ['天', 'tian'],
-        ]),
-      },
-      {
-        id: 'words',
-        title: '2 · 词语朋友',
-        version: 1,
-        goal: '连着输入词语的拼音，再选出完整词语。',
-        discovery: '词语可以一起输入，选好词语后再继续下一段。',
-        tasks: chinese([
-          ['你好', 'ni hao'],
-          ['小鸟', 'xiao niao'],
-          ['白云', 'bai yun'],
-          ['太阳', 'tai yang'],
-          ['月亮', 'yue liang'],
-          ['开心', 'kai xin'],
-          ['朋友', 'peng you'],
-          ['故事', 'gu shi'],
-        ]),
-      },
+      ...sixthGradeWordGroups.map((group) => ({
+        id: group.id,
+        title: group.title,
+        version: 3,
+        goal: `${group.lessons}的看拼音写词语，共 ${group.words.length} 个。`,
+        discovery: '同一个拼音可能对应多个汉字，先看清词语再选字；长词可以分几次选字。',
+        tasks: chinese(group.words),
+      })),
       {
         id: 'sentences',
-        title: '3 · 写一句话',
-        version: 1,
-        goal: '把短句写完整，中途选字也没关系。',
-        discovery: '一句话可以分几次选字，程序会等你把目标短句写完整。',
+        title: '5 · 六年级句子',
+        version: 3,
+        goal: '把六年级课文里的短句写完整，中途选字也没关系。',
+        discovery: '句子可以分几次选字，程序会等你把目标句子写完整。',
         tasks: chinese([
-          ['你好朋友', 'ni hao peng you'],
-          ['小鸟飞上天', 'xiao niao fei shang tian'],
-          ['我喜欢故事', 'wo xi huan gu shi'],
-          ['今天真开心', 'jin tian zhen kai xin'],
+          ['草原上空气清鲜', 'cao yuan shang kong qi qing xian'],
+          ['我们只有一个地球', 'wo men zhi you yi ge di qiu'],
+          ['少年闰土聪明能干', 'shao nian run tu cong ming neng gan'],
+          ['夏天是万物生长的季节', 'xia tian shi wan wu sheng zhang de ji jie'],
+          ['北京的春节真热闹', 'bei jing de chun jie zhen re nao'],
         ]),
       },
     ],
@@ -166,8 +143,9 @@ export const typingGames: Record<GameId, TypingGame> = {
   falling: {
     id: 'falling',
     title: '字母雨 · 词雨',
-    description: '字母和单词从天上落下，输入正确就能把它们击落。',
-    instruction: '输入落得最低的词，打对会自动击落；漏掉会扣一格护盾。先保证准确，再慢慢加快。',
+    description: 'PEP 六年级上下册的单词和短语从天上落下，输入正确就能把它们击落。',
+    instruction:
+      '输入落得最低的词或短语，空格、连字符和点号直接敲；打对会自动击落，漏掉会扣一格护盾。先保证准确，再慢慢加快。',
     kind: 'falling',
     input: 'keyboard',
     icon: 'meteor',

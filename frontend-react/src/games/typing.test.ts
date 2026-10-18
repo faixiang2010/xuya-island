@@ -111,8 +111,9 @@ describe('入门打字练习', () => {
     expect(useGameProgress.getState().records.map((item) => item.levelId)).toEqual([
       'letters',
       'numbers',
-      'words',
     ])
+    expect(useGameProgress.getState().records.map((item) => item.levelId)).not.toContain('mixed')
+    expect(useGameProgress.getState().records.map((item) => item.levelId)).not.toContain('words')
     expect(gameFinished('keyboard', useGameProgress.getState().records)).toBe(false)
     useGameProgress.getState().saveDraft('keyboard', 'uppercase', 1, 1)
     expect(cache.get('xuya:typing-progress:v1')).toBe(old)
@@ -129,9 +130,10 @@ describe('入门打字练习', () => {
     })
     useGameProgress.getState().hydrate()
     expect(useGameProgress.getState().cacheAvailable).toBe(false)
-    useGameProgress.getState().saveDraft('pinyin', 'characters', 2, 2)
+    const pinyinLevel = typingGames.pinyin.levels[0]
+    useGameProgress.getState().saveDraft('pinyin', pinyinLevel.id, 2, 2)
     expect(useGameProgress.getState().drafts[0].nextIndex).toBe(2)
-    useGameProgress.getState().complete('pinyin', 'characters', 8)
+    useGameProgress.getState().complete('pinyin', pinyinLevel.id, pinyinLevel.tasks.length)
     expect(useGameProgress.getState().records).toHaveLength(1)
     expect(useGameProgress.getState().cacheAvailable).toBe(false)
   })

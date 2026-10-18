@@ -53,11 +53,44 @@ test('大小写五级与汉字三级完成后地图推进，刷新记录保留',
   await page.goto('/')
   await expect(page.getByRole('link', { name: '开始 / 继续' })).toHaveAttribute(
     'href',
-    '#/games/pinyin?level=characters',
+    '#/games/pinyin?level=six-up-1',
   )
   await page.reload()
   await expect(page.getByRole('list', { name: '学习步骤' })).toContainText('5 / 5 级已练完')
-  for (let i = 0; i < typingGames.pinyin.levels.length; i++) await finishLevel(page, 'pinyin', i)
+  // 拼音词库扩充到 440 个词语后，逐题通关会跑很久；这里写入完成记录，只实际完成 5 题的句子级。
+  const prefix = await accountStoragePrefix(page)
+  await page.evaluate(
+    ({ storagePrefix, levels, stamp }) => {
+      const key = storagePrefix + 'xuya:typing-progress:v2'
+      const raw = JSON.parse(localStorage.getItem(key) ?? '{"version":2,"records":[],"drafts":[]}')
+      for (const level of levels)
+        if (
+          !raw.records.some(
+            (item: { gameId: string; levelId: string }) =>
+              item.gameId === 'pinyin' && item.levelId === level.id,
+          )
+        )
+          raw.records.push({
+            gameId: 'pinyin',
+            levelId: level.id,
+            levelVersion: level.version,
+            attempts: level.count,
+            completedAt: stamp,
+          })
+      localStorage.setItem(key, JSON.stringify(raw))
+    },
+    {
+      storagePrefix: prefix,
+      levels: typingGames.pinyin.levels.slice(0, -1).map((level) => ({
+        id: level.id,
+        version: level.version,
+        count: level.tasks.length,
+      })),
+      stamp: new Date().toISOString(),
+    },
+  )
+  await page.reload()
+  await finishLevel(page, 'pinyin', typingGames.pinyin.levels.length - 1)
   await page.goto('/')
   await expect(page.getByRole('link', { name: '开始 / 继续' })).toHaveAttribute(
     'href',
@@ -93,16 +126,16 @@ test('中文选字与重复组合事件不会误判或跳两题，短句可分�
   const storagePrefix = await accountStoragePrefix(page)
   await page.goto('/#/games/pinyin')
   const input = page.getByLabel('用拼音输入法输入汉字')
-  await input.fill('shan')
+  await input.fill('lv tan')
   await expect(page.getByRole('status')).toContainText('选出汉字')
   await input.dispatchEvent('compositionstart')
-  await input.fill('山')
+  await input.fill('绿毯')
   await input.press('Enter')
   await expect(page.getByRole('status')).toContainText('正在选字')
-  await expect(page.getByTestId('typing-target')).toHaveText('山')
+  await expect(page.getByTestId('typing-target')).toHaveText('绿毯')
   await input.dispatchEvent('compositionend')
   await input.dispatchEvent('compositionend')
-  await expect(page.getByTestId('typing-target')).toHaveText('水')
+  await expect(page.getByTestId('typing-target')).toHaveText('线条')
   expect(
     await page.evaluate(
       (key) => JSON.parse(localStorage.getItem(key)!).drafts[0].nextIndex,
@@ -110,10 +143,10 @@ test('中文选字与重复组合事件不会误判或跳两题，短句可分�
     ),
   ).toBe(1)
   await page.goto('/#/games/pinyin?level=sentences')
-  await input.fill('你好')
+  await input.fill('草原')
   await expect(page.getByRole('status')).toContainText('接着输入')
-  await input.fill('你好朋友')
-  await expect(page.getByTestId('typing-target')).toHaveText('小鸟飞上天')
+  await input.fill('草原上空气清鲜')
+  await expect(page.getByTestId('typing-target')).toHaveText('我们只有一个地球')
   await page.screenshot({ path: 'test-results/playful-pinyin.png', fullPage: true })
 })
 test('六卡任务可休息，中途游标刷新恢复，不把一组当成整个级别', async ({ page }) => {
@@ -182,7 +215,7 @@ test('损坏与旧缓存安全迁移，存储失败仍可练习且明确提示',
     }
   }, progressKey)
   await page.reload()
-  await finishLevel(page, 'pinyin', 2)
+  await finishLevel(page, 'pinyin', typingGames.pinyin.levels.length - 1)
   await expect(page.getByRole('alert')).toContainText('不能保存练习记录')
   await page.getByRole('link', { name: '回到学习地图 →' }).click()
   await expect(page.getByRole('alert')).toContainText('无法保存游戏练习记录')

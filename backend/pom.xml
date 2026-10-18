@@ -68,7 +68,11 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
-            <exclusions><exclusion><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-logging</artifactId></exclusion></exclusions>
+            <exclusions>
+                <exclusion><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-logging</artifactId></exclusion>
+                <!-- jsonassert 自带 android-json，会与 socket.io-client 传递的 org.json 重复；测试统一使用后者。 -->
+                <exclusion><groupId>com.vaadin.external.google</groupId><artifactId>android-json</artifactId></exclusion>
+            </exclusions>
             <scope>test</scope>
         </dependency>
         <dependency>

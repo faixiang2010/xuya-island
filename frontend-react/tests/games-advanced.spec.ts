@@ -87,12 +87,12 @@ test('字母雨能生成词、暂停并击落第一个词', async ({ page }) => 
 
 test('字母雨可以切换难度并显示新目标', async ({ page }) => {
   await page.goto('/#/games/falling?level=letters')
-  await page.getByRole('button', { name: '2 · 三字母词' }).click()
-  await expect(page.getByRole('button', { name: '2 · 三字母词' })).toHaveAttribute(
+  await page.getByRole('button', { name: '2 · 六上词汇' }).click()
+  await expect(page.getByRole('button', { name: '2 · 六上词汇' })).toHaveAttribute(
     'aria-pressed',
     'true',
   )
-  await expect(page.getByRole('heading', { name: '2 · 三字母词' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: '2 · 六上词汇' })).toBeVisible()
 })
 
 test('语文和英语课文分成两张卡，页面只显示各自的长篇', async ({ page }) => {

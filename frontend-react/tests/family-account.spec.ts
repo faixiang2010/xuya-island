@@ -154,7 +154,7 @@ test('家庭管理员设置、软萌登录、账户隔离与主机Python完整�
         version: 2,
         records: [],
         drafts: [
-          { gameId: 'pinyin', levelId: 'characters', levelVersion: 1, nextIndex: 3, attempts: 3 },
+          { gameId: 'pinyin', levelId: 'six-up-1', levelVersion: 3, nextIndex: 3, attempts: 3 },
         ],
       }),
     )

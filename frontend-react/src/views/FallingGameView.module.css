@@ -93,6 +93,11 @@
   outline: 2px solid color-mix(in srgb, var(--accent) 50%, transparent);
   background: var(--learning-soft, #fff2f7);
 }
+.wordLong {
+  padding: 5px 9px;
+  font-size: clamp(13px, 1.5vw, 18px);
+  letter-spacing: 0;
+}
 .overlay {
   position: absolute;
   inset: 0;

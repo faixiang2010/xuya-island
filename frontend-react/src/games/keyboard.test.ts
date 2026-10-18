@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { fingerForKey, homeKeys, keyRows, practiceCharacters } from './keyboard'
 import { fingerLevels } from './fingerCourse'
 import { fallingDifficulties, fallingLevels } from './fallingWords'
+import { typingGames } from './content'
 import { passages, passageLevels, splitPassageText } from './passages'
 
 describe('全键盘十指分区', () => {
@@ -46,6 +47,47 @@ describe('指法课程与掉落词库', () => {
       expect(
         fallingDifficulties.find((item) => item.id === level.id)?.words.length,
       ).toBeGreaterThan(0)
+  })
+})
+
+describe('六年级拼音与掉落词库', () => {
+  it('拼音小站收录部编版六上、六下全部看拼音写词语', () => {
+    const levels = typingGames.pinyin.levels
+    expect(levels.map((level) => level.title)).toEqual([
+      '1 · 六上词语（一）',
+      '2 · 六上词语（二）',
+      '3 · 六下词语（一）',
+      '4 · 六下词语（二）',
+      '5 · 六年级句子',
+    ])
+    expect(levels.every((level) => level.version === 3)).toBe(true)
+    expect(levels[0].tasks[0]).toEqual({ target: '绿毯', pinyin: 'lv tan' })
+    expect(levels[0].tasks.map((task) => task.target)).toContain('心满意足')
+    expect(levels[1].tasks.map((task) => task.target)).toContain('陡然')
+    expect(levels[2].tasks.map((task) => task.target)).toContain('焉知非福')
+    expect(levels[3].tasks.map((task) => task.target)).toContain('锲而不舍')
+    expect(levels[4].tasks.map((task) => task.target)).toContain('我们只有一个地球')
+    const words = levels.slice(0, 4).flatMap((level) => level.tasks)
+    expect(words).toHaveLength(440)
+    expect(words.every((task) => task.target.length > 0 && Boolean(task.pinyin))).toBe(true)
+  })
+
+  it('掉落词库覆盖 PEP 六年级上下册全部词汇', () => {
+    expect(fallingDifficulties[1].title).toBe('2 · 六上词汇')
+    expect(fallingDifficulties[1].words).toContain('museum')
+    expect(fallingDifficulties[1].words).toContain('take a deep breath')
+    expect(fallingDifficulties[1].words).not.toContain('cat')
+    expect(fallingDifficulties[2].title).toBe('3 · 六下词汇')
+    expect(fallingDifficulties[2].words).toContain('younger')
+    for (const level of fallingDifficulties.slice(1)) {
+      expect(level.title).toContain('六')
+      expect(level.version).toBe(3)
+      expect(level.words.every((word) => /^[a-z. -]+$/.test(word))).toBe(true)
+    }
+    const all = fallingDifficulties[4].words
+    expect(new Set(all).size).toBe(all.length)
+    for (const word of fallingDifficulties[1].words) expect(all).toContain(word)
+    for (const word of fallingDifficulties[2].words) expect(all).toContain(word)
   })
 })
 

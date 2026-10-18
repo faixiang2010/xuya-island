@@ -369,9 +369,9 @@ class GrowthIntegrationTest {
                                 List.of(
                                         Map.of(
                                                 "gameId",
-                                                "pinyin",
+                                                "finger",
                                                 "levelId",
-                                                "characters",
+                                                "home",
                                                 "levelVersion",
                                                 1,
                                                 "nextIndex",

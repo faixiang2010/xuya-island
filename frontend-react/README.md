@@ -15,7 +15,7 @@ npm.cmd --prefix frontend-react run format:check
 npm.cmd --prefix frontend-react run test:e2e
 ```
 
-工具路径、端口与调试见[本地开发与首次使用](../docs/getting-started.md)。浏览器测试自动构建源码，用临时学习库/随机端口/空模型配置，全部用例经 `tests/support/session.ts` 走真实管理员登录；当前为 13 个 spec、56 条用例，单元测试 28 个文件、101 条。`--reuse-build` 只用于本轮已构建时，`--lan` 走本机私有 IPv4。`test:curriculum`、`test:adventure` 是历史 Pyodide 兼容检查，正式运行由 Java 启动原生 Python。
+工具路径、端口与调试见[本地开发与首次使用](../docs/getting-started.md)。浏览器测试自动构建源码，用临时学习库/随机端口/空模型配置，全部用例经 `tests/support/session.ts` 走真实管理员登录；当前为 13 个 spec、56 条用例，单元测试 28 个文件、103 条。`--reuse-build` 只用于本轮已构建时，`--lan` 走本机私有 IPv4。`test:curriculum`、`test:adventure` 是历史 Pyodide 兼容检查，正式运行由 Java 启动原生 Python。
 
 ## 模块职责
 
@@ -38,7 +38,8 @@ npm.cmd --prefix frontend-react run test:e2e
 ## 游戏中心
 
 - 指法学院：完整 QWERTY 键盘、十指分区、家位凸点、盲打模式，键盘下方悬浮双手并对目标手指做下压动画。
-- 字母雨/词雨：五档难度，按准确率自适应速度，支持暂停、护盾和结算。
+- 字母雨/词雨：单字母档练键位，第二档起覆盖 PEP 人教版六年级上下册全部单词与短语；五档难度，按准确率自适应速度，支持暂停、护盾和结算。
+- 拼音汉字小站：部编版六年级上下册全部“看拼音写词语”（440 个，按课文分四组）和课文短句，练习拼音输入与选字。
 - 语文/英语课文：分成两张卡和两个入口，只收录约 200–500 字长篇；语文 14 篇、英语 12 篇，按六年级上册、下册分组。历史短篇（古诗、文言文）不再混入长篇列表。
 - 进度、续学和徽章沿用账户学习记录；自定义文章只保存在本机。
 
