@@ -111,7 +111,9 @@ class StudySessionIntegrationTest {
     private StudioViews.Snapshot await(
             StudySessionService service, String id, Predicate<StudioViews.Snapshot> ready)
             throws Exception {
-        long deadline = System.currentTimeMillis() + 15000;
+        // 预算用例要等完整跑完 5 次模型调用再触发失败；CI 的 Windows 磁盘与杀毒扫描会明显变慢，
+        // 15 秒会在原生会话落盘失败事件之前超时，这里给足余量，避免把慢机器误判为功能失败。
+        long deadline = System.currentTimeMillis() + 60000;
         StudioViews.Snapshot value;
         do {
             value = service.snapshot(id);
