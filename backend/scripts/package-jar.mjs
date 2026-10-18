@@ -1,5 +1,5 @@
 import { spawn } from 'node:child_process'
-import { cp, mkdir, rm, writeFile } from 'node:fs/promises'
+import { cp, mkdir, readFile, rm, writeFile } from 'node:fs/promises'
 import { existsSync } from 'node:fs'
 import path from 'node:path'
 import { backendRoot, workspaceRoot } from './runtime.mjs'
@@ -31,6 +31,76 @@ function run(command, args, options = {}) {
       code === 0 ? resolve() : reject(new Error(`命令退出码：${code}`)),
     )
   })
+}
+
+function runCapture(command, args, options = {}) {
+  return new Promise((resolve, reject) => {
+    const child = spawn(command, args, { ...options })
+    let stdout = ''
+    let stderr = ''
+    child.stdout.on('data', (chunk) => {
+      stdout += chunk
+    })
+    child.stderr.on('data', (chunk) => {
+      stderr += chunk
+    })
+    child.once('error', reject)
+    child.once('exit', (code) =>
+      code === 0
+        ? resolve(stdout)
+        : reject(new Error(`命令退出码：${code}${stderr ? `，${stderr.trim()}` : ''}`)),
+    )
+  })
+}
+
+/** 运行包里的文本必须是无 BOM 的 UTF-8，避免 macOS 上出现乱码或脚本首行失效。 */
+async function assertUtf8Text(file, { shell = false, lf = false, crlf = false } = {}) {
+  const bytes = await readFile(file)
+  if (bytes.length >= 3 && bytes[0] === 0xef && bytes[1] === 0xbb && bytes[2] === 0xbf)
+    throw new Error(`${path.basename(file)} 带有 UTF-8 BOM，请改为无 BOM 的 UTF-8。`)
+  let text
+  try {
+    text = new TextDecoder('utf-8', { fatal: true }).decode(bytes)
+  } catch {
+    throw new Error(`${path.basename(file)} 不是有效的 UTF-8 文本。`)
+  }
+  if (lf && text.includes('\r'))
+    throw new Error(`${path.basename(file)} 必须使用 LF 换行，不能包含 CR。`)
+  if (crlf) {
+    if (!text.startsWith('@echo off\r\n'))
+      throw new Error(`${path.basename(file)} 必须以 @echo off 和 CRLF 换行开头。`)
+    if (/(?<!\r)\n/.test(text) || /\r(?!\n)/.test(text))
+      throw new Error(`${path.basename(file)} 必须统一使用 CRLF 换行。`)
+  }
+  if (shell) {
+    if (text.includes('\r')) throw new Error(`${path.basename(file)} 必须使用 LF 换行。`)
+    if (!text.startsWith('#!/usr/bin/env bash\n'))
+      throw new Error(`${path.basename(file)} 必须以 bash shebang 开头。`)
+  }
+  return text
+}
+
+async function assertArchive() {
+  const raw =
+    process.platform === 'win32'
+      ? await runCapture('tar.exe', ['-tf', zipFile], { cwd: workspaceRoot })
+      : await runCapture('unzip', ['-Z1', zipFile], { cwd: workspaceRoot })
+  const entries = raw.split(/\r?\n/).filter(Boolean)
+  if (entries.some((entry) => entry.includes('\\')))
+    throw new Error('压缩包内出现了反斜杠路径，macOS 解压会丢失目录结构。')
+  const normalized = entries.map((entry) => entry.replace(/^\.\//, ''))
+  const required = [
+    '.env.example',
+    'README.md',
+    'config/application-local.example.yml',
+    'config/application-local.yml',
+    'start.cmd',
+    'start.sh',
+    'xuya-backend.jar',
+  ]
+  for (const name of required) {
+    if (!normalized.includes(name)) throw new Error(`压缩包缺少 ${name}。`)
+  }
 }
 
 async function buildIfNeeded() {
@@ -135,13 +205,17 @@ async function writeLaunchers(root = packageRoot) {
 
   await writeFile(path.join(root, 'start.cmd'), startCmd, 'utf8')
   await writeFile(path.join(root, 'start.sh'), startSh, 'utf8')
+  await assertUtf8Text(path.join(root, 'start.cmd'), { crlf: true })
+  await assertUtf8Text(path.join(root, 'start.sh'), { shell: true })
 
   const startEnv = [
     '# 复制本文件为 .env 后填写；不要直接修改 .env.example。',
+    '# 本文件必须保存为 UTF-8（无 BOM）；请保留本行注释，Windows 批处理会跳过 # 开头的行。',
     '# Windows PowerShell: Copy-Item .env.example .env',
     '# macOS/Linux:        cp .env.example .env',
     '',
     '# JDK 17+ 根目录（不是 bin 目录）。Windows 例：C:/Java/jdk-17',
+    '# Windows 路径请使用正斜杠；start.sh 会把反斜杠当作转义符。',
     '# macOS 例：/Library/Java/JavaVirtualMachines/temurin-17.jdk/Contents/Home',
     'JAVA_HOME=',
     '',
@@ -171,6 +245,28 @@ async function writeLaunchers(root = packageRoot) {
     '',
   ].join('\n')
   await writeFile(path.join(root, '.env.example'), startEnv, 'utf8')
+  await assertUtf8Text(path.join(root, '.env.example'), { lf: true })
+}
+
+async function writeLocalConfig(root) {
+  const example = (
+    await readFile(path.join(backendRoot, 'config/application-local.example.yml'), 'utf8')
+  ).replace(/\r\n/g, '\n')
+  const body = example
+    .split(/\r?\n/)
+    .filter((line, index) => !(index === 0 && line.startsWith('#')))
+    .join('\n')
+    .trimStart()
+  const content = [
+    '# 可直接编辑的本地配置。模型 Key 推荐写在 .env；本文件可保持默认。',
+    '# 填写真实 Key 后不要把这个文件发给别人。',
+    '',
+    body,
+    '',
+  ].join('\n')
+  const file = path.join(root, 'config/application-local.yml')
+  await writeFile(file, content, 'utf8')
+  await assertUtf8Text(file, { lf: true })
 }
 
 async function writeReadme(root = packageRoot) {
@@ -179,6 +275,33 @@ async function writeReadme(root = packageRoot) {
     '',
     '这是一个只依赖 JDK 的 Java 一体化运行包，不包含 Electron，也不需要 Node、Maven 或源码。',
     'JAR 内已经包含 Java 后端、React 页面、SQLite 迁移、课程资源与 Python 运行辅助脚本。',
+    '',
+    '## 包内文件',
+    '',
+    '| 文件 | 用途 |',
+    '|---|---|',
+    '| `xuya-backend.jar` | 后端、页面、课程和数据库迁移 |',
+    '| `start.cmd` | Windows 启动脚本 |',
+    '| `start.sh` | macOS / Linux 启动脚本 |',
+    '| `.env.example` | JDK、端口、Python、局域网等运行配置模板 |',
+    '| `config/application-local.example.yml` | 模型 Key 等应用配置模板 |',
+    '| `config/application-local.yml` | 可直接编辑的本地配置；默认无 Key |',
+    '| `README.md` | 本说明 |',
+    '',
+    'macOS 的 `.env.example` 以点开头，Finder 默认隐藏；请在终端用 `ls -a` 查看，或按 `Cmd + Shift + .` 显示隐藏文件。',
+    '',
+    '所有文本文件都是 UTF-8（无 BOM），`start.sh` 使用 LF 换行。编辑 `.env` 或 YAML 时请保持 UTF-8，不要另存为 UTF-16 或 ANSI。',
+    '',
+    '| 文件 | 编码 | 换行 | 平台 |',
+    '|---|---|---|---|',
+    '| `start.sh` | UTF-8 无 BOM | LF | macOS / Linux |',
+    '| `start.cmd` | UTF-8 无 BOM | CRLF | Windows |',
+    '| `.env` / `.env.example` | UTF-8 无 BOM | LF | 两平台 |',
+    '| `application-local*.yml` | UTF-8 无 BOM | LF | 两平台 |',
+    '| `README.md` | UTF-8 无 BOM | LF | 两平台 |',
+    '| `xuya-backend.jar` | 二进制 | 不适用 | 两平台 |',
+    '',
+    '在 Windows 上编辑 `.env` 时也建议保存为 UTF-8；`start.sh` 会去掉 CR，但不要保存成 UTF-16 或 ANSI。',
     '',
     '## 运行要求',
     '',
@@ -291,7 +414,7 @@ async function writeReadme(root = packageRoot) {
     '',
     '## 模型 Key 配置',
     '',
-    '推荐复制模板后填写：',
+    '运行包已经带一个空的 `config/application-local.yml`，可以直接编辑。只有文件被删除时，才需要从示例复制：',
     '',
     '```bash',
     'cp config/application-local.example.yml config/application-local.yml',
@@ -350,6 +473,9 @@ async function writeReadme(root = packageRoot) {
     '',
     '| 现象 | 处理 |',
     '|---|---|',
+    '| 解压后看不到 `.env.example` | 这是隐藏文件；macOS 用 `ls -a` 或 `Cmd + Shift + .` 查看 |',
+    '| `start.sh` 报 `line 1: ...: command not found` | 文件被保存成了 UTF-16、带 BOM 或换行损坏；从新压缩包重新解压，保持 UTF-8 无 BOM + LF，并用 `bash start.sh` |',
+    '| 配置文件打开乱码 | 编辑器另存为 UTF-8（无 BOM）；不要用 ANSI/GBK/UTF-16 |',
     '| 提示“未找到 Java” | 安装 JDK 17+，设置 `JAVA_HOME`，或把 `java` 加入 PATH |',
     '| 提示“当前 Java 版本…需要 JDK 17+” | PATH 里的 `java` 是旧版本；在 `.env` 写 `JAVA_HOME=JDK 17+ 根目录` |',
     '| 机器有多个 JDK | 在 `.env` 写 `JAVA_HOME=想使用的 JDK 17+ 根目录`，启动脚本优先使用它 |',
@@ -360,6 +486,7 @@ async function writeReadme(root = packageRoot) {
     '',
   ].join('\n')
   await writeFile(path.join(root, 'README.md'), readme, 'utf8')
+  await assertUtf8Text(path.join(root, 'README.md'), { lf: true })
 }
 
 async function createArchive(sourceRoot) {
@@ -368,25 +495,14 @@ async function createArchive(sourceRoot) {
     return
   }
   await rm(zipFile, { force: true })
-  try {
-    if (process.platform === 'win32') {
-      await run(
-        'powershell.exe',
-        [
-          '-NoProfile',
-          '-NonInteractive',
-          '-Command',
-          `Compress-Archive -Path '${path.join(sourceRoot, '*')}' -DestinationPath '${zipFile}' -Force`,
-        ],
-        { cwd: workspaceRoot },
-      )
-    } else {
-      await run('zip', ['-r', '-q', zipFile, '.'], { cwd: sourceRoot })
-    }
-    console.log(`已生成压缩包：${path.relative(workspaceRoot, zipFile)}`)
-  } catch (error) {
-    console.warn(`压缩包生成失败，目录仍然可用：${error.message}`)
+  if (process.platform === 'win32') {
+    // Windows 自带 bsdtar 生成标准 zip，条目使用正斜杠，避免 macOS 解压后目录丢失。
+    await run('tar.exe', ['-a', '-c', '-f', zipFile, '.'], { cwd: sourceRoot })
+  } else {
+    await run('zip', ['-r', '-q', zipFile, '.'], { cwd: sourceRoot })
   }
+  await assertArchive()
+  console.log(`已生成压缩包：${path.relative(workspaceRoot, zipFile)}`)
 }
 
 async function preparePackage(root) {
@@ -396,6 +512,8 @@ async function preparePackage(root) {
     path.join(backendRoot, 'config/application-local.example.yml'),
     path.join(root, 'config/application-local.example.yml'),
   )
+  await assertUtf8Text(path.join(root, 'config/application-local.example.yml'), { lf: true })
+  await writeLocalConfig(root)
   await writeLaunchers(root)
   await writeReadme(root)
 }
@@ -415,6 +533,10 @@ async function mergeArtifacts(sourceRoot, targetRoot) {
     const destination = path.join(targetRoot, relative)
     await mkdir(path.dirname(destination), { recursive: true })
     await cp(path.join(sourceRoot, relative), destination)
+  }
+  const localConfig = path.join(targetRoot, 'config/application-local.yml')
+  if (!existsSync(localConfig)) {
+    await cp(path.join(sourceRoot, 'config/application-local.yml'), localConfig)
   }
 }
 

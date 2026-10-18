@@ -63,11 +63,30 @@ backend/dist/xuya-portable/
   .env.example              # 配置模板；复制为 .env 后填写
   config/
     application-local.example.yml
+    application-local.yml   # 可直接编辑；默认无 Key
   README.md                 # 给使用者看的运行说明
 backend/dist/xuya-portable.zip
 ```
 
 运行包自带 `.env.example`，但不会预置 `.env`。复制成 `.env` 后再填写自己的配置。`backend/dist` 已被 Git 忽略，运行包不会提交到仓库。
+
+运行包也会带一个空的 `config/application-local.yml`，可以直接编辑；如果你把所有配置都放在 `.env`，这个文件保持默认即可。重复打包不会覆盖已有的 `application-local.yml`。
+
+解压后建议先核对文件：
+
+```text
+.env.example
+README.md
+start.cmd
+start.sh
+xuya-backend.jar
+config/application-local.example.yml
+config/application-local.yml
+```
+
+macOS 的 `.env.example` 以点开头，Finder 默认隐藏，终端里用 `ls -a` 查看，或按 `Cmd + Shift + .` 显示隐藏文件。压缩包内路径使用标准正斜杠，`config/` 目录会正常解出。
+
+所有文本文件都是 UTF-8（无 BOM），`start.sh` 使用 LF 换行。编辑 `.env` 或 YAML 时请保持 UTF-8，不要另存为 UTF-16 或 ANSI。
 
 ### 3. 复制 .env.example 为 .env
 
@@ -97,7 +116,14 @@ JAVA_HOME=/Library/Java/JavaVirtualMachines/temurin-17.jdk/Contents/Home
 
 注意 `JAVA_HOME` 指向 **JDK 根目录**，不是 `bin` 目录。机器上装了多个 JDK 时，把这里改成你希望叙芽岛使用的那一个；启动脚本会优先使用它，不再依赖 PATH 默认版本。
 
-端口、数据目录、局域网共享、Python 和模型 Key 也可以直接写在 `.env`，`.env.example` 里已有注释示例。
+Windows 路径请写正斜杠，例如 `C:/Java/jdk-17`。`start.sh` 会把反斜杠当作转义符，`C:\Java\jdk-17` 在 macOS/Linux 上会解析错误。
+
+端口、数据目录、局域网共享、Python 和模型 Key 也可以直接写在 `.env`，`.env.example` 里已有注释示例。端口示例：
+
+```text
+XUYA_PORT=43172
+XUYA_RUNNER_PORT=43173
+```
 
 ### 4. 复制到目标机器
 
@@ -151,6 +177,17 @@ http://127.0.0.1:43172
 
 启动脚本会优先使用 `JAVA_HOME`，没有则使用 `PATH` 里的 `java`。如果 `PATH` 默认是 JDK 8，脚本会明确提示“需要 JDK 17+”，不会直接抛出难以理解的类版本错误。
 
+部署前按这张表检查：
+
+| 检查项 | 操作 |
+|---|---|
+| JDK | 目标机器安装 JDK 17+，运行包里**不包含 JDK** |
+| `.env` | 从 `.env.example` 复制，填写 `JAVA_HOME` |
+| Python | 需要课堂运行代码时安装 Python 3；运行包里**不包含 Python** |
+| 端口 | 默认 43172 / 43173，可在 `.env` 改 `XUYA_PORT`、`XUYA_RUNNER_PORT` |
+| 模型 Key | 需要 AI 时配置 `config/application-local.yml` 或 `.env` |
+| 数据目录 | 默认运行包下 `data`，首次启动自动创建 |
+
 ### 7. 端口与环境变量
 
 优先写在 `.env`；下面的系统环境变量方式适合临时覆盖。
@@ -196,7 +233,7 @@ JAR 不内置 Python；不装 Python 仍可启动、浏览、编辑和保存，�
 
 #### 模型 Key
 
-推荐放在运行包目录的 `config/application-local.yml`。先复制模板：
+推荐放在运行包目录的 `config/application-local.yml`。运行包已经带一个空的该文件，可以直接编辑；只有文件被删除时，才需要从示例复制：
 
 ```bash
 cp config/application-local.example.yml config/application-local.yml
@@ -279,10 +316,44 @@ XUYA_BIND_ADDRESS=0.0.0.0 bash start.sh
 - 换机器：复制整个运行包目录，或至少复制 `xuya-backend.jar`、`.env`、`data`、`config`。
 - 不要删除 `data`，里面是账户、作品和学习记录。
 
-### 11. 常见问题
+### 11. 编码与换行约定
+
+运行包内文本文件统一为 **UTF-8 无 BOM**，但换行按平台区分：
+
+| 文件 | 编码 | 换行 | 平台 |
+|---|---|---|---|
+| `start.sh` | UTF-8 无 BOM | LF | macOS / Linux |
+| `start.cmd` | UTF-8 无 BOM | CRLF | Windows |
+| `.env` / `.env.example` | UTF-8 无 BOM | LF | 两平台 |
+| `application-local*.yml` | UTF-8 无 BOM | LF | 两平台 |
+| `README.md` | UTF-8 无 BOM | LF | 两平台 |
+| `xuya-backend.jar` | 二进制 | 不适用 | 两平台 |
+
+打包脚本会强制检查：出现 BOM、非 UTF-8、`start.sh` 含 CR、`start.cmd` 不是 CRLF，都会直接失败。
+
+解压后可以这样确认：
+
+```bash
+file start.sh start.cmd .env.example config/application-local.yml
+bash -n start.sh
+```
+
+预期：
+
+- `start.sh` 显示 UTF-8 文本，且没有 CR
+- `start.cmd` 显示 UTF-8 文本，使用 CRLF
+- `.env.example`、YAML 显示 UTF-8 文本
+- `bash -n start.sh` 无输出，退出码为 0
+
+Windows 的 `start.cmd` 内部执行 `chcp 65001`，因此 UTF-8 中文提示可以正常显示。不要用会把文件保存成 UTF-16 或 ANSI 的编辑器修改这些文件。
+
+### 12. 常见问题
 
 | 现象 | 处理 |
 |---|---|
+| 解压后看不到 `.env.example` | 这是隐藏文件；macOS 用 `ls -a` 或 `Cmd + Shift + .` 查看 |
+| `start.sh` 报 `line 1: ...: command not found` | 文件被保存成了 UTF-16、带 BOM 或换行损坏；从新压缩包重新解压，保持 UTF-8 无 BOM + LF，并用 `bash start.sh` |
+| 配置文件打开乱码 | 编辑器另存为 UTF-8（无 BOM）；不要用 ANSI/GBK/UTF-16 |
 | 提示“未找到 Java” | 安装 JDK 17+，设置 `JAVA_HOME`，或把 `java` 加入 PATH |
 | 提示“当前 Java 版本…需要 JDK 17+” | PATH 里的 `java` 是旧版本；在 `.env` 写 `JAVA_HOME=JDK 17+ 根目录` |
 | 机器有多个 JDK | 在 `.env` 写 `JAVA_HOME=想使用的 JDK 17+ 根目录`，启动脚本优先使用它 |
