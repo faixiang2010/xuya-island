@@ -93,7 +93,7 @@ backend/dist/xuya-portable/
 backend/dist/xuya-portable.zip
 ```
 
-复制到其他 Windows/macOS/Linux 机器后，先把 `.env.example` 复制为 `.env` 并填写 JDK 17+ 的 `JAVA_HOME`，然后 Windows 执行 `start.cmd`，macOS/Linux 执行 `bash start.sh`。源码包与 Windows 安装包的区别见[打包与跨平台分发](./docs/packaging.md)。
+复制到其他 Windows/macOS/Linux 机器后，先把 `.env.example` 复制为 `.env` 并填写 JDK 17+ 的 `JAVA_HOME`（留空时启动脚本会自动探测），然后 Windows 执行 `start.cmd`，macOS/Linux 先 `chmod +x start.sh` 再 `./start.sh`（或直接 `bash start.sh`）。源码包与 Windows 安装包的区别见[打包与跨平台分发](./docs/packaging.md)。
 
 > **没有预置账号或默认密码。** 首次打开先创建超级管理员，再到「家人账户」添加学习者。Python 通常无需手动选择：安装版优先内置，源码版自动使用本机已安装的 Python。
 

@@ -53,6 +53,20 @@ node backend/scripts/package-jar.mjs --reuse-build --no-zip
 
 重复执行打包不会删除运行包目录里已有的 `data`、`logs`、`.env` 和 `config/application-local.yml`，只会覆盖 JAR、启动脚本、示例配置文件与 README。
 
+#### GitHub Actions 自动打包
+
+不想在本机打包时，推送 `v*` 标签会触发 `.github/workflows/release.yml`，在同一个**草稿 Release** 里自动产出：
+
+- Windows Electron 安装包（`.exe`、`.blockmap`、`latest.yml`）
+- 跨平台 JAR 运行包 `xuya-portable.zip`
+
+流水线复用构建安装包时已经生成的 `backend/dist/xuya-backend.jar`（`--reuse-build`），不会重复跑测试。注意：
+
+- 只有推 `v*` 标签才会触发；普通分支 `git push` 只跑 `verify.yml` 的测试，不打包。
+- 标签指向的提交必须已有一次成功的 Verify 运行，否则 `gate` 步骤直接失败。
+- 缺少 `xuya-portable.zip` 时“收集发布资产”会失败，避免草稿 Release 少产物。
+- 标签版本要与 `electron/package.json` 的 `version` 一致（例如 `v0.2.1`）。
+
 ### 2. 产物位置
 
 ```text
@@ -114,7 +128,9 @@ macOS 示例：
 JAVA_HOME=/Library/Java/JavaVirtualMachines/temurin-17.jdk/Contents/Home
 ```
 
-注意 `JAVA_HOME` 指向 **JDK 根目录**，不是 `bin` 目录。机器上装了多个 JDK 时，把这里改成你希望叙芽岛使用的那一个；启动脚本会优先使用它，不再依赖 PATH 默认版本。
+注意 `JAVA_HOME` 指向 **JDK 根目录**，不是 `bin` 目录。机器上装了多个 JDK 时，把这里改成你希望叙芽岛使用的那一个；启动脚本会优先使用它，不再依赖 PATH 默认版本。路径中可以写 `~/...` 或 `$HOME/...`，启动脚本会展开。
+
+只有复制出来的 `.env` 才会被读取，直接修改 `.env.example` 不生效；`.env` 里留空的项（例如 `JAVA_HOME=`）不会覆盖系统已有的环境变量。`JAVA_HOME` 留空时，`start.sh` 会依次检查 PATH 中的 `java`、`/usr/libexec/java_home` 和常见 JDK 安装目录，自动选择 17 或更高版本；找不到时打印实际检查到的 java 路径与版本。
 
 Windows 路径请写正斜杠，例如 `C:/Java/jdk-17`。`start.sh` 会把反斜杠当作转义符，`C:\Java\jdk-17` 在 macOS/Linux 上会解析错误。
 
@@ -139,7 +155,14 @@ Windows：
 macOS / Linux：
 
 ```bash
-# 从 Windows 压缩包解压后，start.sh 可能没有执行权限
+# 从 Windows 压缩包解压后，start.sh 通常没有执行权限
+chmod +x start.sh
+./start.sh
+```
+
+也可以直接用 bash 启动（不需要执行权限，脚本首次运行后会自动补上执行位）：
+
+```bash
 bash start.sh
 ```
 
@@ -175,7 +198,7 @@ http://127.0.0.1:43172
 | 模型 Key | 可选 | 小奇和成人工作台的 AI 需要 |
 | Git | 可选 | 成人工作台的 Git 功能需要 |
 
-启动脚本会优先使用 `JAVA_HOME`，没有则使用 `PATH` 里的 `java`。如果 `PATH` 默认是 JDK 8，脚本会明确提示“需要 JDK 17+”，不会直接抛出难以理解的类版本错误。
+`start.sh` 的选择顺序是：`.env` / 系统环境变量中的 `JAVA_HOME` → PATH 里的 `java` → macOS/Linux 常见 JDK 安装目录（`/usr/libexec/java_home`、`/Library/Java/JavaVirtualMachines`、Homebrew、`/usr/lib/jvm`）。自动改用其他 JDK 时会打印实际路径和版本；全部低于 17 时会明确提示需要 JDK 17+，并列出检查到的 java 路径与版本，不会直接抛出难以理解的类版本错误。`start.cmd` 在 `JAVA_HOME` 无效时也会提示并回退到 PATH。
 
 部署前按这张表检查：
 
@@ -352,10 +375,11 @@ Windows 的 `start.cmd` 内部执行 `chcp 65001`，因此 UTF-8 中文提示可
 | 现象 | 处理 |
 |---|---|
 | 解压后看不到 `.env.example` | 这是隐藏文件；macOS 用 `ls -a` 或 `Cmd + Shift + .` 查看 |
+| `zsh: permission denied: ./start.sh` | 压缩包不保留执行位；执行 `chmod +x start.sh`，或直接用 `bash start.sh` |
 | `start.sh` 报 `line 1: ...: command not found` | 文件被保存成了 UTF-16、带 BOM 或换行损坏；从新压缩包重新解压，保持 UTF-8 无 BOM + LF，并用 `bash start.sh` |
 | 配置文件打开乱码 | 编辑器另存为 UTF-8（无 BOM）；不要用 ANSI/GBK/UTF-16 |
-| 提示“未找到 Java” | 安装 JDK 17+，设置 `JAVA_HOME`，或把 `java` 加入 PATH |
-| 提示“当前 Java 版本…需要 JDK 17+” | PATH 里的 `java` 是旧版本；在 `.env` 写 `JAVA_HOME=JDK 17+ 根目录` |
+| 提示“未找到可用的 JDK 17+” | 安装 JDK 17+，或在 `.env` 写 `JAVA_HOME=JDK 根目录`；按输出确认脚本检查到的 java 路径与版本 |
+| 配置了 JDK 仍提示 Java 1.8 | 确认改的是复制出来的 `.env` 而不是 `.env.example`；`JAVA_HOME` 要写 JDK 根目录；留空则自动探测 PATH 与常见安装目录 |
 | 机器有多个 JDK | 在 `.env` 写 `JAVA_HOME=想使用的 JDK 17+ 根目录`，启动脚本优先使用它 |
 | 页面打不开 | 看控制台端口提示；确认 `XUYA_PORT` 未被占用 |
 | 课堂提示未配置 Python | 安装 Python 3，或在家庭管理手动选择 |
@@ -459,5 +483,6 @@ npm --prefix electron run dist    # NSIS 安装包
 - `start.cmd` 在未配置 JDK 17 时给出明确的“需要 JDK 17+”提示。
 - 运行包自动创建 `data` 和 `logs`，不写入源码目录。
 - 重复打包会保留 `data`、`logs`、`.env` 和 `config/application-local.yml`；zip 只包含程序文件。
+- `start.sh` 在 Windows Git Bash 下用假 JDK 模拟验证：`.env` 优先、空值不覆盖、CRLF 与引号、`~` / `$HOME` / `${HOME}` 展开、`JAVA_HOME` 指向 `bin`、旧 JDK 诊断、缺少 `.env` 提示、自动补执行位、PATH 与常见安装目录探测，共 12 项通过。
 
 macOS 真实启动仍需在 Mac 上按“源码包”或“跨平台 JAR 运行包”各跑一次；本机只能完成 Windows 实跑和 macOS 分支模拟。

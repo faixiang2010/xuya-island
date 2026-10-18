@@ -1,6 +1,6 @@
 name: Release
 
-# 推送 v* 标签时构建 Windows 安装包，并创建草稿 Release 供人工确认。
+# 推送 v* 标签时构建 Windows 安装包与跨平台 JAR 运行包，并创建草稿 Release 供人工确认。
 # 标签版本应与 electron/package.json 的 version 一致（例如 v0.2.1）。
 #
 # 可选签名：仓库配置 WINDOWS_CERT_BASE64 / WINDOWS_CERT_PASSWORD 两个 Secret
@@ -106,6 +106,10 @@ jobs:
           node -e "const fs=require('fs');const p='electron/package.json';const j=JSON.parse(fs.readFileSync(p,'utf8'));const [owner,repo]=process.env.GH_REPOSITORY.split('/');j.build.publish[0].owner=owner;j.build.publish[0].repo=repo;const signed=Boolean(process.env.CSC_LINK);j.build.win.signAndEditExecutable=signed;fs.writeFileSync(p,JSON.stringify(j,null,2)+'\n');console.log('publish ->',owner+'/'+repo,'signed='+signed)"
       - name: 构建安装包
         run: npm.cmd --prefix electron run dist
+      - name: 生成跨平台 JAR 运行包
+        # 复用上一步 electron 构建产出的 backend/dist/xuya-backend.jar，不重复跑测试。
+        # 产物：backend/dist/xuya-portable/ 与 backend/dist/xuya-portable.zip。
+        run: node backend/scripts/package-jar.mjs --reuse-build
       - name: 收集发布资产
         shell: pwsh
         run: |
@@ -113,6 +117,8 @@ jobs:
           Copy-Item electron/dist/*.exe release-assets/ -ErrorAction SilentlyContinue
           Copy-Item electron/dist/*.blockmap release-assets/ -ErrorAction SilentlyContinue
           Copy-Item electron/dist/latest.yml release-assets/ -ErrorAction SilentlyContinue
+          # 缺少 zip 说明打包链路异常，这里直接失败，避免草稿 Release 少资产。
+          Copy-Item backend/dist/xuya-portable.zip release-assets/
           Get-ChildItem release-assets | Format-Table Name, Length
       - name: 创建草稿 Release
         uses: softprops/action-gh-release@v2
