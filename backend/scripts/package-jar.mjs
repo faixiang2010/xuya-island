@@ -103,6 +103,42 @@ async function assertArchive() {
   }
 }
 
+function findEndOfCentralDirectory(bytes) {
+  const start = Math.max(0, bytes.length - 65557)
+  for (let offset = bytes.length - 22; offset >= start; offset -= 1)
+    if (bytes.readUInt32LE(offset) === 0x06054b50) return offset
+  throw new Error('无法定位压缩包中央目录。')
+}
+
+/**
+ * Windows 生成的 zip 不记录 Unix 权限位，macOS 解压后 start.sh 会变成不可执行。
+ * 直接在中央目录写入 0755，避免使用者每次都要手动 chmod。
+ */
+async function markExecutableInArchive(archive, entry) {
+  const bytes = await readFile(archive)
+  const eocd = findEndOfCentralDirectory(bytes)
+  const total = bytes.readUInt16LE(eocd + 10)
+  let offset = bytes.readUInt32LE(eocd + 16)
+  let found = false
+  for (let index = 0; index < total; index += 1) {
+    if (bytes.readUInt32LE(offset) !== 0x02014b50)
+      throw new Error(`压缩包目录损坏：${path.relative(workspaceRoot, archive)}`)
+    const nameLength = bytes.readUInt16LE(offset + 28)
+    const extraLength = bytes.readUInt16LE(offset + 30)
+    const commentLength = bytes.readUInt16LE(offset + 32)
+    const name = bytes.toString('utf8', offset + 46, offset + 46 + nameLength)
+    if (name === entry || name === `./${entry}`) {
+      // version made by = Unix 2.0；external attributes = 0100755 << 16。
+      bytes.writeUInt16LE(0x0314, offset + 4)
+      bytes.writeUInt32LE(0x81ed0000, offset + 38)
+      found = true
+    }
+    offset += 46 + nameLength + extraLength + commentLength
+  }
+  if (!found) throw new Error(`压缩包缺少 ${entry}，无法写入执行权限。`)
+  await writeFile(archive, bytes)
+}
+
 async function buildIfNeeded() {
   if (reuseBuild) {
     if (!existsSync(jarFile))
@@ -191,9 +227,9 @@ async function writeLaunchers(root = packageRoot) {
     'SCRIPT_FILE="$SCRIPT_DIR/$(basename "$0")"',
     'cd "$SCRIPT_DIR"',
     '',
-    '# Windows 生成的压缩包不保留执行位；用 bash start.sh 首次启动后会自动补上，之后可直接 ./start.sh。',
+    '# 压缩包已写入执行位；若拷贝方式丢失权限，这里尝试补上，noexec 卷则提示改用 bash 启动。',
     'if [ ! -x "$SCRIPT_FILE" ]; then',
-    '  chmod +x "$SCRIPT_FILE" 2>/dev/null || true',
+    '  chmod +x "$SCRIPT_FILE" 2>/dev/null || echo "提示：当前磁盘不支持执行权限，之后请用 bash start.sh 启动。"',
     'fi',
     '',
     '# 只导入非空配置：.env 中留空的项不会覆盖系统环境变量。',
@@ -583,17 +619,17 @@ async function writeReadme(root = packageRoot) {
     '',
     '### macOS / Linux',
     '',
-    '从 Windows 压缩包解压后，`start.sh` 通常没有执行权限。先补执行位再启动：',
+    '推荐直接用 bash 启动，不依赖执行权限。外置硬盘、NTFS/exFAT 或 noexec 卷上，`./start.sh` 可能始终报 permission denied，`chmod` 也无效：',
+    '',
+    '```bash',
+    'bash start.sh',
+    '```',
+    '',
+    '如果运行包在支持 Unix 权限的本地磁盘上，也可以直接运行（新压缩包已自带执行位）：',
     '',
     '```bash',
     'chmod +x start.sh',
     './start.sh',
-    '```',
-    '',
-    '也可以直接用 bash 启动（不需要执行权限，脚本首次运行后会自动补上执行位）：',
-    '',
-    '```bash',
-    'bash start.sh',
     '```',
     '',
     '也可以手动运行：',
@@ -709,7 +745,7 @@ async function writeReadme(root = packageRoot) {
     '| 现象 | 处理 |',
     '|---|---|',
     '| 解压后看不到 `.env.example` | 这是隐藏文件；macOS 用 `ls -a` 或 `Cmd + Shift + .` 查看 |',
-    '| `zsh: permission denied: ./start.sh` | 压缩包不保留执行位；执行 `chmod +x start.sh`，或直接用 `bash start.sh` |',
+    '| `zsh: permission denied: ./start.sh` | 直接改用 `bash start.sh`；外置 NTFS/exFAT 或 noexec 卷不支持执行位，`chmod` 也可能无效 |',
     '| `start.sh` 报 `line 1: ...: command not found` | 文件被保存成了 UTF-16、带 BOM 或换行损坏；从新压缩包重新解压，保持 UTF-8 无 BOM + LF，并用 `bash start.sh` |',
     '| 配置文件打开乱码 | 编辑器另存为 UTF-8（无 BOM）；不要用 ANSI/GBK/UTF-16 |',
     '| 提示“未找到可用的 JDK 17+” | 按提示安装 JDK 17+，或在 `.env` 写 `JAVA_HOME=JDK 根目录`；脚本会同时打印它检查到的 java 路径和版本 |',
@@ -738,6 +774,7 @@ async function createArchive(sourceRoot) {
   } else {
     await run('zip', ['-r', '-q', zipFile, '.'], { cwd: sourceRoot })
   }
+  await markExecutableInArchive(zipFile, 'start.sh')
   await assertArchive()
   console.log(`已生成压缩包：${path.relative(workspaceRoot, zipFile)}`)
 }
@@ -795,7 +832,7 @@ async function main() {
   console.log(`\n跨平台运行包目录：${path.relative(workspaceRoot, packageRoot)}`)
   console.log('已保留原有 data、logs、.env 和 config/application-local.yml。')
   console.log(
-    '目标机器只需要 JDK 17+；Windows 双击 start.cmd，macOS/Linux 先 chmod +x start.sh 再 ./start.sh（或 bash start.sh）。',
+    '目标机器只需要 JDK 17+；Windows 双击 start.cmd，macOS/Linux 执行 bash start.sh（新压缩包已带执行位，也可 ./start.sh）。',
   )
 }
 

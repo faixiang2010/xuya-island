@@ -152,19 +152,13 @@ Windows：
 .\start.cmd
 ```
 
-macOS / Linux：
-
-```bash
-# 从 Windows 压缩包解压后，start.sh 通常没有执行权限
-chmod +x start.sh
-./start.sh
-```
-
-也可以直接用 bash 启动（不需要执行权限，脚本首次运行后会自动补上执行位）：
+macOS / Linux，推荐直接用 bash 启动，不依赖执行权限：
 
 ```bash
 bash start.sh
 ```
+
+新压缩包已经给 `start.sh` 写入执行位，在支持 Unix 权限的本地磁盘上也可以直接 `./start.sh`。如果运行包放在外置硬盘、NTFS/exFAT 或 noexec 卷上，`chmod +x` 也可能无效，此时请始终使用 `bash start.sh`。
 
 也可以完全手动运行：
 
@@ -378,7 +372,7 @@ Windows 的 `start.cmd` 内部执行 `chcp 65001`，因此 UTF-8 中文提示可
 | 现象 | 处理 |
 |---|---|
 | 解压后看不到 `.env.example` | 这是隐藏文件；macOS 用 `ls -a` 或 `Cmd + Shift + .` 查看 |
-| `zsh: permission denied: ./start.sh` | 压缩包不保留执行位；执行 `chmod +x start.sh`，或直接用 `bash start.sh` |
+| `zsh: permission denied: ./start.sh` | 直接改用 `bash start.sh`；外置 NTFS/exFAT 或 noexec 卷不支持执行位，`chmod` 也可能无效 |
 | `start.sh` 报 `line 1: ...: command not found` | 文件被保存成了 UTF-16、带 BOM 或换行损坏；从新压缩包重新解压，保持 UTF-8 无 BOM + LF，并用 `bash start.sh` |
 | 配置文件打开乱码 | 编辑器另存为 UTF-8（无 BOM）；不要用 ANSI/GBK/UTF-16 |
 | 提示“未找到可用的 JDK 17+” | 安装 JDK 17+，或在 `.env` 写 `JAVA_HOME=JDK 根目录`；按输出确认脚本检查到的 java 路径与版本 |
@@ -489,5 +483,6 @@ npm --prefix electron run dist    # NSIS 安装包
 - 重复打包会保留 `data`、`logs`、`.env` 和 `config/application-local.yml`；zip 只包含程序文件。
 - `start.sh` 在 Windows Git Bash 下用假 JDK 模拟验证：`.env` 优先、空值不覆盖、CRLF 与引号、`~` / `$HOME` / `${HOME}` 展开、`JAVA_HOME` 指向 `bin`、旧 JDK 诊断、缺少 `.env` 提示、自动补执行位、PATH 与常见安装目录探测，共 12 项通过。
 - 启动脚本读取 `config/network.json` 决定 `XUYA_BIND_ADDRESS`，并优先采用 `.env` / 系统环境变量；启动前会停止同一数据目录的旧实例，避免 `backend.lock` 冲突。
+- 打包脚本会在 zip 中央目录给 `start.sh` 写入 `0755`，macOS 解压后可直接执行；noexec 卷仍推荐 `bash start.sh`。
 
 macOS 真实启动仍需在 Mac 上按“源码包”或“跨平台 JAR 运行包”各跑一次；本机只能完成 Windows 实跑和 macOS 分支模拟。
