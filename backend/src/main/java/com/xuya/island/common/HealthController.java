@@ -25,7 +25,7 @@ public class HealthController {
     public HealthVO health() {
         return new HealthVO(
                 "xuya-island",
-                "0.2.1",
+                "0.1.0",
                 "ready",
                 runner.getOrigin(),
                 properties.model().configured());

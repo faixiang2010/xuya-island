@@ -14,7 +14,12 @@ const createZip = !process.argv.includes('--no-zip')
 const distRoot = path.join(backendRoot, 'dist')
 const packageRoot = path.join(distRoot, 'xuya-portable')
 const stagingRoot = path.join(distRoot, '.xuya-portable-staging')
-const zipFile = path.join(distRoot, 'xuya-portable.zip')
+// 压缩包名带版本号，避免不同版本的资产在 Release 页面里同名难以区分。
+const { version: portableVersion } = JSON.parse(
+  await readFile(path.join(workspaceRoot, 'electron/package.json'), 'utf8'),
+)
+if (!portableVersion) throw new Error('electron/package.json 缺少 version，无法生成带版本的压缩包名。')
+const zipFile = path.join(distRoot, `xuya-portable-${portableVersion}.zip`)
 const jarFile = path.join(distRoot, 'xuya-backend.jar')
 
 function assertInsideDist(target) {

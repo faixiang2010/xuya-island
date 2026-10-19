@@ -58,14 +58,14 @@ node backend/scripts/package-jar.mjs --reuse-build --no-zip
 不想在本机打包时，推送 `v*` 标签会触发 `.github/workflows/release.yml`，在同一个**草稿 Release** 里自动产出：
 
 - Windows Electron 安装包（`.exe`、`.blockmap`、`latest.yml`）
-- 跨平台 JAR 运行包 `xuya-portable.zip`
+- 跨平台 JAR 运行包 `xuya-portable-<version>.zip`（版本取自 `electron/package.json`）
 
 流水线复用构建安装包时已经生成的 `backend/dist/xuya-backend.jar`（`--reuse-build`），不会重复跑测试。注意：
 
 - 只有推 `v*` 标签才会触发；普通分支 `git push` 只跑 `verify.yml` 的测试，不打包。
 - 标签指向的提交必须已有一次成功的 Verify 运行，否则 `gate` 步骤直接失败。
-- 缺少 `xuya-portable.zip` 时“收集发布资产”会失败，避免草稿 Release 少产物。
-- 标签版本要与 `electron/package.json` 的 `version` 一致（例如 `v0.2.1`）。
+- 缺少 `xuya-portable-<version>.zip` 时“收集发布资产”会失败，避免草稿 Release 少产物。
+- 标签版本要与 `electron/package.json` 的 `version` 一致（例如 `v0.1.0`）。
 
 ### 2. 产物位置
 
@@ -79,7 +79,7 @@ backend/dist/xuya-portable/
     application-local.example.yml
     application-local.yml   # 可直接编辑；默认无 Key
   README.md                 # 给使用者看的运行说明
-backend/dist/xuya-portable.zip
+backend/dist/xuya-portable-<version>.zip
 ```
 
 运行包自带 `.env.example`，但不会预置 `.env`。复制成 `.env` 后再填写自己的配置。`backend/dist` 已被 Git 忽略，运行包不会提交到仓库。
@@ -143,7 +143,7 @@ XUYA_RUNNER_PORT=43173
 
 ### 4. 复制到目标机器
 
-复制 `xuya-portable.zip` 或整个 `xuya-portable` 目录即可。目标机器只需要 JDK 17+，并先在 `.env` 填好 `JAVA_HOME`。
+复制 `xuya-portable-<version>.zip` 或整个 `xuya-portable` 目录即可。目标机器只需要 JDK 17+，并先在 `.env` 填好 `JAVA_HOME`。
 
 Windows：
 

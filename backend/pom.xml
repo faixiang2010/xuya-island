@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.xuya.island</groupId>
     <artifactId>xuya-backend</artifactId>
-    <version>0.2.1-SNAPSHOT</version>
+    <version>0.1.0-SNAPSHOT</version>
     <name>叙芽岛后端</name>
     <description>亲子 Python 创作室的业务服务与 AI 教学服务</description>
     <properties>

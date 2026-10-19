@@ -2,7 +2,7 @@
 
 **AI 亲子 Python 创作室 —— 让故事，在代码里长大。**
 
-孩子跟着「离谱小镇」侦探故事，用真实 Python 改代码、修机器、做出能试玩的作品；大人用小奇和成人工作台陪伴与开发。正式前端为 `frontend-react`（React + TypeScript + Zustand + React Router），后端为 Java 17。工程版本 0.2.1。
+孩子跟着「离谱小镇」侦探故事，用真实 Python 改代码、修机器、做出能试玩的作品；大人用小奇和成人工作台陪伴与开发。正式前端为 `frontend-react`（React + TypeScript + Zustand + React Router），后端为 Java 17。工程版本 0.1.0。
 
 ## 现在能做什么
 
@@ -90,7 +90,7 @@ node backend/scripts/package-jar.mjs
 
 ```text
 backend/dist/xuya-portable/
-backend/dist/xuya-portable.zip
+backend/dist/xuya-portable-<version>.zip
 ```
 
 复制到其他 Windows/macOS/Linux 机器后，先把 `.env.example` 复制为 `.env` 并填写 JDK 17+ 的 `JAVA_HOME`（留空时启动脚本会自动探测），然后 Windows 执行 `start.cmd`，macOS/Linux 先 `chmod +x start.sh` 再 `./start.sh`（或直接 `bash start.sh`）。源码包与 Windows 安装包的区别见[打包与跨平台分发](./docs/packaging.md)。
