@@ -1,10 +1,12 @@
 # 叙芽岛 React 前端
 
-正式页面使用 React + TypeScript + Zustand + React Router，包含家庭登录/管理、侦探手册、指法学院与字母雨/词雨、六年级语文/英语课文打字、48 活动课堂、离谱小镇前四集、小奇创作室、作品与成长手册，以及独立成人开发工作台。
+正式前端，React + TypeScript + Zustand + React Router。包含家庭登录/管理、侦探手册、指法学院与字母雨/词雨、六年级语文/英语课文打字、48 活动课堂、离谱小镇前四集、小奇创作室、作品与成长手册，以及独立成人开发工作台。
+
+面向**前端开发者**；想跑起来先看[快速上手](../docs/quickstart.md)。
 
 ## 开发与验证
 
-从项目根目录执行（Windows 与 macOS 命令一致；PowerShell 拦截 `npm.ps1` 时改用 `npm.cmd`）：
+从项目根目录执行，Windows 与 macOS 命令一致（PowerShell 拦截 `npm.ps1` 时改用 `npm.cmd`）：
 
 ```bash
 npm --prefix frontend-react ci
@@ -15,9 +17,9 @@ npm --prefix frontend-react run format:check
 npm --prefix frontend-react run test:e2e
 ```
 
-启动前后端前，先按[本地开发与首次使用](../docs/getting-started.md)配置 `backend/config/toolchain.json` 里的 JDK 与 Maven。工具路径、端口与调试见同一文档。macOS 首次跑浏览器测试前执行 `npx playwright install chromium`。
+启动前后端前，先按[本地开发与首次使用](../docs/getting-started.md)配置 `backend/config/toolchain.json` 里的 JDK 与 Maven；工具路径、端口与调试见同一文档。macOS 首次跑浏览器测试前执行 `npx playwright install chromium`。
 
-浏览器测试自动构建源码，用临时学习库/随机端口/空模型配置，全部用例经 `tests/support/session.ts` 走真实管理员登录；当前为 13 个 spec、56 条用例，单元测试 28 个文件、103 条。`--reuse-build` 只用于本轮已构建时，`--lan` 走本机私有 IPv4。`test:curriculum`、`test:adventure` 是历史 Pyodide 兼容检查，正式运行由 Java 启动原生 Python。
+浏览器测试自动构建源码，用临时学习库/随机端口/空模型配置，全部用例经 `tests/support/session.ts` 走真实管理员登录；`--reuse-build` 只用于本轮已构建时，`--lan` 走本机私有 IPv4。`test:curriculum`、`test:adventure` 是历史 Pyodide 兼容检查，正式运行由 Java 启动原生 Python。
 
 ## 模块职责
 
@@ -41,7 +43,7 @@ npm --prefix frontend-react run test:e2e
 
 - 指法学院：完整 QWERTY 键盘、十指分区、家位凸点、盲打模式，键盘下方悬浮双手并对目标手指做下压动画。
 - 字母雨/词雨：单字母档练键位，第二档起覆盖 PEP 人教版六年级上下册全部单词与短语；五档难度，按准确率自适应速度，支持暂停、护盾和结算。
-- 拼音汉字小站：部编版六年级上下册全部“看拼音写词语”（440 个，按课文分四组）和课文短句，练习拼音输入与选字。
+- 拼音汉字小站：部编版六年级上下册全部"看拼音写词语"（440 个，按课文分四组）和课文短句，练习拼音输入与选字。
 - 语文/英语课文：分成两张卡和两个入口，只收录约 200–500 字长篇；语文 14 篇、英语 12 篇，按六年级上册、下册分组。历史短篇（古诗、文言文）不再混入长篇列表。
 - 进度、续学和徽章沿用账户学习记录；自定义文章只保存在本机。
 
@@ -51,6 +53,8 @@ npm --prefix frontend-react run test:e2e
 - 重新生成会重新提交对应的上一条提问，提交期间保留输入框草稿；赞踩按账户保存在本机。
 - 打开历史会话时消息直接完整显示；当前会话里新收到的回答逐字流式展开，并跟随滚动。
 - SSE 事件按 `id` 去重，消息按 `messageId` 累加；断开观察不取消后台运行。
+
+完整契约见[成人开发工作台](../docs/workbench.md)。
 
 ## 执行与视觉
 

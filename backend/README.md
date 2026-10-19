@@ -1,26 +1,8 @@
 # 叙芽岛后端
 
-Java 17 / Spring Boot 4.0.8 WebFlux / SQLite / AgentScope 2.1.0-BETA1，启动类 `com.xuya.island.XuyaIslandApplication`。
+Java 17 / Spring Boot WebFlux / SQLite / AgentScope，启动类 `com.xuya.island.XuyaIslandApplication`。
 
-## 启动与验证
-
-从项目根目录执行，Windows 与 macOS 使用同一套命令：
-
-| 用途 | 命令 |
-|---|---|
-| 联合启动 React 与 Java | `node backend/scripts/dev.mjs` |
-| 单独运行后端 | `node backend/scripts/backend-task.mjs run` |
-| 后端测试 | `node backend/scripts/backend-task.mjs test` |
-| 集成构建 | `node backend/scripts/build.mjs` |
-| 运行已构建 JAR | `node backend/scripts/run-jar.mjs` |
-| 生成跨平台 JAR 运行包 | `node backend/scripts/package-jar.mjs` |
-| 清理中间产物 | `node backend/scripts/clean.mjs` |
-
-JDK 17+ 与 Maven 3.9+ 不做自动探测，必须复制 `config/toolchain.example.json` 为 `config/toolchain.json` 并填写 `javaHome`、`mavenHome`，或用 `XUYA_JAVA_HOME`、`XUYA_MAVEN_HOME` 覆盖。`toolchain.json` 已被 Git 忽略。
-
-`ports.mjs` 在 Windows 上通过 PowerShell 读取 Win32 进程，在 macOS 上使用 `lsof` + `ps`，只结束确认属于本工程的进程。完整依赖与平台差异见[本地开发与首次使用](../docs/getting-started.md)。
-
-API 默认 43172、React 43171，43173 为历史资源端口。
+本模块提供全部 API 与业务：家庭账户、课程与学习、原生 Python 执行、成长账本、成人工作台（码穹）。面向**后端开发者**；想跑起来先看[快速上手](../docs/quickstart.md)。
 
 ## 分层与存储
 
@@ -37,6 +19,22 @@ Controller 管协议与校验，Service 管规则/事务，Repository 管参数�
 | `logs` / `dist` | 运行日志 / 正式一体 JAR |
 
 SQLite 迁移至 V11，升级前 `VACUUM INTO` 一致性备份；迁移脚本按 `db/migration/V<序号>__<说明>.sql` 自动发现，序号唯一且连续，缺号拒绝启动，不覆盖旧 SQL。
+
+## 启动与验证
+
+从项目根目录执行，Windows 与 macOS 使用同一套命令；完整入口与工具链配置见[本地开发与首次使用](../docs/getting-started.md)。
+
+| 用途 | 命令 |
+|---|---|
+| 联合启动 React 与 Java | `node backend/scripts/dev.mjs` |
+| 单独运行后端 | `node backend/scripts/backend-task.mjs run` |
+| 后端测试 | `node backend/scripts/backend-task.mjs test` |
+| 集成构建 | `node backend/scripts/build.mjs` |
+| 运行已构建 JAR | `node backend/scripts/run-jar.mjs` |
+| 生成跨平台 JAR 运行包 | `node backend/scripts/package-jar.mjs` |
+| 清理中间产物 | `node backend/scripts/clean.mjs` |
+
+API 默认 43172、React 43171，43173 为历史资源端口。`ports.mjs` 在 Windows 上通过 PowerShell 读取 Win32 进程，在 macOS 上使用 `lsof` + `ps`，只结束确认属于本工程的进程。
 
 ## 接口与权限
 
@@ -56,4 +54,6 @@ SQLite 迁移至 V11，升级前 `VACUUM INTO` 一致性备份；迁移脚本按
 
 ## 模型与配置
 
-公共 `application.yml` 只含环境变量占位与公开默认值；模型 Key 放 Git 忽略的 `config/application-local.yml`，不打入 JAR。开发脚本用本模块 config/data/logs，安装版路径由 Electron 注入。环境变量与模型操作统一见[根 README](../README.md) 与[成人开发工作台](../docs/workbench.md)；测试用临时 SQLite 与本机固定模型响应，不访问付费 API。
+公共 `application.yml` 只含环境变量占位与公开默认值；模型 Key 放 Git 忽略的 `config/application-local.yml`，不打入 JAR。字段含义与填法见[本地开发与首次使用](../docs/getting-started.md#模型-key)。
+
+开发脚本用本模块 `config`/`data`/`logs`，安装版路径由 Electron 注入。测试用临时 SQLite 与本机固定模型响应，不访问付费 API。

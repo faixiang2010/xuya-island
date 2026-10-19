@@ -1,6 +1,10 @@
 # 本地开发与首次使用
 
-源码启动、构建和 JAR 运行在 **Windows 与 macOS 使用同一套 Node 命令**。JDK 与 Maven 不做自动探测，必须由开发人员在 Git 忽略的本机配置中显式填写。
+这是**源码开发**的完整说明：依赖、工具链配置、启动、首次建号、Python / 模型 / 端口 / 局域网共享等全部配置，以及排障。
+
+只想五分钟跑起来，先看[快速上手](./quickstart.md)；本文是它的详细版，也是**配置的集中地**——其他文档遇到"怎么配 XX"会指回这里。
+
+> 运行包（`xuya-portable`）和安装包用的是 `.env` / 安装界面，配置方式见[打包与跨平台分发](./packaging.md)，但"填什么值"的含义与本文一致。
 
 ## 依赖清单
 
@@ -14,38 +18,6 @@
 | Windows 10/11 或 macOS 12+ | — | 当前源码运行支持的两个平台 |
 
 项目不内置 Maven Wrapper，也不读取系统默认 JDK 8。不要用 `sudo` 运行构建脚本：它不会补上缺失的依赖，还会让构建产物变成 root 所有。
-
-### 首次配置工具链
-
-复制模板：
-
-```bash
-cp backend/config/toolchain.example.json backend/config/toolchain.json
-```
-
-Windows PowerShell 用：
-
-```powershell
-Copy-Item backend/config/toolchain.example.json backend/config/toolchain.json
-```
-
-然后填写自己的 JDK 与 Maven 根目录（不是 `bin` 目录）：
-
-```json
-{
-  "javaHome": "/path/to/jdk-17",
-  "mavenHome": "/path/to/apache-maven-3.9"
-}
-```
-
-Windows 路径可以写成 `C:/Java/jdk-17` 或 `C:\\Java\\jdk-17`。也可以用环境变量临时覆盖：
-
-| 环境变量 | 对应配置 |
-|---|---|
-| `XUYA_JAVA_HOME` | `javaHome` |
-| `XUYA_MAVEN_HOME` | `mavenHome` |
-
-`backend/config/toolchain.json` 已被 Git 忽略，不会提交，也不会写进文档或安装包。脚本找不到配置时会直接报错并给出填写指引，不再扫描 PATH 或常见安装目录。
 
 ### 可选安装
 
@@ -62,13 +34,43 @@ Windows 路径可以写成 `C:/Java/jdk-17` 或 `C:\\Java\\jdk-17`。也可以�
 
 SQLite 由 `sqlite-jdbc` 内嵌，自动在 `backend/data/db/xuya.db` 建库并执行迁移，不需要安装 MySQL、PostgreSQL 或 Redis。
 
+## 工具链配置
+
+JDK 与 Maven 不做自动探测，必须显式填写。复制模板并填写自己的路径：
+
+```bash
+# macOS / Linux
+cp backend/config/toolchain.example.json backend/config/toolchain.json
+```
+
+```powershell
+# Windows PowerShell
+Copy-Item backend/config/toolchain.example.json backend/config/toolchain.json
+```
+
+编辑 `backend/config/toolchain.json`，填 **JDK / Maven 的根目录**（不是 `bin` 目录）：
+
+```json
+{
+  "javaHome": "C:/Java/jdk-17",
+  "mavenHome": "C:/apache-maven-3.9"
+}
+```
+
+| 环境变量 | 对应配置 | 说明 |
+|---|---|---|
+| `XUYA_JAVA_HOME` | `javaHome` | 临时覆盖工具链配置 |
+| `XUYA_MAVEN_HOME` | `mavenHome` | 临时覆盖工具链配置 |
+
+`backend/config/toolchain.json` 已被 Git 忽略，不会提交，也不会写进文档或安装包。脚本找不到配置时会直接报错并给出填写指引，不再扫描 PATH 或常见安装目录。
+
 ### macOS 一次性准备
 
 ```bash
 brew install openjdk@17 maven node python@3.12 git
 ```
 
-安装后按“首次配置工具链”填写 `javaHome` 和 `mavenHome`。例如 Homebrew 的 JDK 与 Maven 目录可以直接写入 `toolchain.json`，不需要修改系统默认 Java。
+安装后按上面填写 `javaHome`、`mavenHome`（Homebrew 的 JDK 与 Maven 目录可直接写入 `toolchain.json`，无需修改系统默认 Java）。
 
 ## 启动
 
@@ -78,7 +80,7 @@ brew install openjdk@17 maven node python@3.12 git
 |---|---|---|
 | 43171 | React 开发页面（Vite，仅开发时存在） | 否，只绑定 `127.0.0.1` |
 | 43172 | Java 服务；开发时只提供 API，构建后同时提供页面 | 开启共享后可 |
-| 43173 | 历史 Python 资源端口配置，正式原生教学不依赖 | 否 |
+| 43173 | 历史 Python 资源端口，正式原生教学不依赖 | 否 |
 
 端口读 `backend/config/ports.json`（缺失用 `ports.example.json`）；被占用时自动换空闲端口，以终端输出为准。
 
@@ -91,9 +93,9 @@ node backend/scripts/dev.mjs
 
 Windows 与 macOS 命令一致。只有 PowerShell 拦截 `npm.ps1` 时，才把 `npm` 换成 `npm.cmd`。依赖已装且锁文件未变时可跳过 `ci`。
 
-开发页面是 `http://127.0.0.1:43171`，`/api` 自动代理到后端 43172，改前端即时热更新。启动流程只运行服务，不执行测试；测试按需单独跑。
-
-开发期间不要用 43172 验收页面：它提供的是上一次构建写进 `target/generated-resources/static` 的旧页面。
+- 开发页面是 `http://127.0.0.1:43171`，`/api` 自动代理到后端 43172，改前端即时热更新。
+- 启动流程只运行服务，不执行测试；测试按需单独跑。
+- 开发期间不要用 43172 验收页面：它提供的是上一次构建写进 `target/generated-resources/static` 的旧页面。
 
 ### 正式使用（日常运行）
 
@@ -125,8 +127,6 @@ node backend/scripts/run-jar.mjs
 `build.mjs`、`dev.mjs`、`test-e2e.mjs` 内部也调用同一套 Node 入口，不再区分 Windows PowerShell 与 macOS 命令。
 
 跨平台 JAR 运行包、源码包和 Windows 安装包的区别与完整用法见[打包与跨平台分发](./packaging.md)。
-
-<a id="first-use"></a>
 
 ## 首次使用与家庭配置
 
@@ -172,6 +172,47 @@ node backend/scripts/run-jar.mjs
 ### 5. 确认能学习
 
 用学习者账户进第一课跑一段 `print()`，确认有输出，再保存作品并刷新查看。开发数据在 `backend/data`，安装版在 `%LOCALAPPDATA%\XuyaIsland`；升级前自动备份，别随意删除。
+
+## 配置集中说明
+
+这里把散落在各处的配置项集中解释。**源码开发**主要用 `toolchain.json`（工具链）和 `application-local.yml`（模型），端口读 `ports.json`；**运行包**则把同类配置写在 `.env`（见[打包](./packaging.md)）。
+
+### 模型 Key
+
+放在 Git 忽略的 `backend/config/application-local.yml`，复制示例后填写：
+
+```bash
+cp backend/config/application-local.example.yml backend/config/application-local.yml
+```
+
+```yaml
+xuya:
+  model:
+    api-key: 你的Key
+    base-url: https://api.deepseek.com   # 可选，非默认服务时填
+    name: deepseek-flash                 # 可选
+```
+
+也可以用环境变量 `XUYA_MODEL_API_KEY` / `XUYA_MODEL_BASE_URL` / `XUYA_MODEL_NAME`（运行包写进 `.env`）。两种方式二选一，修改后重启生效。
+
+不配模型 Key 不影响启动、学习和运行 Python，只影响小奇与成人工作台的 AI。
+
+### 端口与环境变量
+
+| 变量 | 默认值 | 说明 |
+|---|---|---|
+| `XUYA_PORT` | 43172 | 页面和 API 端口 |
+| `XUYA_RUNNER_PORT` | 43173 | 历史 Python 资源端口 |
+| `XUYA_DATA_DIR` | `./data` | 数据库、作品和运行数据 |
+| `XUYA_CONFIG_DIR` | `./config` | 本机配置目录 |
+| `LOGGING_FILE_NAME` | `./logs/backend.log` | 后端日志 |
+| `XUYA_BIND_ADDRESS` | 127.0.0.1 | 局域网共享时设为 0.0.0.0 |
+
+源码开发时端口通常不需要改（`ports.json` 被占用会自动换）；运行包可写在 `.env` 临时覆盖。
+
+### 局域网共享
+
+家庭管理 → 运行与共享开启，按提示重启。设置写入 `config/network.json`，**重启后生效**；`XUYA_BIND_ADDRESS` 显式设置优先。家人用本机局域网地址（如 `http://192.168.1.10:43172`）访问，主机需保持运行，防火墙放行 43172。成人工作台仍仅主机本地开放。
 
 ## 验证与构建
 

@@ -1,10 +1,16 @@
 # 打包与跨平台分发
 
-这篇文档只解决一个问题：**先看目标机器有什么，再决定打成什么包**。不要混用“源码包”“JAR 运行包”和“Windows 安装包”。
+这篇文档只解决一个问题：**先看目标机器有什么，再决定打成什么包**。不要混用「源码包」「JAR 运行包」和「Windows 安装包」。
 
 ## 先选产物
 
-| 产物 | 生成命令 | 目标机器需要 | 包含 JDK | 包含 Python | 适用场景 |
+先回答三个问题：
+
+1. **给谁用？** 家庭用户 → 装安装包；开发者/服务器 → 源码包或运行包。
+2. **目标机器有 JDK 吗？** 有 → 运行包；没有且是 Windows → 安装包。
+3. **还要继续改代码吗？** 要 → 源码包。
+
+| 产物 | 生成命令 | 目标机器需要 | 含 JDK | 含 Python | 适用场景 |
 |---|---|---|---|---|---|
 | 源码包 | `git archive` 或压缩源码目录 | Node 22.12+、JDK 17+、Maven 3.9+ | 否 | 否 | 继续开发、在 Mac 上重新构建 |
 | **跨平台 JAR 运行包** | `node backend/scripts/package-jar.mjs` | **只需要 JDK 17+** | 否 | 否 | **复制到另一台 Windows/Mac/Linux 直接运行（最常用）** |
@@ -17,11 +23,13 @@
 - **Windows 用户要双击安装、不关心 Java/Python** → 用 Electron 安装包。
 - **macOS 用户要 .app 双击安装** → 目前没有实现。
 
+> 配置项（Python、模型 Key、端口、局域网共享）的**含义**统一见[本地开发与首次使用](./getting-started.md#配置集中说明)；本文只讲「运行包在哪个文件里填」。
+
 ---
 
 ## 一、跨平台 JAR 运行包（重点）
 
-这是“在 Windows 上打包，复制到其他环境，只要有 JDK 就能用”的方式。
+这是"在 Windows 上打包，复制到其他环境，只要有 JDK 就能用"的方式。
 
 ### 1. 构建
 
@@ -64,7 +72,7 @@ node backend/scripts/package-jar.mjs --reuse-build --no-zip
 
 - 只有推 `v*` 标签才会触发；普通分支 `git push` 只跑 `verify.yml` 的测试，不打包。
 - 标签指向的提交必须已有一次成功的 Verify 运行，否则 `gate` 步骤直接失败。
-- 缺少 `xuya-portable-<version>.zip` 时“收集发布资产”会失败，避免草稿 Release 少产物。
+- 缺少 `xuya-portable-<version>.zip` 时"收集发布资产"会失败，避免草稿 Release 少产物。
 - 标签版本要与 `electron/package.json` 的 `version` 一致（例如 `v0.1.0`）。
 
 ### 2. 产物位置
@@ -207,7 +215,7 @@ http://127.0.0.1:43172
 
 ### 7. 端口与环境变量
 
-优先写在 `.env`；下面的系统环境变量方式适合临时覆盖。
+优先写在 `.env`；下面的系统环境变量方式适合临时覆盖。各变量含义见[配置集中说明](./getting-started.md#配置集中说明)。
 
 | 变量 | 默认值 | 说明 |
 |---|---|---|
@@ -236,7 +244,7 @@ XUYA_PORT=43272 XUYA_RUNNER_PORT=43273 bash start.sh
 
 #### Python
 
-推荐启动后由管理员进入「家庭管理 → 运行与共享 → Python 环境」选择解释器，选择结果保存在 `data` 里。
+推荐启动后由管理员进入「家庭管理 → 运行与共享 → Python 环境」选择解释器，选择结果保存在 `data` 里。字段含义见[本地开发与首次使用](./getting-started.md#2-配-python)。
 
 不想打开界面时，可以在 `.env` 中写 Python 可执行文件的绝对路径：
 
@@ -244,9 +252,7 @@ XUYA_PORT=43272 XUYA_RUNNER_PORT=43273 bash start.sh
 XUYA_BUNDLED_PYTHON=C:/Python313/python.exe
 ```
 
-注意这里是 `python.exe` / `python3` 文件，不是 Python 安装目录。
-
-JAR 不内置 Python；不装 Python 仍可启动、浏览、编辑和保存，只是不能运行课堂代码。
+注意这里是 `python.exe` / `python3` 文件，不是 Python 安装目录。JAR 不内置 Python；不装 Python 仍可启动、浏览、编辑和保存，只是不能运行课堂代码。
 
 #### 模型 Key
 
@@ -256,7 +262,7 @@ JAR 不内置 Python；不装 Python 仍可启动、浏览、编辑和保存，�
 cp config/application-local.example.yml config/application-local.yml
 ```
 
-然后填写：
+然后填写（字段含义见[配置集中说明](./getting-started.md#模型-key)）：
 
 ```yaml
 xuya:
@@ -282,9 +288,7 @@ XUYA_MODEL_BASE_URL=https://api.deepseek.com
 XUYA_MODEL_NAME=deepseek-flash
 ```
 
-`.env` 会由启动脚本导出为环境变量，`application.yml` 会读取这些变量。两种方式二选一即可，修改后重启生效。
-
-不配模型 Key 不影响启动、学习和运行 Python，只影响小奇与成人工作台的 AI。
+`.env` 会由启动脚本导出为环境变量，`application.yml` 会读取这些变量。两种方式二选一即可，修改后重启生效。不配模型 Key 不影响启动、学习和运行 Python，只影响小奇与成人工作台的 AI。
 
 #### JEV / Studio 扩展服务
 
@@ -375,10 +379,10 @@ Windows 的 `start.cmd` 内部执行 `chcp 65001`，因此 UTF-8 中文提示可
 | `zsh: permission denied: ./start.sh` | 直接改用 `bash start.sh`；外置 NTFS/exFAT 或 noexec 卷不支持执行位，`chmod` 也可能无效 |
 | `start.sh` 报 `line 1: ...: command not found` | 文件被保存成了 UTF-16、带 BOM 或换行损坏；从新压缩包重新解压，保持 UTF-8 无 BOM + LF，并用 `bash start.sh` |
 | 配置文件打开乱码 | 编辑器另存为 UTF-8（无 BOM）；不要用 ANSI/GBK/UTF-16 |
-| 提示“未找到可用的 JDK 17+” | 安装 JDK 17+，或在 `.env` 写 `JAVA_HOME=JDK 根目录`；按输出确认脚本检查到的 java 路径与版本 |
+| 提示"未找到可用的 JDK 17+" | 安装 JDK 17+，或在 `.env` 写 `JAVA_HOME=JDK 根目录`；按输出确认脚本检查到的 java 路径与版本 |
 | 配置了 JDK 仍提示 Java 1.8 | 确认改的是复制出来的 `.env` 而不是 `.env.example`；`JAVA_HOME` 要写 JDK 根目录；留空则自动探测 PATH 与常见安装目录 |
 | 机器有多个 JDK | 在 `.env` 写 `JAVA_HOME=想使用的 JDK 17+ 根目录`，启动脚本优先使用它 |
-| 启动报“此数据目录已有后端运行” | 脚本会先自动停止同一数据目录的旧实例；仍出现时确认没有其他副本共用同一 `data` 目录，或手动结束旧进程 |
+| 启动报"此数据目录已有后端运行" | 脚本会先自动停止同一数据目录的旧实例；仍出现时确认没有其他副本共用同一 `data` 目录，或手动结束旧进程 |
 | 页面打不开 | 看控制台端口提示；确认 `XUYA_PORT` 未被占用 |
 | 课堂提示未配置 Python | 安装 Python 3，或在家庭管理手动选择 |
 | 局域网其他设备打不开 | 在界面保存共享设置后重启服务；脚本会读取 `config/network.json`，`.env` 的 `XUYA_BIND_ADDRESS` 优先；再检查防火墙 |
@@ -388,7 +392,7 @@ Windows 的 `start.cmd` 内部执行 `chcp 65001`，因此 UTF-8 中文提示可
 
 ## 二、源码包
 
-适合“目标机器还要继续开发”，或者想在 Mac 上重新构建。
+适合"目标机器还要继续开发"，或者想在 Mac 上重新构建。
 
 在 Windows 上生成只包含 Git 跟踪文件的源码包：
 
@@ -423,7 +427,7 @@ node backend/scripts/build.mjs
 node backend/scripts/run-jar.mjs
 ```
 
-目标机器需要 Node 22.12+、JDK 17+、Maven 3.9+；Python 和 Git 可选。源码包**不含 JDK 和 Python**，也不含依赖缓存。
+目标机器需要 Node 22.12+、JDK 17+、Maven 3.9+；Python 和 Git 可选。源码包**不含 JDK 和 Python**，也不含依赖缓存。完整的从零到跑起来见[快速上手](./quickstart.md)。
 
 ---
 
@@ -478,11 +482,11 @@ npm --prefix electron run dist    # NSIS 安装包
 - `/api/health` 返回 `ready`，首页返回 HTTP 200。
 - `package-jar.mjs` 生成的 `start.cmd` 在 JDK 17 下启动成功。
 - `.env.example` 复制为 `.env` 并填写 JDK 17 后，即使系统 PATH 默认是 JDK 8，也能用 JDK 17 启动。
-- `start.cmd` 在未配置 JDK 17 时给出明确的“需要 JDK 17+”提示。
+- `start.cmd` 在未配置 JDK 17 时给出明确的"需要 JDK 17+"提示。
 - 运行包自动创建 `data` 和 `logs`，不写入源码目录。
 - 重复打包会保留 `data`、`logs`、`.env` 和 `config/application-local.yml`；zip 只包含程序文件。
 - `start.sh` 在 Windows Git Bash 下用假 JDK 模拟验证：`.env` 优先、空值不覆盖、CRLF 与引号、`~` / `$HOME` / `${HOME}` 展开、`JAVA_HOME` 指向 `bin`、旧 JDK 诊断、缺少 `.env` 提示、自动补执行位、PATH 与常见安装目录探测，共 12 项通过。
 - 启动脚本读取 `config/network.json` 决定 `XUYA_BIND_ADDRESS`，并优先采用 `.env` / 系统环境变量；启动前会停止同一数据目录的旧实例，避免 `backend.lock` 冲突。
 - 打包脚本会在 zip 中央目录给 `start.sh` 写入 `0755`，macOS 解压后可直接执行；noexec 卷仍推荐 `bash start.sh`。
 
-macOS 真实启动仍需在 Mac 上按“源码包”或“跨平台 JAR 运行包”各跑一次；本机只能完成 Windows 实跑和 macOS 分支模拟。
+macOS 真实启动仍需在 Mac 上按"源码包"或"跨平台 JAR 运行包"各跑一次；本机只能完成 Windows 实跑和 macOS 分支模拟。
