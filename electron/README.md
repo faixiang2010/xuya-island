@@ -29,7 +29,7 @@ npm.cmd --prefix electron run dist     # 构建 NSIS 安装包
 - **发布渠道**：`electron/package.json` 的 `build.publish` 指向 `faixiang2010/xuya-island`，`release.yml` 用当前仓库覆盖；可用 `XUYA_UPDATE_URL` 运行时指向 generic 静态源。**仓库需 public**，否则安装端无法免鉴权读取 `latest.yml`。
 - **安装方式**：NSIS `perMachine:false`，默认装 `%LOCALAPPDATA%\Programs`，免管理员权限。
 - **内置 Python**：`prepare:python` 下载官方 embeddable Python（仅标准库）到 `build/python` 随包分发，经 `XUYA_BUNDLED_PYTHON` 注入；管理员可在「家庭管理 → Python 环境」切换主机 Python，也可一键恢复内置。
-- **签名**：`win.signAndEditExecutable` 默认 false；配置 `WINDOWS_CERT_BASE64`/`WINDOWS_CERT_PASSWORD` Secret 后 `release.yml` 自动改证书签名。自签名与官方证书的区别见 [ca 说明](../ca/代码签名证书生成说明.md)。
+- **签名**：`win.signAndEditExecutable` 默认 false；配置 `WINDOWS_CERT_BASE64`/`WINDOWS_CERT_PASSWORD` Secret 后 `release.yml` 自动改证书签名。本地过渡用自签名证书，正式分发前替换为 CA 证书；证书生成步骤见本机 `ca/代码签名证书生成说明.md`（该目录被 Git 忽略，不进仓库）。
 - **安装自检**：启动时校验后端 JAR 与 Java 运行时，缺失提示重装；学习数据在用户目录不受影响。
 
 本地 Java 17 从 Git 忽略的 `backend/config/toolchain.json`（`javaHome`）或 `XUYA_JAVA_HOME` 读取，配置方法见[本地开发与首次使用](../docs/getting-started.md)；`prepare:java` 经 jlink 生成含 HTTP/JDBC/字符集/TLS 的运行时，不拷整个 JDK。展开资源 `asar=false`，渲染进程 sandbox/contextIsolation 且无 Node 桥；正式交付阶段再验 ASAR、签名与自定义图标。
