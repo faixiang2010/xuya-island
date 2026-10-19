@@ -18,7 +18,8 @@ const stagingRoot = path.join(distRoot, '.xuya-portable-staging')
 const { version: portableVersion } = JSON.parse(
   await readFile(path.join(workspaceRoot, 'electron/package.json'), 'utf8'),
 )
-if (!portableVersion) throw new Error('electron/package.json 缺少 version，无法生成带版本的压缩包名。')
+if (!portableVersion)
+  throw new Error('electron/package.json 缺少 version，无法生成带版本的压缩包名。')
 const zipFile = path.join(distRoot, `xuya-portable-${portableVersion}.zip`)
 const jarFile = path.join(distRoot, 'xuya-backend.jar')
 
