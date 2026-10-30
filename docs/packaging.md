@@ -75,6 +75,15 @@ node backend/scripts/package-jar.mjs --reuse-build --no-zip
 - 缺少 `xuya-portable-<version>.zip` 时"收集发布资产"会失败，避免草稿 Release 少产物。
 - 标签版本要与 `electron/package.json` 的 `version` 一致（例如 `v0.1.0`）。
 
+推标签请用统一发布脚本，它会先等同一提交的 Verify 成功，再打标签并推送，避免手工抢跑被 `gate` 拦截：
+
+```bash
+node backend/scripts/release.mjs v0.1.0            # 等待 Verify 通过后打标签
+node backend/scripts/release.mjs v0.1.0 --force    # 重建同名标签并重新触发 Release
+```
+
+脚本还会校验本地分支与远端一致、标签版本与 `electron/package.json` 对应。直连 GitHub 失败时加 `--proxy=http://127.0.0.1:12334`（或设置 `XUYA_HTTPS_PROXY`），代理只作用于本次命令，不会写入 Git 配置。
+
 ### 2. 产物位置
 
 ```text
