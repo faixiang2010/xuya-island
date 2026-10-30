@@ -145,9 +145,19 @@ node backend/scripts/run-jar.mjs
 通常不用手动配置：
 
 - **安装版**：启动时自动使用内置 Python，家人打开课堂就能运行。
-- **源码开发（Windows）**：没有内置时，启动阶段自动从 `PATH` 和常见安装目录（`%LOCALAPPDATA%\Programs\Python`、`C:\Python*`、Program Files）选择一个可用的 Python 3。
+- **源码开发（Windows）**：没有内置时，启动阶段自动从 `PATH` 和常见安装目录（`%LOCALAPPDATA%\Programs\Python`、`C:\Python*`、Program Files）选择一个可用的 Python 3；Windows 应用商店版通过 `WindowsApps` 别名同样可以识别。
 - **源码开发（macOS）**：自动从 `PATH`、Homebrew（`/opt/homebrew/bin`、`/usr/local/bin`）和 `/Library/Frameworks/Python.framework` 选择 Python 3。
-- **自动找不到时**：到「家庭管理 → 运行与共享」选择环境，或展开「手动填写路径」填解释器完整路径。
+- **JAR 运行包 / 便携包**：不自动扫描主机环境，需要管理员在「家庭管理 → 运行与共享」手动选择；安装包带内置 Python 时仍默认使用内置。
+- **自动找不到或手动切换时**：到「家庭管理 → 运行与共享」选择环境，或展开「手动填写路径」填解释器完整路径。
+
+配置优先级从高到低：
+
+1. 家庭管理界面手动选择（保存在数据库，随时覆盖其他来源）。
+2. 安装包内置 Python，或运行包 `.env` 里的 `XUYA_BUNDLED_PYTHON`。
+3. 源码启动时的本机自动发现（仅 `dev.mjs`、`backend-task.mjs run`，可用 `XUYA_AUTO_PYTHON=0` 关闭）。
+4. 都没有时显示「尚未配置」。
+
+自动发现的结果同样写入第 1 项；已保存的路径失效后会重新按未配置处理，源码模式会自动再找一次。
 
 解释器家庭共用，家人设备无需装 Python；缺第三方库由管理员准备自定义环境。未配模型 Key 也能运行 Python、学固定内容和保存作品；Python 未就绪时仍可编辑查阅，执行前需完成配置。
 
@@ -262,7 +272,8 @@ node backend/scripts/run-jar.mjs         # 打开 http://127.0.0.1:43172
 | `未找到 lsof` | 检查 macOS `PATH` 是否包含 `/usr/sbin` |
 | 端口检查失败 | 先关闭本项目后端/桌面；脚本只会结束确认属于本工程的进程 |
 | 运行按钮旁提示未配 Python | 到家庭管理选解释器，确认主机在线后重新准备 |
-| 自动找不到 Python（Windows 应用商店版） | 应用商店的 `python.exe` 是别名，后端可能无法探测；安装官方 Python 并勾选 PATH，或在家庭管理手动选择解释器 |
+| 自动找不到 Python（Windows 应用商店版） | 应用商店版已通过 `WindowsApps` 别名识别；仍不可用时安装官方 Python 并勾选 PATH，或在家庭管理手动选择解释器 |
+| JAR/便携包提示未配置 Python | 打包运行不自动扫描主机，属预期行为；到「家庭管理 → 运行与共享」选择解释器 |
 | Vite 代理报错 | 后端未就绪或已退出，看后端日志 |
 | 改 Java 不生效 | 重启 Java；页面改动走 React 热更新 |
 | 改课程/资源不生效 | 走脚本生成到 target，再重启/构建 |

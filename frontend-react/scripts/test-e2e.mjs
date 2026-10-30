@@ -116,6 +116,8 @@ try {
           ...(development ? { XUYA_FRONTEND_PORT: String(frontendPort) } : {}),
           XUYA_DATA_DIR: testDirectory,
           XUYA_CONFIG_DIR: path.join(testDirectory, 'config'),
+          // 自动化用例等同源码运行：启动时探测本机 Python，课堂用例不依赖管理员预先配置。
+          XUYA_AUTO_PYTHON: '1',
           XUYA_MODEL_API_KEY: '',
           LOGGING_FILE_NAME: '',
           ...(existsSync(bundledPython) ? { XUYA_BUNDLED_PYTHON: bundledPython } : {}),

@@ -490,7 +490,7 @@ async function writeLaunchers(root = packageRoot) {
     '# 可选：局域网共享。界面里保存后需重启；这里显式设置时优先于界面配置',
     '# XUYA_BIND_ADDRESS=127.0.0.1',
     '',
-    '# 可选：强制指定 Python 3 可执行文件（不是目录）；也可以启动后在家庭管理中选择',
+    '# 可选：指定运行包默认 Python 3 可执行文件（不是目录）；家庭管理里手动选择会覆盖这里',
     '# XUYA_BUNDLED_PYTHON=C:/Python313/python.exe',
     '',
     '# 可选：模型 Key。推荐写在 config/application-local.yml，也可以直接写在这里',

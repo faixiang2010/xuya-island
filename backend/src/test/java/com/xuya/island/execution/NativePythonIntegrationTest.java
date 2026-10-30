@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 import com.xuya.island.account.AccountRequests;
 import com.xuya.island.account.AccountScope;
@@ -201,7 +202,21 @@ class NativePythonIntegrationTest {
     }
 
     @Test
-    void storeAliasAndMissingInterpreterAreRejected() {
+    void savedInterpreterThatDisappearedIsReportedAsUnconfigured() {
+        assumeFalse(
+                Boolean.TRUE.equals(environments.bundledStatus().get("available")),
+                "存在内置解释器时无法验证失效路径的回退");
+        assumeFalse("1".equals(System.getenv("XUYA_AUTO_PYTHON")), "源码自动发现模式不验证失效路径");
+        accounts.setSetting("python_executable", data.resolve("missing-python.exe").toString());
+        Map<String, Object> state = environments.state();
+        assertFalse(Boolean.TRUE.equals(state.get("configured")));
+        assertEquals("none", state.get("source"));
+        assertThrows(BusinessException.class, environments::executable);
+    }
+
+    @Test
+    void brokenStoreAliasAndMissingInterpreterAreRejected() {
+        // 别名路径存在但无法启动时仍要拒绝；可用别名由探测结果决定，不能只看文件属性。
         assertThrows(
                 BusinessException.class,
                 () ->

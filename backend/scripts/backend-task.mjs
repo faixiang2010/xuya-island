@@ -40,7 +40,11 @@ async function main() {
   // 在启动 Maven 前完成工具链检查，配置缺失时直接给出明确指引。
   resolveJavaExecutable(env)
   resolveMavenExecutable(env)
-  if (task === 'run') await applyPorts(env)
+  if (task === 'run') {
+    await applyPorts(env)
+    // 源码启动默认自动探测；设置 XUYA_AUTO_PYTHON=0 可复现打包后的手动配置流程。
+    env.XUYA_AUTO_PYTHON ??= '1'
+  }
   if (task !== 'clean') {
     runNodeScript(
       path.join(workspaceRoot, 'frontend-react/scripts/prepare-learning-catalog.mjs'),

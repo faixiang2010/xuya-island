@@ -335,10 +335,28 @@ XUYA_BIND_ADDRESS=0.0.0.0 bash start.sh
 
 ### 10. 升级、备份与换机器
 
-- 升级：停止程序，替换 `xuya-backend.jar`，保留 `data`、`config` 和 `.env`。
-- 备份：复制整个 `data` 目录；数据库升级前程序也会自动做一致性备份。
-- 换机器：复制整个运行包目录，或至少复制 `xuya-backend.jar`、`.env`、`data`、`config`。
-- 不要删除 `data`，里面是账户、作品和学习记录。
+先记住数据在哪：账户、学习记录、作品和排行榜都在数据目录的 `db/xuya.db`，升级只替换程序文件，不会清空数据目录。
+
+| 运行方式 | 数据目录 | 本机配置 |
+|---|---|---|
+| 源码 | `backend/data` | `backend/config/application-local.yml` |
+| 便携 JAR 包 | 运行包下的 `data` | `.env`、`config/application-local.yml` |
+| Windows 安装版 | `%LOCALAPPDATA%\XuyaIsland` | 同目录下的 `config/` |
+
+升级前先备份：
+
+- 源码：复制整个 `backend/data`，不要只复制 `xuya.db`。
+- 便携包：复制整个运行包目录，或至少复制 `data`、`config`、`.env`。
+- 安装版：复制 `%LOCALAPPDATA%\XuyaIsland`。
+
+各方式升级：
+
+- **源码**：停止 `dev.mjs` → 备份 → 更新代码和依赖 → `node backend/scripts/build.mjs` → 启动。数据库迁移会自动执行，并在 `data/backups` 留一份升级前备份；`clean.mjs` 不会删除 `data`。
+- **便携包**：停止程序 → 备份 → 只替换 `xuya-backend.jar`，或用新压缩包覆盖旧目录。重复打包/覆盖会保留 `data`、`logs`、`.env` 和 `config/application-local.yml`。
+- **安装版**：退出程序 → 备份 `%LOCALAPPDATA%\XuyaIsland` → 运行新安装包或使用应用内更新。安装器配置为不删除应用数据，卸载也不会清空学习记录。
+- **换方式或换机器**：把旧数据目录整体复制到新位置。源码切到安装版时，把 `backend/data` 的内容复制到 `%LOCALAPPDATA%\XuyaIsland`，并把 `application-local.yml` 放进对应 `config/`。
+- **浏览器进度**：旧打字游戏会从学习记录恢复；8 款小游戏登录后会从排行榜最佳成绩恢复通关状态。旧版只在浏览器里留下的通关记录会在登录时补交为完成记录，不参与排行榜排名。仍建议保持同一访问地址和端口，避免旧浏览器缓存找不到。
+- 不要删除 `data`；也不要让两个实例同时使用同一个 `data` 目录。
 
 ### 11. 编码与换行约定
 

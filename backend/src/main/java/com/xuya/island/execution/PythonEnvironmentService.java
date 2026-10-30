@@ -24,7 +24,10 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import tools.jackson.databind.json.JsonMapper;
 
-/** 默认使用随安装包内置的精简Python；家庭管理员可切换到主机已安装的解释器。 */
+/**
+ * 安装包优先使用随包内置的精简Python；源码开发自动探测本机解释器；打包或便携运行不自动扫描，
+ * 由家庭管理员手动选择，避免把打包机器上的环境带进其他电脑。
+ */
 @Service
 public class PythonEnvironmentService {
     private static final Logger LOG = LoggerFactory.getLogger(PythonEnvironmentService.class);
@@ -34,6 +37,9 @@ public class PythonEnvironmentService {
 
     /** Electron 启动后端时注入的内置解释器路径。 */
     private static final String BUNDLED_ENV = "XUYA_BUNDLED_PYTHON";
+
+    /** 仅源码启动脚本注入；未注入时保持手动配置，打包运行不会自动探测主机环境。 */
+    private static final String AUTO_DETECT_ENV = "XUYA_AUTO_PYTHON";
 
     private final AccountService accounts;
     private final JsonMapper mapper = JsonMapper.builder().build();
@@ -48,11 +54,14 @@ public class PythonEnvironmentService {
         ensureDefault();
         String selected = accounts.setting("python_executable", "");
         Map<String, Object> bundled = bundledStatus();
-        boolean custom = !selected.isBlank();
+        // 保存过的路径可能已被卸载或移动，失效时按未配置处理，避免界面误报“已选择”。
+        boolean custom = usable(selected);
         boolean available = custom || Boolean.TRUE.equals(bundled.get("available"));
         Map<String, Object> result = new LinkedHashMap<>();
         result.put("configured", available);
-        result.put("executable", custom ? selected : String.valueOf(bundled.get("executable")));
+        result.put(
+                "executable",
+                custom ? selected : (available ? String.valueOf(bundled.get("executable")) : ""));
         result.put("source", custom ? "custom" : (available ? BUNDLED : "none"));
         result.put("bundled", bundled);
         result.put("mode", "family-trusted");
@@ -63,18 +72,19 @@ public class PythonEnvironmentService {
     public Path executable() {
         ensureDefault();
         String value = accounts.setting("python_executable", "");
-        if (!value.isBlank()) return checked(value);
+        if (usable(value)) return checked(value);
         return bundledExecutable()
                 .orElseThrow(
                         () -> AccountService.conflict("还没有可用的Python。请家庭管理员打开「家庭管理 → 运行与共享」选择一个"));
     }
 
     /**
-     * 首次运行时自动选用一个可用解释器：安装版优先内置 Python，源码开发使用这台电脑已安装的 Python，
-     * 避免家人第一次打开课堂就被“尚未配置”挡住。管理员之后仍可随时切换。
+     * 源码开发首次运行时自动选用一个可用解释器，避免家人第一次打开课堂就被“尚未配置”挡住。
+     * 安装包有内置 Python 时不需要扫描；打包或便携运行没有该标记，保持管理员手动选择。
      */
     @EventListener(ApplicationReadyEvent.class)
     public void ensureDefault() {
+        if (!autoDetect()) return;
         try {
             chooseDefault();
         } catch (RuntimeException exception) {
@@ -86,7 +96,8 @@ public class PythonEnvironmentService {
     private synchronized void chooseDefault() {
         if (autoScanned) return;
         autoScanned = true;
-        if (!accounts.setting("python_executable", "").isBlank()) return;
+        // 手动选择或上次自动发现的结果仍可用时保持不变；失效的路径不阻止重新发现。
+        if (usable(accounts.setting("python_executable", ""))) return;
         if (bundledExecutable().isPresent()) return;
         for (String candidate : pathCandidates().stream().limit(8).toList()) {
             try {
@@ -124,6 +135,7 @@ public class PythonEnvironmentService {
     }
 
     public List<Map<String, Object>> discover() {
+        rescanDefault();
         var result = new ArrayList<Map<String, Object>>();
         var seen = new LinkedHashSet<String>();
         bundledExecutable()
@@ -140,9 +152,11 @@ public class PythonEnvironmentService {
                             }
                         });
         for (String candidate : pathCandidates().stream().limit(16).toList()) {
+            if (!seen.add(candidate)) continue;
             try {
-                Map<String, Object> item = probe(candidate);
-                if (!seen.add(String.valueOf(item.get("executable")))) continue;
+                Map<String, Object> item = new LinkedHashMap<>(probe(candidate));
+                // 展示与保存都使用候选路径，避免应用商店别名探测出的真实路径无法再次启动。
+                item.put("executable", candidate);
                 result.add(item);
             } catch (RuntimeException ignored) {
                 result.add(
@@ -158,25 +172,34 @@ public class PythonEnvironmentService {
         return List.copyOf(result);
     }
 
+    /**
+     * 管理员点击“重新发现环境”时重新执行一次自动选择；打包运行时只刷新候选列表，
+     * 不会替管理员自动选定主机解释器。
+     */
+    private synchronized void rescanDefault() {
+        autoScanned = false;
+        if (autoDetect()) chooseDefault();
+    }
+
     /** PATH 与常见安装目录里的解释器候选；探测后才会真正采用。 */
     private List<String> pathCandidates() {
         var candidates = new LinkedHashSet<String>();
         String configured = accounts.setting("python_executable", "");
         if (!configured.isBlank()) candidates.add(configured);
-        for (String directory :
-                System.getenv().getOrDefault("PATH", "").split(File.pathSeparator)) {
+        for (String directory : env("PATH").split(File.pathSeparator)) {
             if (directory.isBlank()) continue;
             for (String name : interpreterNames()) {
                 try {
                     Path candidate = Path.of(directory).resolve(name);
-                    if (Files.isRegularFile(candidate)) candidates.add(candidate.toString());
+                    if (Files.isRegularFile(candidate) || storeAlias(candidate))
+                        candidates.add(candidate.toString());
                 } catch (RuntimeException ignored) {
                     // PATH 里可能有 Windows 扩展路径或非法字符，跳过这一项即可。
                 }
             }
         }
         if (windows()) {
-            String localAppData = System.getenv("LOCALAPPDATA");
+            String localAppData = env("LOCALAPPDATA");
             if (localAppData != null && !localAppData.isBlank()) {
                 try {
                     addInstalled(
@@ -187,7 +210,7 @@ public class PythonEnvironmentService {
             }
             addInstalled(candidates, Path.of("C:\\"), "python.exe");
             for (String key : List.of("ProgramFiles", "ProgramFiles(x86)")) {
-                String directory = System.getenv(key);
+                String directory = env(key);
                 if (directory == null || directory.isBlank()) continue;
                 try {
                     addInstalled(candidates, Path.of(directory), "python.exe");
@@ -219,6 +242,37 @@ public class PythonEnvironmentService {
 
     private static boolean windows() {
         return System.getProperty("os.name").toLowerCase(Locale.ROOT).contains("win");
+    }
+
+    /** 只有源码启动脚本显式注入标记时才自动探测本机环境。 */
+    private static boolean autoDetect() {
+        return "1".equals(env(AUTO_DETECT_ENV).trim());
+    }
+
+    /**
+     * Windows 环境变量名大小写并不固定（常见 PATH 写成 Path），直接按大写读取会得到空值。
+     */
+    private static String env(String name) {
+        String value = System.getenv(name);
+        if (value != null) return value;
+        for (Map.Entry<String, String> entry : System.getenv().entrySet())
+            if (entry.getKey().equalsIgnoreCase(name)) return entry.getValue();
+        return "";
+    }
+
+    /**
+     * Windows 应用商店的 Python 在 PATH 中是 0 字节的应用执行别名，NIO 会认为它不是普通文件，
+     * 但该别名可以正常启动并转发到已安装的解释器，因此不能仅凭文件属性排除。
+     */
+    private static boolean storeAlias(Path path) {
+        if (!windows()) return false;
+        String value = path.toString().replace('\\', '/').toLowerCase(Locale.ROOT);
+        if (!value.contains("/microsoft/windowsapps/")) return false;
+        Path name = path.getFileName();
+        return name != null
+                && name.toString()
+                        .toLowerCase(Locale.ROOT)
+                        .matches("python(3(\\.\\d+)?)?(\\.exe)?");
     }
 
     private void addInstalled(Set<String> candidates, Path root, String relative) {
@@ -278,35 +332,42 @@ public class PythonEnvironmentService {
             accounts.audit("python:select-bundled", bundled.toString(), true);
             return probe(bundled.toString());
         }
-        Map<String, Object> result = probe(value);
-        accounts.setSetting("python_executable", checked(value).toString());
-        accounts.audit("python:select", checked(value).toString(), true);
+        Path path = checked(value);
+        Map<String, Object> result = probe(path.toString());
+        accounts.setSetting("python_executable", path.toString());
+        accounts.audit("python:select", path.toString(), true);
         return result;
     }
 
-    /** 环境变量注入的内置解释器；未配置或不可用时返回空。 */
+    /** 环境变量注入的默认解释器（安装包内置或运行包 .env 指定）；不可用时返回空。 */
     private Optional<Path> bundledExecutable() {
-        String value = System.getenv(BUNDLED_ENV);
+        String value = env(BUNDLED_ENV);
+        if (!usable(value)) return Optional.empty();
+        return parse(value);
+    }
+
+    /** 已保存或配置的路径是否仍可启动；应用商店别名交给后续 probe 实际验证。 */
+    private static boolean usable(String value) {
+        return parse(value).filter(PythonEnvironmentService::usablePath).isPresent();
+    }
+
+    private static Optional<Path> parse(String value) {
         if (value == null || value.isBlank()) return Optional.empty();
         try {
-            Path path = Path.of(value).normalize();
-            if (path.isAbsolute() && Files.isRegularFile(path)) return Optional.of(path);
-        } catch (RuntimeException ignored) {
-            /* 环境变量无效时视为没有内置解释器。 */
+            return Optional.of(Path.of(value).normalize());
+        } catch (RuntimeException exception) {
+            return Optional.empty();
         }
-        return Optional.empty();
+    }
+
+    private static boolean usablePath(Path path) {
+        return path.isAbsolute() && (Files.isRegularFile(path) || storeAlias(path));
     }
 
     private Path checked(String value) {
         if (value == null || value.isBlank()) throw AccountService.invalid("请选择完整的Python可执行文件路径");
-        Path path;
-        try {
-            path = Path.of(value).normalize();
-        } catch (RuntimeException exception) {
-            throw AccountService.invalid("Python路径无效");
-        }
-        if (!path.isAbsolute() || !Files.isRegularFile(path))
-            throw AccountService.invalid("请使用真实Python解释器的完整路径");
+        Path path = parse(value).orElseThrow(() -> AccountService.invalid("Python路径无效"));
+        if (!usablePath(path)) throw AccountService.invalid("请使用真实Python解释器的完整路径");
         return path;
     }
 }
