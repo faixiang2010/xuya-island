@@ -4,6 +4,7 @@ import { CheckCircle2, Clock, Pause, Play, RotateCcw, Shield, Zap } from 'lucide
 import { fallingDifficulty } from '../games/fallingWords'
 import { typingGames } from '../games/content'
 import { useGameProgress } from '../games/progress'
+import { reportPracticeScore } from '../games/leaderboard'
 import { useLearningPreferences } from '../learning/preferences'
 import { playLearningNote } from '../learning/audio'
 import { celebrate } from '../motivation/celebrate'
@@ -95,6 +96,18 @@ export default function FallingGameView({
       setStatus('finished')
       setResult(reason)
       complete('falling', difficulty.id, 1)
+      const stats = statsRef.current
+      // 只有达成击落目标才计入家庭榜，护盾用完的局只保留练习记录。
+      if (stats.kills >= difficulty.target) {
+        const levelVersion = game.levels.find((item) => item.id === difficulty.id)?.version ?? 1
+        void reportPracticeScore({
+          gameId: 'falling',
+          levelId: difficulty.id,
+          levelVersion,
+          accuracy: stats.keystrokes ? (stats.correct / stats.keystrokes) * 100 : 100,
+          durationMs: elapsed.current * 1000,
+        })
+      }
       celebrate({
         kind: 'level',
         title: '这一局结束啦！',
@@ -102,7 +115,7 @@ export default function FallingGameView({
         id: `falling-${difficulty.id}`,
       })
     },
-    [complete, difficulty.id, difficulty.title],
+    [complete, game.levels, difficulty],
   )
 
   function spawn() {
@@ -305,6 +318,12 @@ export default function FallingGameView({
             {item.title}
           </button>
         ))}
+        <Link
+          className="button secondary"
+          to={`/games/leaderboard?game=falling&level=${difficulty.id}`}
+        >
+          看本关排行榜
+        </Link>
       </div>
       <section className={styles.round} aria-label="字母雨游戏">
         <div className={styles.hud}>

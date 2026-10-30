@@ -1,0 +1,72 @@
+.levels {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.level {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  color: var(--muted);
+  font: inherit;
+  font-size: var(--fs-sm);
+  cursor: pointer;
+}
+.level:hover {
+  border-color: var(--brand-soft-strong);
+  color: var(--ink);
+}
+.levelActive {
+  border-color: var(--brand);
+  background: var(--brand-soft);
+  color: var(--brand-ink);
+  font-weight: 600;
+}
+.rankLink {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 14px;
+  border: 1px dashed var(--brand-soft-strong);
+  border-radius: var(--radius-pill);
+  color: var(--brand-ink);
+  font-size: var(--fs-sm);
+  text-decoration: none;
+}
+.rankLink:hover {
+  background: var(--brand-soft);
+}
+.brief {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.brief p {
+  margin: 0;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  color: var(--muted);
+  font-size: var(--fs-sm);
+}
+.brief strong {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--ink);
+}
+.instruction {
+  margin-bottom: 16px;
+  color: var(--muted);
+  font-size: var(--fs-sm);
+}
+@media (max-width: 720px) {
+  .brief {
+    grid-template-columns: 1fr;
+  }
+}

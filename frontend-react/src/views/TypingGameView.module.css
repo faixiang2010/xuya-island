@@ -12,6 +12,9 @@
   border-radius: var(--radius-lg);
   background: var(--surface);
 }
+.rankLink {
+  margin-top: var(--sp-3);
+}
 .page :global(.page-heading) {
   margin-bottom: var(--sp-4);
 }
@@ -394,6 +397,20 @@
   .route,
   .scene {
     display: none;
+  }
+  /* 矮视口下练习设置只保留下拉框，排行榜入口与它同行，避免把练习区挤出首屏。 */
+  .configuration {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-3);
+  }
+  .levelSelect {
+    flex: 1;
+    margin-bottom: 0;
+  }
+  .rankLink {
+    margin-top: 0;
+    white-space: nowrap;
   }
   .page.page:global(.page) {
     padding-top: 12px;

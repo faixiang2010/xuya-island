@@ -1,0 +1,140 @@
+.filters {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+.categories,
+.levels {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.boardActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.level {
+  padding: 8px 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  color: var(--muted);
+  font: inherit;
+  font-size: var(--fs-sm);
+  cursor: pointer;
+}
+.level:hover {
+  border-color: var(--brand-soft-strong);
+  color: var(--ink);
+}
+.levelActive {
+  border-color: var(--brand);
+  background: var(--brand-soft);
+  color: var(--brand-ink);
+  font-weight: 600;
+}
+.board {
+  padding: 22px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-xl);
+  background: var(--surface);
+  box-shadow: var(--shadow-1);
+}
+.boardHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.boardHead h2 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--fs-lg);
+}
+.boardHead p {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: var(--fs-sm);
+}
+.notice {
+  padding: 24px 0;
+  color: var(--muted);
+  text-align: center;
+}
+.notice p {
+  margin-bottom: 12px;
+}
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--fs-sm);
+}
+.table th {
+  padding: 10px 8px;
+  border-bottom: 1px solid var(--line);
+  color: var(--muted);
+  font-weight: 600;
+  text-align: left;
+}
+.table td {
+  padding: 12px 8px;
+  border-bottom: 1px solid var(--line);
+}
+.self {
+  background: var(--brand-soft);
+}
+.selfTag {
+  margin-left: 6px;
+  padding: 1px 8px;
+  border-radius: var(--radius-pill);
+  background: var(--brand);
+  color: var(--on-brand);
+  font-size: var(--fs-caption);
+}
+.rank {
+  display: inline-grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--surface-2, #f4efe7);
+  color: var(--muted);
+  font-weight: 700;
+}
+.rank1 {
+  background: #ffe9a8;
+  color: #8a6a1f;
+}
+.rank2 {
+  background: #e8edf5;
+  color: #596273;
+}
+.rank3 {
+  background: #f4dfcc;
+  color: #8a5a33;
+}
+.score {
+  font-weight: 700;
+}
+.time {
+  color: var(--muted);
+  white-space: nowrap;
+}
+.mine {
+  margin-top: 14px;
+  padding: 12px 14px;
+  border-radius: var(--radius-lg);
+  background: var(--brand-soft);
+  color: var(--brand-ink);
+  font-size: var(--fs-sm);
+}
+@media (max-width: 720px) {
+  .table {
+    display: block;
+    overflow-x: auto;
+  }
+}

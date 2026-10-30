@@ -23,6 +23,14 @@ export type BadgeIcon =
   | 'search'
   | 'wand'
   | 'calendar'
+  | 'blocks'
+  | 'bomb'
+  | 'radar'
+  | 'wind'
+  | 'music'
+  | 'piano'
+  | 'brush'
+  | 'images'
 
 export interface BadgeInput extends StationContext {
   drafts: GameDraft[]
@@ -41,6 +49,16 @@ export interface Badge {
 }
 
 const dayBadgeGoal = 3
+const arcadeGameIds = new Set<string>([
+  'tetris',
+  'minesweeper',
+  'echo',
+  'wind',
+  'melody',
+  'piano',
+  'mirror',
+  'memory',
+])
 
 /** 本地自然日，避免用 UTC 切片把深夜的探索算到前一天。 */
 function localDay(value: string) {
@@ -103,7 +121,7 @@ export function computeBadges(input: BadgeInput): Badge[] {
           id: `${item.id}-pro`,
           title: item.badgeTitle,
           description: `把${item.title}的 ${item.levels.length} 个级别都练完。`,
-          group: '起步',
+          group: arcadeGameIds.has(item.id) ? '动脑与画笔' : '起步',
           icon: item.icon,
         },
         typedLevelsDone(item.id, input.records),

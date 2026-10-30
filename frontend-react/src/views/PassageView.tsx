@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom'
 import { BookOpen, CheckCircle2, Gauge, RotateCcw, Sparkles } from 'lucide-react'
 import { passageById, orderedPassages, splitPassageText } from '../games/passages'
 import { typingGames } from '../games/content'
-import { useGameProgress } from '../games/progress'
+import { useGameProgress, type GamePerformance } from '../games/progress'
+import { reportPracticeScore } from '../games/leaderboard'
 import { useLearningPreferences } from '../learning/preferences'
 import { playLearningNote } from '../learning/audio'
 import { celebrate } from '../motivation/celebrate'
@@ -56,14 +57,23 @@ export default function PassageView({
   const saved = useRef(
     useGameProgress
       .getState()
-      .drafts.find((item) => item.gameId === 'passage' && item.levelId === levelId),
+      .drafts.find((item) => item.gameId === gameId && item.levelId === levelId),
   )
+  const levelVersion = game.levels.find((item) => item.id === levelId)?.version ?? 1
+  const performanceBase = useRef<GamePerformance>(
+    saved.current?.performance ?? { correct: 0, mistakes: 0, elapsedMs: 0 },
+  )
+  const performanceStart = useRef(0)
+  // 每次存检查点后把已计入的统计记为基线，避免下一次重复累加本次会话的数据。
+  const statsBaseline = useRef({ correct: 0, mistakes: 0 })
   const segments = customMode && custom ? splitPassageText(custom.text) : base.segments
   const [index, setIndex] = useState(Math.min(saved.current?.nextIndex ?? 0, segments.length - 1))
   const [input, setInput] = useState('')
   const [composing, setComposing] = useState(false)
   const [done, setDone] = useState(false)
   const [stats, setStats] = useState(emptyStats)
+  const statsRef = useRef(stats)
+  statsRef.current = stats
   const [now, setNow] = useState(Date.now())
   const startedAt = useRef(0)
   const latest = useRef('')
@@ -103,7 +113,10 @@ export default function PassageView({
       playLearningNote(sound, ticket, next >= segments.length)
       if (next >= segments.length) {
         setDone(true)
-        if (builtIn) complete('passage', levelId, segments.length)
+        if (builtIn) {
+          complete(gameId, levelId, segments.length)
+          reportFinish()
+        }
         if (builtIn)
           celebrate({
             kind: 'level',
@@ -112,7 +125,28 @@ export default function PassageView({
             id: `passage-${levelId}`,
           })
       } else {
-        if (builtIn) saveDraft('passage', levelId, next, next)
+        if (builtIn) {
+          const performance: GamePerformance = {
+            correct:
+              performanceBase.current.correct +
+              statsRef.current.correct -
+              statsBaseline.current.correct,
+            mistakes:
+              performanceBase.current.mistakes +
+              statsRef.current.mistakes -
+              statsBaseline.current.mistakes,
+            elapsedMs:
+              performanceBase.current.elapsedMs +
+              (performanceStart.current ? Date.now() - performanceStart.current : 0),
+          }
+          saveDraft(gameId, levelId, next, next, undefined, performance)
+          performanceBase.current = performance
+          statsBaseline.current = {
+            correct: statsRef.current.correct,
+            mistakes: statsRef.current.mistakes,
+          }
+          performanceStart.current = Date.now()
+        }
         setIndex(next)
         setInput('')
         latest.current = ''
@@ -127,7 +161,9 @@ export default function PassageView({
     index,
     segments.length,
     builtIn,
+    gameId,
     levelId,
+    levelVersion,
     complete,
     saveDraft,
     sound,
@@ -135,8 +171,33 @@ export default function PassageView({
     base.title,
   ])
 
+  function reportFinish() {
+    const performance: GamePerformance = {
+      correct:
+        performanceBase.current.correct + statsRef.current.correct - statsBaseline.current.correct,
+      mistakes:
+        performanceBase.current.mistakes +
+        statsRef.current.mistakes -
+        statsBaseline.current.mistakes,
+      elapsedMs:
+        performanceBase.current.elapsedMs +
+        (performanceStart.current ? Date.now() - performanceStart.current : 0),
+    }
+    const answered = performance.correct + performance.mistakes
+    void reportPracticeScore({
+      gameId,
+      levelId,
+      levelVersion,
+      accuracy: answered ? (performance.correct / answered) * 100 : 100,
+      durationMs: performance.elapsedMs,
+    })
+  }
+
   function edit(value: string) {
-    if (!startedAt.current) startedAt.current = Date.now()
+    if (!startedAt.current) {
+      startedAt.current = Date.now()
+      performanceStart.current = startedAt.current
+    }
     const previous = latest.current
     if (value.length > previous.length) {
       let correct = 0
@@ -169,6 +230,9 @@ export default function PassageView({
     setComposing(false)
     composition.current = false
     latest.current = ''
+    performanceBase.current = { correct: 0, mistakes: 0, elapsedMs: 0 }
+    performanceStart.current = 0
+    statsBaseline.current = { correct: 0, mistakes: 0 }
     startedAt.current = 0
     setNow(Date.now())
   }
@@ -266,6 +330,12 @@ export default function PassageView({
             </span>
           )}
         </div>
+        <Link
+          className="button secondary"
+          to={`/games/leaderboard?game=${gameId}&level=${levelId}`}
+        >
+          看本关排行榜
+        </Link>
       </div>
       <section className={styles.round} aria-label="课文打字练习">
         <div className={styles.hud}>

@@ -91,6 +91,30 @@ describe('六年级拼音与掉落词库', () => {
   })
 })
 
+describe('选择题题库', () => {
+  const levels = typingGames.quiz.levels
+
+  it('每道题都有四个不重复的选项，且答案在选项里', () => {
+    for (const level of levels)
+      for (const task of level.tasks) {
+        expect(task.options).toHaveLength(4)
+        expect(new Set(task.options).size).toBe(4)
+        expect(task.options).toContain(task.target)
+      }
+  })
+
+  it('正确答案不固定在同一个选项位置', () => {
+    const positions = levels.flatMap((level) =>
+      level.tasks.map((task) => (task.options ?? []).indexOf(task.target)),
+    )
+    expect(new Set(positions).size).toBeGreaterThanOrEqual(3)
+    for (const level of levels) {
+      const levelPositions = level.tasks.map((task) => (task.options ?? []).indexOf(task.target))
+      expect(new Set(levelPositions).size).toBeGreaterThanOrEqual(3)
+    }
+  })
+})
+
 describe('六年级课文库', () => {
   it('语文和英语覆盖六上、六下，只保留 200–500 字长文', () => {
     expect(passages).toHaveLength(26)

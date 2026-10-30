@@ -1,7 +1,6 @@
 package com.xuya.island.config;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
@@ -52,7 +51,8 @@ class DatabaseMigrationTest {
         client.sql("DELETE FROM schema_version WHERE version = :version")
                 .param("version", latest)
                 .update();
-        client.sql("UPDATE sys_menus SET title = 'codex' WHERE id = 'codex'").update();
+        // 当前最新迁移 V12 建立 game_scores；新增迁移后同步调整这里要撤回的对象。
+        client.sql("DROP TABLE game_scores").update();
 
         JdbcClient upgraded = JdbcClient.create(DatabaseConfiguration.openDatabase(file));
         int upgradedVersion =
@@ -63,11 +63,13 @@ class DatabaseMigrationTest {
         int versionRows =
                 upgraded.sql("SELECT COUNT(*) FROM schema_version").query(Integer.class).single();
         assertEquals(versionRows, latest, "补迁移不应重复登记其它版本");
-        String title =
-                upgraded.sql("SELECT title FROM sys_menus WHERE id = 'codex'")
-                        .query(String.class)
-                        .single();
-        assertFalse("codex".equals(title), "待执行的迁移要真的执行，而不只是登记版本号");
+        assertEquals(
+                1,
+                upgraded.sql(
+                                "SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name='game_scores'")
+                        .query(Integer.class)
+                        .single(),
+                "待执行的迁移要真的执行，而不只是登记版本号");
         try (var backups = Files.list(directory.resolve("backups"))) {
             assertEquals(1, backups.count(), "升级前应做一次一致性备份");
         }

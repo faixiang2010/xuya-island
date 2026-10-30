@@ -3,6 +3,13 @@ import { familyApi } from '../account/api'
 import { restoreLearningSession } from '../growth/outbox'
 import { create } from 'zustand'
 import { typingGames, type GameId } from './content'
+import {
+  flushGameScores,
+  rankingMetric,
+  readMyGameScores,
+  submitLegacyCompletions,
+  type MyGameScore,
+} from './leaderboard'
 export const gameStorageKey = 'xuya:typing-progress:v2'
 const legacyKey = 'xuya:typing-progress:v1'
 export interface GameRecord {
@@ -12,6 +19,12 @@ export interface GameRecord {
   completedAt: string
   attempts: number
 }
+/** 练习中的累计表现：跨会话保存，用于通关时上报准确率与用时。 */
+export interface GamePerformance {
+  correct: number
+  mistakes: number
+  elapsedMs: number
+}
 export interface GameDraft {
   gameId: GameId
   levelId: string
@@ -19,6 +32,7 @@ export interface GameDraft {
   nextIndex: number
   attempts: number
   growth?: { sessionId: string; start: number; end: number }
+  performance?: GamePerformance
 }
 interface SavedProgress {
   records: GameRecord[]
@@ -30,6 +44,24 @@ function knownLevel(record: Record<string, unknown>) {
   return typingGames[gameId as GameId].levels.find(
     (level) => level.id === record.levelId && level.version === record.levelVersion,
   )
+}
+function readPerformance(value: unknown): GamePerformance | undefined {
+  if (!value || typeof value !== 'object') return
+  const { correct, mistakes, elapsedMs } = value as Record<string, unknown>
+  if (
+    !Number.isInteger(correct) ||
+    (correct as number) < 0 ||
+    !Number.isInteger(mistakes) ||
+    (mistakes as number) < 0 ||
+    !Number.isInteger(elapsedMs) ||
+    (elapsedMs as number) < 0
+  )
+    return
+  return {
+    correct: correct as number,
+    mistakes: mistakes as number,
+    elapsedMs: elapsedMs as number,
+  }
 }
 export function readSaved(storage: Pick<Storage, 'getItem'>): SavedProgress {
   const saved: SavedProgress = { records: [], drafts: [] }
@@ -76,7 +108,8 @@ export function readSaved(storage: Pick<Storage, 'getItem'>): SavedProgress {
           !saved.drafts.some(
             (item) => item.gameId === draft.gameId && item.levelId === draft.levelId,
           )
-        )
+        ) {
+          const performance = readPerformance(draft.performance)
           saved.drafts.push({
             gameId: draft.gameId,
             levelId: level.id,
@@ -95,7 +128,9 @@ export function readSaved(storage: Pick<Storage, 'getItem'>): SavedProgress {
               draft.growth.end >= draft.nextIndex
                 ? draft.growth
                 : undefined,
+            ...(performance ? { performance } : {}),
           })
+        }
       }
     }
   } catch {
@@ -152,6 +187,7 @@ interface GameProgressState extends SavedProgress {
     nextIndex: number,
     attempts: number,
     growth?: GameDraft['growth'],
+    performance?: GamePerformance,
   ) => void
   clearDraft: (gameId: GameId, levelId: string) => void
   complete: (gameId: GameId, levelId: string, attempts: number) => void
@@ -168,7 +204,7 @@ export const useGameProgress = create<GameProgressState>((set, get) => ({
       set({ cacheAvailable: false })
     }
   },
-  saveDraft: (gameId, levelId, nextIndex, attempts, growth) => {
+  saveDraft: (gameId, levelId, nextIndex, attempts, growth, performance) => {
     const level = typingGames[gameId].levels.find((item) => item.id === levelId)
     if (
       !level ||
@@ -179,6 +215,7 @@ export const useGameProgress = create<GameProgressState>((set, get) => ({
       attempts < nextIndex
     )
       return
+    const clean = readPerformance(performance)
     const drafts = get().drafts.filter((item) => item.gameId !== gameId || item.levelId !== levelId)
     drafts.push({
       gameId,
@@ -187,6 +224,7 @@ export const useGameProgress = create<GameProgressState>((set, get) => ({
       nextIndex,
       attempts,
       ...(growth ? { growth } : {}),
+      ...(clean ? { performance: clean } : {}),
     })
     set({ drafts, cacheAvailable: persist({ records: get().records, drafts }) })
   },
@@ -224,15 +262,73 @@ export function gameFinished(gameId: GameId, records: GameRecord[]) {
   )
 }
 
+/** 把服务端最佳成绩补成通关记录；练习类通关仍以学习记录为准，避免重置后被成绩“复活”。 */
+export function mergeGameScores(records: GameRecord[], scores: MyGameScore[]) {
+  const next = [...records]
+  for (const score of scores) {
+    const game = typingGames[score.gameId as GameId]
+    if (!game) continue
+    if (rankingMetric(score.gameId as GameId) !== 'score') continue
+    const level = game.levels.find(
+      (item) => item.id === score.levelId && item.version === score.levelVersion,
+    )
+    if (!level) continue
+    if (
+      next.some(
+        (record) =>
+          record.gameId === score.gameId &&
+          record.levelId === score.levelId &&
+          record.levelVersion === score.levelVersion,
+      )
+    )
+      continue
+    next.push({
+      gameId: score.gameId as GameId,
+      levelId: score.levelId,
+      levelVersion: score.levelVersion,
+      attempts: Math.max(1, level.tasks.length),
+      completedAt: score.achievedAt,
+    })
+  }
+  return next
+}
+
+function scoreKey(value: { gameId: string; levelId: string; levelVersion: number }) {
+  return `${value.gameId}:${value.levelId}:${value.levelVersion}`
+}
+
+/** 浏览器里有、服务端还没有的通关记录，登录后补交，避免换设备后丢失。 */
+export function missingCompletions(records: GameRecord[], scores: MyGameScore[]) {
+  const known = new Set(scores.map(scoreKey))
+  const missing = new Map<string, { gameId: string; levelId: string; levelVersion: number }>()
+  for (const record of records) {
+    // 练习类游戏用成绩恢复通关会与打字进度重复，这里只补交街机成绩。
+    if (rankingMetric(record.gameId) !== 'score') continue
+    const key = scoreKey(record)
+    if (known.has(key)) continue
+    missing.set(key, {
+      gameId: record.gameId,
+      levelId: record.levelId,
+      levelVersion: record.levelVersion,
+    })
+  }
+  return [...missing.values()]
+}
+
 export async function synchronizeGameProgress() {
-  const remote = await familyApi<SavedProgress & { version: number }>('/learning/typing-progress')
+  let remote: (SavedProgress & { version: number }) | undefined
+  try {
+    remote = await familyApi<SavedProgress & { version: number }>('/learning/typing-progress')
+  } catch {
+    // 旧后端或临时断网时仍继续恢复小游戏成绩。
+  }
   const validated = readSaved({
-    getItem: (key) => (key === gameStorageKey ? JSON.stringify(remote) : null),
+    getItem: (key) => (key === gameStorageKey && remote ? JSON.stringify(remote) : null),
   })
   for (const draft of validated.drafts)
     if (draft.growth) await restoreLearningSession(draft.growth.sessionId)
   const local = useGameProgress.getState()
-  const records = [...local.records]
+  let records = [...local.records]
   for (const item of validated.records)
     if (
       !records.some(
@@ -243,6 +339,19 @@ export async function synchronizeGameProgress() {
       )
     )
       records.push(item)
+  await flushGameScores().catch(() => {})
+  // 新版服务端把 8 款小游戏的最佳成绩也存进了数据库，登录后据此恢复通关状态。
+  let scores: MyGameScore[] | undefined
+  try {
+    scores = await readMyGameScores()
+  } catch {
+    // 旧后端没有成绩接口时，继续使用本地记录。
+  }
+  if (scores) {
+    records = mergeGameScores(records, scores)
+    const missing = missingCompletions(records, scores)
+    if (missing.length) await submitLegacyCompletions(missing).catch(() => {})
+  }
   const drafts = [...local.drafts]
   for (const item of validated.drafts) {
     const index = drafts.findIndex(

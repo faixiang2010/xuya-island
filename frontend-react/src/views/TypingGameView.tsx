@@ -9,7 +9,8 @@ import {
   typingGames,
   type GameId,
 } from '../games/content'
-import { useGameProgress } from '../games/progress'
+import { useGameProgress, type GamePerformance } from '../games/progress'
+import { reportPracticeScore } from '../games/leaderboard'
 import { learningThemes, useLearningPreferences } from '../learning/preferences'
 import {
   prepareLearningAudio,
@@ -22,6 +23,14 @@ import LearningMedia from '../components/LearningMedia'
 import FingerKeyboard from '../components/FingerKeyboard'
 import FallingGameView from './FallingGameView'
 import PassageView from './PassageView'
+import TetrisGameView from './TetrisGameView'
+import MinesweeperGameView from './MinesweeperGameView'
+import EchoMazeGameView from './EchoMazeGameView'
+import WindCourierGameView from './WindCourierGameView'
+import MelodyPathGameView from './MelodyPathGameView'
+import MemoryPianoGameView from './MemoryPianoGameView'
+import MirrorPaintingGameView from './MirrorPaintingGameView'
+import MemoryGalleryGameView from './MemoryGalleryGameView'
 import styles from './TypingGameView.module.css'
 import { LearningRecorder, type LearningReceipt } from '../growth/outbox'
 import { newId } from '../shared/id'
@@ -48,6 +57,71 @@ export default function TypingGameView() {
       <PassageView
         key={id + ':' + level.id}
         gameId={id as 'passage' | 'passage-en'}
+        levelId={level.id}
+        onLevel={(next) => setSearch({ level: next })}
+      />
+    )
+  const arcadeKey = id + ':' + level.id
+  if (game.kind === 'tetris')
+    return (
+      <TetrisGameView
+        key={arcadeKey}
+        levelId={level.id}
+        onLevel={(next) => setSearch({ level: next })}
+      />
+    )
+  if (game.kind === 'minesweeper')
+    return (
+      <MinesweeperGameView
+        key={arcadeKey}
+        levelId={level.id}
+        onLevel={(next) => setSearch({ level: next })}
+      />
+    )
+  if (game.kind === 'echo')
+    return (
+      <EchoMazeGameView
+        key={arcadeKey}
+        levelId={level.id}
+        onLevel={(next) => setSearch({ level: next })}
+      />
+    )
+  if (game.kind === 'wind')
+    return (
+      <WindCourierGameView
+        key={arcadeKey}
+        levelId={level.id}
+        onLevel={(next) => setSearch({ level: next })}
+      />
+    )
+  if (game.kind === 'melody')
+    return (
+      <MelodyPathGameView
+        key={arcadeKey}
+        levelId={level.id}
+        onLevel={(next) => setSearch({ level: next })}
+      />
+    )
+  if (game.kind === 'piano')
+    return (
+      <MemoryPianoGameView
+        key={arcadeKey}
+        levelId={level.id}
+        onLevel={(next) => setSearch({ level: next })}
+      />
+    )
+  if (game.kind === 'mirror')
+    return (
+      <MirrorPaintingGameView
+        key={arcadeKey}
+        levelId={level.id}
+        onLevel={(next) => setSearch({ level: next })}
+      />
+    )
+  if (game.kind === 'memory')
+    return (
+      <MemoryGalleryGameView
+        key={arcadeKey}
         levelId={level.id}
         onLevel={(next) => setSearch({ level: next })}
       />
@@ -92,12 +166,20 @@ function TypingRound({
   )
   const [index, setIndex] = useState(saved.current?.nextIndex ?? 0)
   const [attempts, setAttempts] = useState(saved.current?.attempts ?? 0)
+  const performanceBase = useRef<GamePerformance>(
+    saved.current?.performance ?? { correct: 0, mistakes: 0, elapsedMs: 0 },
+  )
+  const performanceStart = useRef(0)
+  // 每次存检查点后把已计入的统计记为基线，避免下一次重复累加本次会话的数据。
+  const statsBaseline = useRef({ correct: 0, mistakes: 0 })
   const [answer, setAnswer] = useState('')
   const [composing, setComposing] = useState(false)
   const [paused, setPaused] = useState(false)
   const [capsLock, setCapsLock] = useState<boolean>()
   const [blind, setBlind] = useState(false)
   const [stats, setStats] = useState({ correct: 0, mistakes: 0, streak: 0, best: 0 })
+  const statsRef = useRef(stats)
+  statsRef.current = stats
   const [now, setNow] = useState(Date.now())
   const startedAt = useRef(0)
   const [delivered, setDelivered] = useState('')
@@ -187,6 +269,9 @@ function TypingRound({
     const key = index + ':' + answer
     if (!wrongAnswers.current.has(key)) {
       wrongAnswers.current.add(key)
+      // 拼音输入法无法逐字符统计，用整题的答错次数折算准确率；选择题已在点选时计数。
+      if (game.input !== 'keyboard' && !isChoice)
+        setStats((current) => ({ ...current, mistakes: current.mistakes + 1, streak: 0 }))
       recorder.current?.event('card', { index: index - missionStart, answer: answer.slice(0, 200) })
     }
   }, [
@@ -199,6 +284,8 @@ function TypingRound({
     missionStart,
     task.target,
     evaluation.state,
+    game.input,
+    isChoice,
   ])
   useEffect(() => {
     recorder.current?.event(paused ? 'pause' : 'resume', {})
@@ -218,19 +305,60 @@ function TypingRound({
       recorder.current?.event('card', { index: ticket - missionStart, answer })
       const next = ticket + 1
       const count = attempts + 1
+      // 选择题与拼音按题计正确；英文填空的逐字符统计已在输入时累计。
+      if (game.input !== 'keyboard')
+        setStats((current) => {
+          const streak = current.streak + 1
+          return {
+            ...current,
+            correct: current.correct + 1,
+            streak,
+            best: Math.max(current.best, streak),
+          }
+        })
+      const sessionCorrect = statsRef.current.correct - statsBaseline.current.correct
+      const sessionMistakes = statsRef.current.mistakes - statsBaseline.current.mistakes
+      const gainedCorrect = game.input === 'keyboard' ? 0 : 1
+      const performance: GamePerformance = {
+        correct: performanceBase.current.correct + sessionCorrect + gainedCorrect,
+        mistakes: performanceBase.current.mistakes + sessionMistakes,
+        elapsedMs:
+          performanceBase.current.elapsedMs +
+          (performanceStart.current ? Date.now() - performanceStart.current : 0),
+      }
       latestAnswer.current = ''
       setAnswer('')
       setIndex(next)
       setAttempts(count)
       setDelivered(world.delivery)
       if (!review) {
-        if (next === level.tasks.length) complete(gameId, levelId, count)
-        else
-          saveDraft(gameId, levelId, next, count, {
-            sessionId: growthId,
-            start: missionStart,
-            end: missionEnd,
+        if (next === level.tasks.length) {
+          complete(gameId, levelId, count)
+          const answered = performance.correct + performance.mistakes
+          // 练习类游戏用准确率参与家庭榜；得分相同再比累计用时。
+          void reportPracticeScore({
+            gameId,
+            levelId,
+            levelVersion: level.version,
+            accuracy: answered ? (performance.correct / answered) * 100 : 100,
+            durationMs: performance.elapsedMs,
           })
+        } else {
+          saveDraft(
+            gameId,
+            levelId,
+            next,
+            count,
+            { sessionId: growthId, start: missionStart, end: missionEnd },
+            performance,
+          )
+          performanceBase.current = performance
+          statsBaseline.current = {
+            correct: statsRef.current.correct + (game.input === 'keyboard' ? 0 : 1),
+            mistakes: statsRef.current.mistakes,
+          }
+          performanceStart.current = Date.now()
+        }
       }
       if (next === missionEnd || next === level.tasks.length) recorder.current?.finish()
       playLearningNote(
@@ -255,6 +383,9 @@ function TypingRound({
     gameId,
     levelId,
     level.tasks.length,
+    level.version,
+    game.input,
+    isChoice,
     review,
     complete,
     saveDraft,
@@ -282,8 +413,11 @@ function TypingRound({
     return () => window.clearInterval(timer)
   }, [game.input, done, paused])
   function edit(value: string) {
+    if (!composition.current && value !== answer && !startedAt.current) {
+      startedAt.current = Date.now()
+      performanceStart.current = startedAt.current
+    }
     if (game.input === 'keyboard' && !composition.current && value !== answer) {
-      if (!startedAt.current) startedAt.current = Date.now()
       if (value.length > answer.length) {
         let correct = 0
         let mistakes = 0
@@ -309,6 +443,13 @@ function TypingRound({
   }
   function select(option: string) {
     if (composing || paused || checkpoint || done) return
+    if (!startedAt.current) {
+      startedAt.current = Date.now()
+      performanceStart.current = startedAt.current
+    }
+    // 选择题的答错次数在这里计数，答对在自动送达时记一次。
+    if (!checkChoice(task.target, option).correct)
+      setStats((current) => ({ ...current, mistakes: current.mistakes + 1, streak: 0 }))
     latestAnswer.current = option
     setAnswer(option)
     setDelivered('')
@@ -331,6 +472,9 @@ function TypingRound({
     setReceipt(undefined)
     setGrowthMessage('')
     setStats({ correct: 0, mistakes: 0, streak: 0, best: 0 })
+    performanceBase.current = { correct: 0, mistakes: 0, elapsedMs: 0 }
+    performanceStart.current = 0
+    statsBaseline.current = { correct: 0, mistakes: 0 }
     startedAt.current = 0
     setNow(Date.now())
     wrongAnswers.current.clear()
@@ -391,6 +535,12 @@ function TypingRound({
             </button>
           ))}
         </div>
+        <Link
+          className={'button secondary ' + styles.rankLink}
+          to={`/games/leaderboard?game=${gameId}&level=${levelId}`}
+        >
+          看本关排行榜
+        </Link>
       </div>
       <section className={styles.round} aria-label="打字练习">
         <div className={styles.scene}>

@@ -7,6 +7,8 @@
   display: grid;
   gap: var(--sp-3);
   margin-bottom: 30px;
+  /* 让分类标题停在吸顶标签下方，而不是被盖住。 */
+  scroll-margin-top: 84px;
 }
 .groupHeading h2 {
   font-size: var(--fs-xl);
@@ -14,6 +16,83 @@
 .groupHeading p {
   margin-top: 4px;
   color: var(--muted);
+}
+.groupHeading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+.continue {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 22px;
+  margin-bottom: 18px;
+  border: 1px solid var(--brand-soft-strong);
+  border-radius: var(--radius-xl);
+  background: var(--brand-soft);
+}
+.continueTitle {
+  margin-top: 4px;
+  color: var(--brand-ink);
+  font-size: var(--fs-lg);
+  font-weight: 700;
+}
+.continueNote {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: var(--fs-sm);
+}
+.continueActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.categories {
+  position: sticky;
+  top: 8px;
+  z-index: 2;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 8px;
+  margin-bottom: 18px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow-1);
+}
+.category {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-size: var(--fs-sm);
+  cursor: pointer;
+}
+.category:hover {
+  background: var(--brand-soft);
+  color: var(--ink);
+}
+.category small {
+  color: inherit;
+  opacity: 0.75;
+  font-size: var(--fs-caption);
+}
+.categoryActive {
+  border-color: var(--brand);
+  background: var(--brand-soft);
+  color: var(--brand-ink);
+  font-weight: 600;
 }
 .card {
   position: relative;
@@ -60,7 +139,7 @@
   border-radius: var(--radius-lg);
   background: var(--accent-soft);
 }
-.card h2 {
+.card h3 {
   font-size: var(--fs-xl);
 }
 .card p {

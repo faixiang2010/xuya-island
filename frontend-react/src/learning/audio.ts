@@ -84,3 +84,39 @@ export async function playLearningPhrase(enabled: boolean, start: number, length
     return false
   }
 }
+
+/** 小游戏用的 C 大调音阶，从 do 到高音 do。 */
+export const GAME_NOTE_FREQUENCIES = [261.63, 293.66, 329.63, 349.23, 392, 440, 493.88, 523.25]
+
+export function playLearningTone(enabled: boolean, frequency: number, delay = 0, duration = 0.34) {
+  if (!enabled || !context || context.state !== 'running') return false
+  try {
+    const start = context.currentTime + delay
+    for (const [harmonic, volume] of [
+      [1, 0.2],
+      [2, 0.05],
+      [3, 0.02],
+    ]) {
+      const oscillator = context.createOscillator()
+      const envelope = context.createGain()
+      oscillator.type = 'sine'
+      oscillator.frequency.value = frequency * harmonic
+      envelope.gain.setValueAtTime(0, start)
+      envelope.gain.linearRampToValueAtTime(volume, start + 0.012)
+      envelope.gain.exponentialRampToValueAtTime(0.001, start + duration)
+      oscillator.connect(envelope)
+      envelope.connect(context.destination)
+      oscillator.start(start)
+      oscillator.stop(start + duration + 0.05)
+      activeNotes.add(oscillator)
+      oscillator.onended = () => {
+        activeNotes.delete(oscillator)
+        oscillator.disconnect()
+        envelope.disconnect()
+      }
+    }
+    return true
+  } catch {
+    return false
+  }
+}

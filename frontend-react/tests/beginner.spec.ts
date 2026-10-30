@@ -341,6 +341,9 @@ test('三段本地视频可播放、暂停与显示字幕文字版，课堂短�
     { route: '/#/classroom/story-cover', title: '改一个名字，看看程序的变化', seconds: 15 },
   ]) {
     await page.goto(item.route)
+    // 课堂页把演示放在默认折叠的「更多工具」里，先展开再点演示。
+    if (item.route.startsWith('/#/classroom'))
+      await page.getByText('更多工具', { exact: true }).click()
     await page.getByText('看一段演示：' + item.title, { exact: false }).click()
     const video = page.getByLabel(item.title, { exact: true })
     await expect(video).toBeVisible()

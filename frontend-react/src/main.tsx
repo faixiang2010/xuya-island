@@ -12,6 +12,7 @@ import AdventureView from './views/AdventureView'
 import StudioView from './views/StudioView'
 import GamesView from './views/GamesView'
 import TypingGameView from './views/TypingGameView'
+import LeaderboardView from './views/LeaderboardView'
 import './styles.css'
 import './styles-learning.css'
 import './styles-theme.css'
@@ -27,6 +28,7 @@ createRoot(document.getElementById('root')!).render(
         <Route element={<App />}>
           <Route path="/" element={<HomeView />} />
           <Route path="/games" element={<GamesView />} />
+          <Route path="/games/leaderboard" element={<LeaderboardView />} />
           <Route path="/games/:gameId" element={<TypingGameView />} />
           <Route path="/adventure/:episodeId" element={<AdventureView />} />
           <Route path="/studio" element={<StudioView />} />

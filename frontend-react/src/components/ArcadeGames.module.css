@@ -1,0 +1,223 @@
+.stage {
+  padding: 22px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-xl);
+  background: var(--surface);
+  box-shadow: var(--shadow-1);
+}
+.stageHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.hud {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  color: var(--muted);
+  font-size: var(--fs-sm);
+}
+.hud strong {
+  display: block;
+  color: var(--ink);
+  font-size: var(--fs-lg);
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 16px;
+}
+.grid {
+  display: grid;
+  gap: 4px;
+  width: min(100%, 560px);
+  margin: 0 auto;
+  touch-action: manipulation;
+  user-select: none;
+}
+.cell {
+  position: relative;
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface-2, #f7f4ef);
+  color: var(--ink);
+  font: inherit;
+  font-size: var(--fs-sm);
+  cursor: pointer;
+}
+.cell:hover:not(:disabled) {
+  border-color: var(--brand-soft-strong);
+}
+.cell:disabled {
+  cursor: default;
+}
+.cellOpen {
+  background: #fffdf7;
+  cursor: default;
+}
+.cellMine {
+  background: #ffe3e3;
+  border-color: #e8a8a8;
+}
+.cellFlag {
+  background: #fff5d6;
+  border-color: #e8c46a;
+}
+.cellGoal {
+  background: var(--brand-soft);
+  border-color: var(--brand);
+}
+.cellSeen {
+  background: #f1ece4;
+}
+.banner {
+  margin-top: 16px;
+  padding: 14px 16px;
+  border: 1px solid var(--brand-soft-strong);
+  border-radius: var(--radius-lg);
+  background: var(--brand-soft);
+}
+.banner strong {
+  display: block;
+  margin-bottom: 4px;
+}
+.bannerLose {
+  border-color: #e8b4b4;
+  background: #fff0f0;
+}
+.muted {
+  color: var(--muted);
+  font-size: var(--fs-sm);
+}
+.palette {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.swatch {
+  width: 38px;
+  height: 38px;
+  border: 3px solid transparent;
+  border-radius: 50%;
+  cursor: pointer;
+}
+.swatchActive {
+  border-color: var(--ink);
+}
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 10px;
+  color: var(--muted);
+  font-size: var(--fs-sm);
+}
+.canvas {
+  display: block;
+  width: min(100%, 240px);
+  height: auto;
+  margin: 0 auto;
+  border-radius: var(--radius-lg);
+  background: #1f2430;
+}
+.echoUnknown {
+  border-color: #232836;
+  background: #232836;
+}
+.echoWall {
+  border-color: #3a312d;
+  background: #4a3f3a;
+}
+.echoOpen {
+  border-color: #e6ddcf;
+  background: #f3ede3;
+}
+.echoPlayer {
+  border-color: var(--brand);
+  background: var(--brand);
+  box-shadow: 0 0 0 3px var(--brand-soft);
+}
+.echoExit {
+  border-color: #e8c46a;
+  background: #fff3b0;
+  color: #8a6a1f;
+  font-weight: 700;
+}
+.windStart {
+  border-color: var(--brand-soft-strong);
+  background: var(--brand-soft);
+  color: var(--brand-ink);
+  font-weight: 700;
+}
+.windGoal {
+  border-color: #e8c46a;
+  background: #fff5d6;
+  color: #8a6a1f;
+  font-weight: 700;
+}
+.windLetter {
+  border-color: #9bc7a7;
+  background: #eaf6ec;
+  color: #3f7a51;
+  font-weight: 700;
+}
+.windWall {
+  border-color: #4a3f3a;
+  background: #4a3f3a;
+  color: #f3ede3;
+}
+.windArrow {
+  border-color: var(--brand-soft-strong);
+  background: var(--surface);
+  color: var(--brand-ink);
+  font-size: 18px;
+  font-weight: 700;
+}
+.windPath {
+  outline: 2px dashed var(--brand-soft-strong);
+  outline-offset: -3px;
+}
+.windLeaf {
+  border-color: var(--brand);
+  background: var(--brand);
+  color: var(--on-brand);
+  box-shadow: 0 0 0 3px var(--brand-soft);
+}
+.pianoKeys {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  width: min(100%, 560px);
+  margin: 0 auto;
+}
+.pianoKey {
+  flex: 1;
+  min-width: 0;
+  padding: 46px 0 16px;
+  border: 1px solid var(--line);
+  border-radius: 0 0 12px 12px;
+  background: #fffdf7;
+  color: var(--muted);
+  font: inherit;
+  cursor: pointer;
+  transition: background var(--dur-1) var(--ease-out);
+}
+.pianoKey:hover:not(:disabled) {
+  background: var(--brand-soft);
+}
+.pianoKeyLit {
+  background: var(--brand-soft-strong);
+  color: var(--brand-ink);
+  transform: translateY(2px);
+}
+.pianoKeyWrong {
+  background: #ffe3e3;
+}

@@ -1,15 +1,23 @@
 import {
+  Blocks,
+  Bomb,
   BookOpen,
+  Brush,
   CalendarDays,
   CheckCircle2,
   Gamepad2,
   Hand,
+  Images,
   Keyboard,
   Languages,
+  Music,
   Palette,
+  Piano,
+  Radar,
   Search,
   Sprout,
   WandSparkles,
+  Wind,
   Zap,
   type LucideIcon,
 } from 'lucide-react'
@@ -28,6 +36,14 @@ const icons: Record<BadgeIcon, LucideIcon> = {
   search: Search,
   wand: WandSparkles,
   calendar: CalendarDays,
+  blocks: Blocks,
+  bomb: Bomb,
+  radar: Radar,
+  wind: Wind,
+  music: Music,
+  piano: Piano,
+  brush: Brush,
+  images: Images,
 }
 
 export default function BadgeGallery({ badges }: { badges: Badge[] }) {
